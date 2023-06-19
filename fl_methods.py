@@ -114,7 +114,7 @@ def aggregator_update_shapley(
             )
             # compute updated model without active_client_idx
             if subset_size > 0:
-                model_S = deepcopy(init_model)
+                model_S = deepcopy(init_model).to(device)
                 model_S.load_state_dict(model.state_dict())
                 optimiser_S = optim.Adam(model_S.parameters())
                 optimiser_S.load_state_dict(optimiser.state_dict())
@@ -134,14 +134,15 @@ def aggregator_update_shapley(
                     loss = criterion(scores, val_data.targets)
             else:
                 with torch.no_grad():
-                    scores = init_model(val_data.data)
-                    loss = criterion(scores, val_data.targets)
+                    init_model = init_model.cpu()
+                    scores = init_model(val_data.data.cpu())
+                    loss = criterion(scores, val_data.targets.cpu())
             loss_i = loss
 
             # compute updated model with active_client_idx
             chosen_gradient_indices.append(active_client_idx)
 
-            model_Sux = deepcopy(init_model)
+            model_Sux = deepcopy(init_model).to(device)
             model_Sux.load_state_dict(model.state_dict())
             optimiser_Sux = optim.Adam(model_Sux.parameters())
             optimiser_Sux.load_state_dict(optimiser.state_dict())
