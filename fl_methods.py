@@ -10,7 +10,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def aggregator_update(client_states, sent_status, model):
     # find updated model
-    num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
 
     model_state = model.state_dict()
@@ -24,6 +23,7 @@ def aggregator_update(client_states, sent_status, model):
 
     model.load_state_dict(model_state)
 
+
 def aggregator_update_shapley(
     client_values,
     client_states,
@@ -32,9 +32,8 @@ def aggregator_update_shapley(
     val_data,
     criterion,
     device,
-):  
+):
     # find updated model
-    num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
 
     model_state = model.state_dict()
@@ -51,7 +50,6 @@ def aggregator_update_shapley(
 
     init_model = deepcopy(model)
     init_model.load_state_dict(init_state)
-
 
     # calculate shapley values of chosen clients
     active_client_indices = np.where(sent_status)[0]
@@ -133,8 +131,8 @@ def aggregator_update_shapley(
 
     sv_updates = []
     counter = 0
-    alpha = 0.75
-    beta = 0.25
+    alpha = 0.5
+    beta = 0.9
     for idx, client_value in enumerate(client_values):
         if idx in active_client_indices:
             # to match order of magnitude
@@ -160,7 +158,6 @@ def aggregator_update_ucb(
     device,
 ):
     # find updated model
-    num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
 
     model_state = model.state_dict()
@@ -257,7 +254,6 @@ def aggregator_update_ucb(
         final_shapley_values.append(avg_shapley_value)
 
     counter = 0
-    num_selected = np.sum(status)
     for idx, shapley_value in enumerate(sv):
         if idx in active_client_indices:
             # to match order of magnitude
