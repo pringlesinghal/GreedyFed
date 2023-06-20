@@ -86,7 +86,7 @@ def convergenceTest(dshap):
         return False
     else:
         return (
-            np.average(np.abs(torch.Tensor(dshap[-10:]) - dshap[-1])) / dshap[-1]
+            torch.mean(torch.abs(torch.Tensor(dshap[-10:]).to(device) - dshap[-1])) / dshap[-1]
         ) < 0.01
 
 

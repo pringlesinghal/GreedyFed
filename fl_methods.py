@@ -24,7 +24,6 @@ def aggregator_update(client_states, sent_status, model):
 
     model.load_state_dict(model_state)
 
-
 def aggregator_update_shapley(
     client_values,
     client_states,
@@ -33,7 +32,7 @@ def aggregator_update_shapley(
     val_data,
     criterion,
     device,
-):
+):  
     # find updated model
     num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
@@ -52,6 +51,7 @@ def aggregator_update_shapley(
 
     init_model = deepcopy(model)
     init_model.load_state_dict(init_state)
+
 
     # calculate shapley values of chosen clients
     active_client_indices = np.where(sent_status)[0]
@@ -97,9 +97,8 @@ def aggregator_update_shapley(
                     loss = criterion(scores, val_data.targets)
             else:
                 with torch.no_grad():
-                    init_model = init_model.cpu()
-                    scores = init_model(val_data.data.cpu())
-                    loss = criterion(scores, val_data.targets.cpu())
+                    scores = init_model(val_data.data)
+                    loss = criterion(scores, val_data.targets)
             loss_i = loss
 
             # compute updated model with active_client_idx
@@ -144,7 +143,7 @@ def aggregator_update_shapley(
             )
             counter += 1
         sv_updates.append(client_value)
-    return sv_updates
+    return torch.Tensor(sv_updates)
 
 
 def aggregator_update_ucb(
@@ -223,9 +222,8 @@ def aggregator_update_ucb(
                     loss = criterion(scores, val_data.targets)
             else:
                 with torch.no_grad():
-                    init_model = init_model.cpu()
-                    scores = init_model(val_data.data.cpu())
-                    loss = criterion(scores, val_data.targets.cpu())
+                    scores = init_model(val_data.data)
+                    loss = criterion(scores, val_data.targets)
             loss_i = loss
 
             # compute updated model with active_client_idx
@@ -259,6 +257,7 @@ def aggregator_update_ucb(
         final_shapley_values.append(avg_shapley_value)
 
     counter = 0
+    num_selected = np.sum(status)
     for idx, shapley_value in enumerate(sv):
         if idx in active_client_indices:
             # to match order of magnitude
@@ -269,8 +268,9 @@ def aggregator_update_ucb(
             counter += 1
             nk[idx] += 1
         sv[idx] = shapley_value
-        ucb[idx] = shapley_value + beta * np.sqrt(
-            np.log(communication_round + 1) / nk[idx]
-        )
+        if nk[idx] > 0:
+            ucb[idx] = shapley_value + beta * np.sqrt(
+                np.log(communication_round + 1) / nk[idx]
+            )
 
     return sv, nk, ucb
