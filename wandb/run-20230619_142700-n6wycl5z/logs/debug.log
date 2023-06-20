@@ -1,0 +1,53 @@
+2023-06-19 14:27:00,569 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Current SDK version is 0.15.4
+2023-06-19 14:27:00,569 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Configure stats pid to 16848
+2023-06-19 14:27:00,570 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Loading settings from C:\Users\Pranava\.config\wandb\settings
+2023-06-19 14:27:00,570 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Loading settings from c:\Users\Pranava\Documents\Aalborg\code\colab_experimental_results\FL_experiments_fixed\wandb\settings
+2023-06-19 14:27:00,570 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-06-19 14:27:00,570 INFO    MainThread:16848 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2023-06-19 14:27:00,570 INFO    MainThread:16848 [wandb_init.py:_log_setup():507] Logging user logs to c:\Users\Pranava\Documents\Aalborg\code\colab_experimental_results\FL_experiments_fixed\wandb\run-20230619_142700-n6wycl5z\logs\debug.log
+2023-06-19 14:27:00,571 INFO    MainThread:16848 [wandb_init.py:_log_setup():508] Logging internal logs to c:\Users\Pranava\Documents\Aalborg\code\colab_experimental_results\FL_experiments_fixed\wandb\run-20230619_142700-n6wycl5z\logs\debug-internal.log
+2023-06-19 14:27:00,571 INFO    MainThread:16848 [wandb_init.py:init():547] calling init triggers
+2023-06-19 14:27:00,571 INFO    MainThread:16848 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {'random_seed': 0, 'num_clients': 20, 'alpha': 1000000.0, 'learning_rate': 0.01, 'num_communication_rounds': 100, 'server_select_fraction': 0.1, 'client_iterations': 10, 'random_seed_2': 1, 'experiment': 's-fedavg', 'server_selection': 'shapley'}
+2023-06-19 14:27:00,571 INFO    MainThread:16848 [wandb_init.py:init():571] re-initializing run, found existing run on stack: m6llb8bs
+2023-06-19 14:27:00,573 INFO    MainThread:16848 [wandb_run.py:_finish():1890] finishing run pringlesinghal/s-fedavg modifications/m6llb8bs
+2023-06-19 14:27:00,574 ERROR   MainThread:16848 [jupyter.py:save_history():437] Run pip install nbformat to save notebook history
+2023-06-19 14:27:00,574 INFO    MainThread:16848 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2023-06-19 14:27:00,575 INFO    MainThread:16848 [wandb_init.py:_jupyter_teardown():435] cleaning up jupyter logic
+2023-06-19 14:27:00,575 INFO    MainThread:16848 [wandb_run.py:_atexit_cleanup():2124] got exitcode: 0
+2023-06-19 14:27:00,575 INFO    MainThread:16848 [wandb_run.py:_restore():2107] restore
+2023-06-19 14:27:00,575 INFO    MainThread:16848 [wandb_run.py:_restore():2113] restore done
+2023-06-19 14:27:04,593 INFO    MainThread:16848 [wandb_run.py:_footer_history_summary_info():3467] rendering history
+2023-06-19 14:27:04,593 INFO    MainThread:16848 [wandb_run.py:_footer_history_summary_info():3499] rendering summary
+2023-06-19 14:27:04,598 INFO    MainThread:16848 [wandb_run.py:_footer_sync_info():3426] logging synced files
+2023-06-19 14:27:04,716 WARNING MainThread:16848 [wandb_init.py:init():1174] interrupted
+Traceback (most recent call last):
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_init.py", line 1152, in init
+    run = wi.init()
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_init.py", line 581, in init
+    latest_run.finish()
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_run.py", line 391, in wrapper
+    return func(self, *args, **kwargs)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_run.py", line 332, in wrapper
+    return func(self, *args, **kwargs)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_run.py", line 1881, in finish
+    return self._finish(exit_code, quiet)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\sdk\wandb_run.py", line 1913, in _finish
+    wandb._sentry.end_session()
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\analytics\sentry.py", line 40, in wrapper
+    return func(self, *args, **kwargs)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\wandb\analytics\sentry.py", line 170, in end_session
+    client.flush()
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\sentry_sdk\client.py", line 594, in flush
+    self.transport.flush(timeout=timeout, callback=callback)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\sentry_sdk\transport.py", line 493, in flush
+    self._worker.flush(timeout, callback)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\sentry_sdk\worker.py", line 95, in flush
+    self._wait_flush(timeout, callback)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\sentry_sdk\worker.py", line 101, in _wait_flush
+    if not self._timed_queue_join(initial_timeout):
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\sentry_sdk\worker.py", line 56, in _timed_queue_join
+    queue.all_tasks_done.wait(timeout=delay)
+  File "c:\Users\Pranava\anaconda3\envs\niid-bench\lib\threading.py", line 306, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt

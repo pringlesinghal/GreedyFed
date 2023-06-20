@@ -8,89 +8,55 @@ from dshap import convergenceTest
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def aggregator_update(client_gradients, sent_status, model, optimiser):
+def aggregator_update(client_states, sent_status, model):
     # find updated model
     num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
-    weights = [0 for _ in range(num_clients)]
+
+    model_state = model.state_dict()
+    for key in model_state.keys():
+        model_state[key] -= model_state[key]  # set to zero
+    # find updated model by averaging weights from selected clients
     for idx, status in enumerate(sent_status):
-        # uniform weights to active clients
-        weights[idx] = (
-            active_clients and status and 1 / (active_clients)
-        )  # to handle division by zero
+        if status:
+            for key in model_state.keys():
+                model_state[key] += (1 / active_clients) * client_states[idx][key]
 
-    weights = torch.Tensor(weights).to(device)
-    for i in client_gradients:
-        if i is not None:
-            # make gradients variable different from None
-            model.set_gradients(i)
-            break
-
-    optimiser.zero_grad(set_to_none=False)  # clear aggregator gradients to zero
-    agg_gradient = model.gradients()
-    # calculate gradients for all parameters using all clients
-    for i in range(num_clients):
-        if sent_status[i]:  # otherwise we skip
-            # client_gradients[i], tuple with gradients for all weights and biases
-            for param_idx in range(len(agg_gradient)):
-                agg_gradient[param_idx] += weights[i] * client_gradients[i][param_idx]
-
-    # update aggregator gradient and then update weights
-    model.set_gradients(agg_gradient)
-    optimiser.step()
+    model.load_state_dict(model_state)
 
 
 def aggregator_update_shapley(
     client_values,
-    client_gradients,
+    client_states,
     sent_status,
     model,
-    optimiser,
     val_data,
     criterion,
     device,
 ):
-    # update shapley values for clients with sent status True
-    # use val data for calculation
-
     # find updated model
     num_clients = len(sent_status)
     active_clients = np.sum(sent_status)
-    weights = [0 for _ in range(num_clients)]
+
+    model_state = model.state_dict()
+    init_state = deepcopy(model_state)
+    for key in model_state.keys():
+        model_state[key] -= model_state[key]  # set to zero
+    # find updated model by averaging weights from selected clients
     for idx, status in enumerate(sent_status):
-        # uniform weights to active clients
-        weights[idx] = (
-            active_clients and status and 1 / (active_clients)
-        )  # to handle division by zero
+        if status:
+            for key in model_state.keys():
+                model_state[key] += (1 / active_clients) * client_states[idx][key]
 
-    weights = torch.Tensor(weights).to(device)
-    for i in client_gradients:
-        if i is not None:
-            # make gradients variable different from None
-            model.set_gradients(i)
-            break
-
-    optimiser.zero_grad(set_to_none=False)  # clear aggregator gradients to zero
-    agg_gradient = model.gradients()
+    model.load_state_dict(model_state)
 
     init_model = deepcopy(model)
-    init_model.load_state_dict(model.state_dict())
+    init_model.load_state_dict(init_state)
 
-    # calculate gradients for all parameters using all clients
-    for i in range(num_clients):
-        if sent_status[i]:  # otherwise we skip
-            # client_gradients[i], tuple with gradients for all weights and biases
-            for param_idx in range(len(agg_gradient)):
-                agg_gradient[param_idx] += weights[i] * client_gradients[i][param_idx]
-
-    # update aggregator gradient and then update weights
-    model.set_gradients(agg_gradient)
-    optimiser.step()
-
-    # calculate shapley values using init model
+    # calculate shapley values of chosen clients
     active_client_indices = np.where(sent_status)[0]
+    final_shapley_values = []
     for active_client_idx in active_client_indices:
-        init_client_value = client_values[active_client_idx]
         remaining_client_indices = list(
             set(active_client_indices) - set([active_client_idx])
         )
@@ -100,7 +66,6 @@ def aggregator_update_shapley(
         avg_shapley_value = 0
         while t < T:
             if convergenceTest(shapley_values):
-                print("Converged")
                 break
             t += 1
             loss_i = 0
@@ -109,26 +74,24 @@ def aggregator_update_shapley(
             subset_sizes = [i for i in range(len(remaining_client_indices))]
             subset_size = np.random.choice(subset_sizes, size=1)[0]
             # select a random subset of gradients that were transmitted
-            chosen_gradient_indices = np.random.choice(
+            chosen_client_indices = np.random.choice(
                 remaining_client_indices, size=subset_size, replace=False
             )
             # compute updated model without active_client_idx
             if subset_size > 0:
-                model_S = deepcopy(init_model).to(device)
-                model_S.load_state_dict(model.state_dict())
-                optimiser_S = optim.Adam(model_S.parameters())
-                optimiser_S.load_state_dict(optimiser.state_dict())
+                model_S = deepcopy(init_model)
+                client_states_S = []
+                sent_status_S = []
+                for idx, state in enumerate(client_states):
+                    if idx in chosen_client_indices:
+                        client_states_S.append(state)
+                        sent_status_S.append(True)
+                aggregator_update(
+                    client_states=client_states_S,
+                    sent_status=sent_status_S,
+                    model=model_S,
+                )
 
-                optimiser_S.zero_grad(set_to_none=False)
-                agg_gradient = model_S.gradients()
-
-                for idx in chosen_gradient_indices:
-                    for param_idx in range(len(model_S.parameters())):
-                        agg_gradient[param_idx] += (1 / subset_size) * client_gradients[
-                            idx
-                        ][param_idx]
-                model_S.set_gradients(agg_gradient)
-                optimiser_S.step()
                 with torch.no_grad():
                     scores = model_S(val_data.data)
                     loss = criterion(scores, val_data.targets)
@@ -140,22 +103,21 @@ def aggregator_update_shapley(
             loss_i = loss
 
             # compute updated model with active_client_idx
-            chosen_gradient_indices.append(active_client_idx)
+            chosen_client_indices = list(chosen_client_indices)
+            chosen_client_indices.append(active_client_idx)
 
-            model_Sux = deepcopy(init_model).to(device)
-            model_Sux.load_state_dict(model.state_dict())
-            optimiser_Sux = optim.Adam(model_Sux.parameters())
-            optimiser_Sux.load_state_dict(optimiser.state_dict())
-            optimiser_Sux.zero_grad(set_to_none=False)
-            agg_gradient = model_Sux.gradients()
-
-            for idx in chosen_gradient_indices:
-                for param_idx in range(len(model_Sux.parameters())):
-                    agg_gradient[param_idx] += (1 / subset_size) * client_gradients[
-                        idx
-                    ][param_idx]
-            model_Sux.set_gradients(agg_gradient)
-            optimiser_Sux.step()
+            model_Sux = deepcopy(init_model)
+            client_states_Sux = []
+            sent_status_Sux = []
+            for idx, state in enumerate(client_states):
+                if idx in chosen_client_indices:
+                    client_states_Sux.append(state)
+                    sent_status_Sux.append(True)
+            aggregator_update(
+                client_states=client_states_Sux,
+                sent_status=sent_status_Sux,
+                model=model_Sux,
+            )
             with torch.no_grad():
                 scores = model_Sux(val_data.data)
                 loss = criterion(scores, val_data.targets)
@@ -167,3 +129,148 @@ def aggregator_update_shapley(
                 avg_shapley_value * len(shapley_values) + shapley_value_t
             ) / (len(shapley_values) + 1)
             shapley_values.append(avg_shapley_value)
+
+        final_shapley_values.append(avg_shapley_value)
+
+    sv_updates = []
+    counter = 0
+    alpha = 0.75
+    beta = 0.25
+    for idx, client_value in enumerate(client_values):
+        if idx in active_client_indices:
+            # to match order of magnitude
+            client_value = (
+                alpha * client_value + beta * final_shapley_values[counter] * 10
+            )
+            counter += 1
+        sv_updates.append(client_value)
+    return sv_updates
+
+
+def aggregator_update_ucb(
+    communication_round,
+    beta,
+    sv,
+    nk,
+    ucb,
+    client_states,
+    sent_status,
+    model,
+    val_data,
+    criterion,
+    device,
+):
+    # find updated model
+    num_clients = len(sent_status)
+    active_clients = np.sum(sent_status)
+
+    model_state = model.state_dict()
+    init_state = deepcopy(model_state)
+    for key in model_state.keys():
+        model_state[key] -= model_state[key]  # set to zero
+    # find updated model by averaging weights from selected clients
+    for idx, status in enumerate(sent_status):
+        if status:
+            for key in model_state.keys():
+                model_state[key] += (1 / active_clients) * client_states[idx][key]
+
+    model.load_state_dict(model_state)
+
+    init_model = deepcopy(model)
+    init_model.load_state_dict(init_state)
+
+    # calculate shapley values of chosen clients
+    active_client_indices = np.where(sent_status)[0]
+    final_shapley_values = []
+    for active_client_idx in active_client_indices:
+        remaining_client_indices = list(
+            set(active_client_indices) - set([active_client_idx])
+        )
+        T = 50
+        t = 0
+        shapley_values = []
+        avg_shapley_value = 0
+        while t < T:
+            if convergenceTest(shapley_values):
+                break
+            t += 1
+            loss_i = 0
+            loss_f = 0
+            # pick a size for the random subset
+            subset_sizes = [i for i in range(len(remaining_client_indices))]
+            subset_size = np.random.choice(subset_sizes, size=1)[0]
+            # select a random subset of gradients that were transmitted
+            chosen_client_indices = np.random.choice(
+                remaining_client_indices, size=subset_size, replace=False
+            )
+            # compute updated model without active_client_idx
+            if subset_size > 0:
+                model_S = deepcopy(init_model)
+                client_states_S = []
+                sent_status_S = []
+                for idx, state in enumerate(client_states):
+                    if idx in chosen_client_indices:
+                        client_states_S.append(state)
+                        sent_status_S.append(True)
+                aggregator_update(
+                    client_states=client_states_S,
+                    sent_status=sent_status_S,
+                    model=model_S,
+                )
+
+                with torch.no_grad():
+                    scores = model_S(val_data.data)
+                    loss = criterion(scores, val_data.targets)
+            else:
+                with torch.no_grad():
+                    init_model = init_model.cpu()
+                    scores = init_model(val_data.data.cpu())
+                    loss = criterion(scores, val_data.targets.cpu())
+            loss_i = loss
+
+            # compute updated model with active_client_idx
+            chosen_client_indices = list(chosen_client_indices)
+            chosen_client_indices.append(active_client_idx)
+
+            model_Sux = deepcopy(init_model)
+            client_states_Sux = []
+            sent_status_Sux = []
+            for idx, state in enumerate(client_states):
+                if idx in chosen_client_indices:
+                    client_states_Sux.append(state)
+                    sent_status_Sux.append(True)
+            aggregator_update(
+                client_states=client_states_Sux,
+                sent_status=sent_status_Sux,
+                model=model_Sux,
+            )
+            with torch.no_grad():
+                scores = model_Sux(val_data.data)
+                loss = criterion(scores, val_data.targets)
+            loss_f = loss
+            # calculate shapley value for client_idx as difference in val loss
+            shapley_value_t = loss_i - loss_f
+            # calculate average shapley value and append to list
+            avg_shapley_value = (
+                avg_shapley_value * len(shapley_values) + shapley_value_t
+            ) / (len(shapley_values) + 1)
+            shapley_values.append(avg_shapley_value)
+
+        final_shapley_values.append(avg_shapley_value)
+
+    counter = 0
+    for idx, shapley_value in enumerate(sv):
+        if idx in active_client_indices:
+            # to match order of magnitude
+            shapley_value = (
+                (communication_round * shapley_value) + final_shapley_values[counter]
+            ) / (communication_round + 1)
+            # moving average with respect to number of communication rounds
+            counter += 1
+            nk[idx] += 1
+        sv[idx] = shapley_value
+        ucb[idx] = shapley_value + beta * np.sqrt(
+            np.log(communication_round + 1) / nk[idx]
+        )
+
+    return sv, nk, ucb

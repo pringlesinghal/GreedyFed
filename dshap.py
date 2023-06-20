@@ -85,7 +85,9 @@ def convergenceTest(dshap):
     if len(dshap) < 20:
         return False
     else:
-        return (np.mean(np.abs(dshap[-10:] - dshap[-1])) / dshap[-1]) < 0.01
+        return (
+            np.average(np.abs(torch.Tensor(dshap[-10:]) - dshap[-1])) / dshap[-1]
+        ) < 0.01
 
 
 def DShap(x, S, global_dataset):
