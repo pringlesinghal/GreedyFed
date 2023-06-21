@@ -292,6 +292,8 @@ def DivideIntoBatches(client_indices, num_batches):
     client_indices_batched = [[] for i in range(num_clients)]
     for i in range(num_clients):
         mbs = int(np.floor(len(client_indices[i]) / Nb))  # mini batch size
+        # shuffle to ensure different batches each time
+        client_indices[i] = np.random.permutation(client_indices[i])
         for j in range(Nb - 1):
             client_indices_batched[i].append(client_indices[i][j * mbs : (j + 1) * mbs])
         client_indices_batched[i].append(
