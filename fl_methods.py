@@ -26,6 +26,8 @@ def aggregator_update(client_states, sent_status, model):
 
 def aggregator_update_shapley(
     client_values,
+    alpha,
+    beta,
     client_states,
     sent_status,
     model,
@@ -131,8 +133,7 @@ def aggregator_update_shapley(
 
     sv_updates = []
     counter = 0
-    alpha = 0.5
-    beta = 0.9
+
     for idx, client_value in enumerate(client_values):
         if idx in active_client_indices:
             # to match order of magnitude

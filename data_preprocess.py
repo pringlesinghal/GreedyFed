@@ -19,10 +19,10 @@ def download_mnist():
     returns a tuple of (train_dataset, validation_dataset, test_dataset)
     """
     train_data_global = datasets.MNIST(
-        root="dataset/", train=True, transform=data_transform_images, download=True
+        root="dataset/", train=True, transform=transforms.ToTensor(), download=True
     )  # 60000 samples
     test_val_data_global = datasets.MNIST(
-        root="dataset/", train=False, transform=data_transform_images, download=True
+        root="dataset/", train=False, transform=transforms.ToTensor(), download=True
     )  # 10000 samples
     val_data_global, test_data_global = torch.utils.data.random_split(
         test_val_data_global, [0.5, 0.5]
@@ -64,6 +64,174 @@ def load_mnist():
         train_data_global = torch.load("processed_data/mnist/train_data_global.pt")
         val_data_global = torch.load("processed_data/mnist/val_data_global.pt")
         test_data_global = torch.load("processed_data/mnist/test_data_global.pt")
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def download_cifar10():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    train_data_global = datasets.CIFAR10(
+        root="dataset/", train=True, transform=transforms.ToTensor(), download=True
+    )  # 50000 samples
+    test_val_data_global = datasets.CIFAR10(
+        root="dataset/", train=False, transform=transforms.ToTensor(), download=True
+    )  # 10000 samples
+    val_data_global, test_data_global = torch.utils.data.random_split(
+        test_val_data_global, [0.5, 0.5]
+    )
+
+    num_train_points = train_data_global.__len__()
+    num_val_points = val_data_global.__len__()
+    num_test_points = test_data_global.__len__()
+
+    # apply transforms through DataLoader (cheap trick)
+
+    train_dataloader = DataLoader(train_data_global, batch_size=num_train_points)
+    train_data_global.data, train_data_global.targets = next(iter(train_dataloader))
+    ### random permutation of train indices
+    indices = torch.Tensor(np.random.permutation(num_train_points)).int()
+    ### shuffle the data
+    train_data_global.data = train_data_global.data[indices]
+    train_data_global.targets = train_data_global.targets[indices]
+
+    val_dataloader = DataLoader(val_data_global, batch_size=num_val_points)
+    val_data_global.data, val_data_global.targets = next(iter(val_dataloader))
+
+    test_dataloader = DataLoader(test_data_global, batch_size=num_test_points)
+    test_data_global.data, test_data_global.targets = next(iter(test_dataloader))
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def load_cifar10():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    if not exists("processed_data/cifar10/test_data_global.pt"):
+        train_data_global, val_data_global, test_data_global = download_cifar10()
+        torch.save(train_data_global, "processed_data/cifar10/train_data_global.pt")
+        torch.save(val_data_global, "processed_data/cifar10/val_data_global.pt")
+        torch.save(test_data_global, "processed_data/cifar10/test_data_global.pt")
+    else:
+        print("files already downloaded")
+        train_data_global = torch.load("processed_data/cifar10/train_data_global.pt")
+        val_data_global = torch.load("processed_data/cifar10/val_data_global.pt")
+        test_data_global = torch.load("processed_data/cifar10/test_data_global.pt")
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def download_mnist_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    train_data_global = datasets.MNIST(
+        root="dataset/", train=True, transform=data_transform_images, download=True
+    )  # 60000 samples
+    test_val_data_global = datasets.MNIST(
+        root="dataset/", train=False, transform=data_transform_images, download=True
+    )  # 10000 samples
+    val_data_global, test_data_global = torch.utils.data.random_split(
+        test_val_data_global, [0.5, 0.5]
+    )
+
+    num_train_points = train_data_global.__len__()
+    num_val_points = val_data_global.__len__()
+    num_test_points = test_data_global.__len__()
+
+    # random permutation of train indices
+    indices = np.random.permutation(num_train_points)
+    # shuffle the data
+    train_data_global.data = train_data_global.data[indices]
+    train_data_global.targets = train_data_global.targets[indices]
+    # apply transforms through DataLoader (cheap trick)
+    train_dataloader = DataLoader(train_data_global, batch_size=num_train_points)
+    train_data_global.data, train_data_global.targets = next(iter(train_dataloader))
+
+    val_dataloader = DataLoader(val_data_global, batch_size=num_val_points)
+    val_data_global.data, val_data_global.targets = next(iter(val_dataloader))
+
+    test_dataloader = DataLoader(test_data_global, batch_size=num_test_points)
+    test_data_global.data, test_data_global.targets = next(iter(test_dataloader))
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def load_mnist_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    if not exists("processed_data/mnist_flat/test_data_global.pt"):
+        train_data_global, val_data_global, test_data_global = download_mnist_flat()
+        torch.save(train_data_global, "processed_data/mnist_flat/train_data_global.pt")
+        torch.save(val_data_global, "processed_data/mnist_flat/val_data_global.pt")
+        torch.save(test_data_global, "processed_data/mnist_flat/test_data_global.pt")
+    else:
+        print("files already downloaded")
+        train_data_global = torch.load("processed_data/mnist_flat/train_data_global.pt")
+        val_data_global = torch.load("processed_data/mnist_flat/val_data_global.pt")
+        test_data_global = torch.load("processed_data/mnist_flat/test_data_global.pt")
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def download_cifar10_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    train_data_global = datasets.CIFAR10(
+        root="dataset/", train=True, transform=data_transform_images, download=True
+    )  # 50000 samples
+    test_val_data_global = datasets.CIFAR10(
+        root="dataset/", train=False, transform=data_transform_images, download=True
+    )  # 10000 samples
+    val_data_global, test_data_global = torch.utils.data.random_split(
+        test_val_data_global, [0.5, 0.5]
+    )
+
+    num_train_points = train_data_global.__len__()
+    num_val_points = val_data_global.__len__()
+    num_test_points = test_data_global.__len__()
+
+    # apply transforms through DataLoader (cheap trick)
+
+    train_dataloader = DataLoader(train_data_global, batch_size=num_train_points)
+    train_data_global.data, train_data_global.targets = next(iter(train_dataloader))
+    ### random permutation of train indices
+    indices = torch.Tensor(np.random.permutation(num_train_points)).int()
+    ### shuffle the data
+    train_data_global.data = train_data_global.data[indices]
+    train_data_global.targets = train_data_global.targets[indices]
+
+    val_dataloader = DataLoader(val_data_global, batch_size=num_val_points)
+    val_data_global.data, val_data_global.targets = next(iter(val_dataloader))
+
+    test_dataloader = DataLoader(test_data_global, batch_size=num_test_points)
+    test_data_global.data, test_data_global.targets = next(iter(test_dataloader))
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def load_cifar10_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    if not exists("processed_data/cifar10_flat/test_data_global.pt"):
+        train_data_global, val_data_global, test_data_global = download_cifar10_flat()
+        torch.save(
+            train_data_global, "processed_data/cifar10_flat/train_data_global.pt"
+        )
+        torch.save(val_data_global, "processed_data/cifar10_flat/val_data_global.pt")
+        torch.save(test_data_global, "processed_data/cifar10_flat/test_data_global.pt")
+    else:
+        print("files already downloaded")
+        train_data_global = torch.load(
+            "processed_data/cifar10_flat/train_data_global.pt"
+        )
+        val_data_global = torch.load("processed_data/cifar10_flat/val_data_global.pt")
+        test_data_global = torch.load("processed_data/cifar10_flat/test_data_global.pt")
 
     return train_data_global, val_data_global, test_data_global
 
