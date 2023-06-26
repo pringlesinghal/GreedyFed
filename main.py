@@ -74,7 +74,7 @@ class Client:
         with torch.no_grad():
             loss = criterion(model, self.data, self.targets)
         model.train()
-        return loss
+        return float(loss.cpu())
 
     def accuracy(self):
         self.model.eval()
@@ -85,7 +85,7 @@ class Client:
             total = self.length
             accuracy = num_correct / total
         self.model.train()
-        return accuracy
+        return float(accuracy.cpu())
 
     def get_subset(self, indices):
         """
@@ -727,7 +727,8 @@ select_fraction = 0.1
 wandb_config["num_communication_rounds"] = T
 wandb_config["select_fraction"] = select_fraction
 
-client_selection_strategies = ["best", "fedavg", "worst", "power_of_choice"]
+# client_selection_strategies = ["best", "fedavg", "worst", "power_of_choice"]
+client_selection_strategies = ["power_of_choice"]
 for client_selection in client_selection_strategies:
     accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
         deepcopy(clients),
