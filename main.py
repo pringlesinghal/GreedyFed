@@ -1,10 +1,15 @@
 # imports
+import wandb
+
+wandb.login()
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from copy import deepcopy
 from tqdm import tqdm
@@ -19,31 +24,9 @@ from model import NN, CNN
 from dshap import convergenceTest
 
 # global variables
+wandb_config = {}
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# data, models
-"""
-1. Synthetic(alpha, beta) - Logistic Regression
-    num_clients = 30
-    number of data points distributed by power law
-    
-2. MNIST - MLP
-
-3. CIFAR10
-
-"""
-
-"""
-client receives server model w(t)
-client has a dataset D_k
-split D_k into B batches randomly
-perform E epochs gradient descent over B batches at each client
-    E 
-    B
-    learning rate
-    momentum
-compute updated model weights w(t+1)_k
-"""
+wandb_config["device"] = device
 
 
 class Client:
@@ -165,7 +148,7 @@ class Server:
         for idx, client_state in enumerate(client_states):
             for key in model_state.keys():
                 model_state[key] += weights[idx] * client_state[key]
-        model = deepcopy(self.model)
+        model = deepcopy(self.model).to(device=self.device)
         model.load_state_dict(model_state)
         return model
 
@@ -188,7 +171,7 @@ class Server:
 
         shapley_values = [[0] for i in range(num_clients)]
 
-        for idx, state in enumerate(client_states):
+        for idx in range(num_clients):
             # compute shapley value of idx client
             """
             until convergence:
@@ -269,6 +252,19 @@ class Server:
             loss = criterion(model, self.val_data, self.val_targets)
         model.train()
         return float(loss.cpu())
+
+
+# data, models
+"""
+1. Synthetic(alpha, beta) - Logistic Regression
+    num_clients = 30
+    number of data points distributed by power law
+    
+2. MNIST - MLP
+
+3. CIFAR10 - CNN
+
+"""
 
 
 def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
@@ -389,6 +385,12 @@ alpha = 1
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
+wandb_config["dataset"] = dataset
+wandb_config["num_clients"] = num_clients
+wandb_config["alpha"] = alpha
+wandb_config["beta"] = beta
+wandb_config["clients"] = clients
+wandb_config["server"] = server
 
 
 # both may be same/different
@@ -423,10 +425,6 @@ def fed_avg_criterion():
         return criterion(scores, targets)
 
     return loss
-
-
-T = 100  # number of communications rounds
-select_fraction = 0.1
 
 
 def fed_avg_run(
@@ -635,12 +633,16 @@ def shapley_run(
     server,
     select_fraction,
     T,
+    client_selection,
     random_seed=0,
     E=5,
     B=10,
     learning_rate=0.01,
     momentum=0.5,
 ):
+    config = deepcopy(wandb_config)
+    config["client_selection"] = client_selection
+    wandb.init(project="federated-learning", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -652,6 +654,8 @@ def shapley_run(
     accuracy = []
     val_loss = []
     test_loss = []
+    shapley_values_T = []
+    selections_T = []
     for t in tqdm(range(T)):
         # select clients to transmit weights to
         # uniform random
@@ -676,31 +680,67 @@ def shapley_run(
         shapley_values = server.shapley_values(
             fed_avg_criterion(), client_states, weights
         )
+        shapley_values_T.append(shapley_values)
+
         # find indices of largest num_selected values in shapley_values
-        indices = np.argpartition(shapley_values, -num_selected)[-num_selected:]
+        selections = [0 for i in range(num_clients)]
+        if client_selection == "best":
+            indices = np.argpartition(shapley_values, -num_selected)[-num_selected:]
+        elif client_selection == "fedavg":
+            indices = np.random.choice(num_clients, size=num_selected, replace=False)
+        elif client_selection == "worst":
+            indices = np.argpartition(shapley_values, num_selected)[:num_selected]
+        elif client_selection == "power_of_choice":
+            indices = np.argpartition(client_losses, -num_selected)[-num_selected:]
         client_states_chosen = [client_states[i] for i in indices]
         weights_chosen = [weights[i] for i in indices]
 
+        for idx in indices:
+            selections[idx] = 1
+        selections_T.append(selections)
+
         server.aggregate(client_states_chosen, weights_chosen)
-        accuracy.append(server.accuracy())
-        val_loss.append(server.val_loss(server.model, fed_avg_criterion()))
-        test_loss.append(server.test_loss(fed_avg_criterion()))
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
 
-    return accuracy, val_loss, test_loss
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        for i in range(num_clients):
+            log_dict[f"shapley_value_{i}"] = shapley_values[i]
+            log_dict[f"selection_{i}"] = selections[i]
+        print(f"logging {log_dict}")
+        wandb.log(log_dict)
+
+    wandb.finish()
+    return accuracy, val_loss, test_loss, shapley_values_T, selections_T
 
 
-accuracy_shap, _, _ = shapley_run(
-    deepcopy(clients), deepcopy(server), select_fraction, T, random_seed=0
-)
-accuracy_fedavg, _, _ = fed_avg_run(
-    deepcopy(clients), deepcopy(server), select_fraction, T, random_seed=0
-)
+T = 100  # number of communications rounds
+select_fraction = 0.1
+wandb_config["num_communication_rounds"] = T
+wandb_config["select_fraction"] = select_fraction
 
-plt.plot(accuracy_shap, label="Shapley")
-plt.plot(accuracy_fedavg, label="FedAvg")
-plt.legend()
-plt.show()
-
+client_selection_strategies = ["best", "fedavg", "worst", "power_of_choice"]
+for client_selection in client_selection_strategies:
+    accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
+        deepcopy(clients),
+        deepcopy(server),
+        select_fraction,
+        T,
+        client_selection,
+        random_seed=0,
+    )
+    sns.heatmap(shapley_heatmap).set(title=client_selection + " client selection")
+    plt.show()
+    sns.heatmap(selection_heatmap).set(title=client_selection + " client selection")
+    plt.show()
 
 # for i in range(5):
 #     accuracy_poc, _, _ = power_of_choice_run(
