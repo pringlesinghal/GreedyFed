@@ -26,13 +26,14 @@ from dshap import convergenceTest
 # global variables
 wandb_config = {}
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = "meta"
 wandb_config["device"] = device
 
 
 class Client:
     def __init__(self, data, targets, device):
-        self.data = data
-        self.targets = targets
+        self.data = data.to(device)
+        self.targets = targets.to(device)
         self.device = device
         self.length = len(self.data)
 
@@ -715,7 +716,6 @@ def shapley_run(
         for i in range(num_clients):
             log_dict[f"shapley_value_{i}"] = shapley_values[i]
             log_dict[f"selection_{i}"] = selections[i]
-        print(f"logging {log_dict}")
         wandb.log(log_dict)
 
     wandb.finish()

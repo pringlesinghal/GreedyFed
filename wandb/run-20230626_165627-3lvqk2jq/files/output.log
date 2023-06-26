@@ -1,0 +1,37 @@
+  0%|                                                                                                             | 0/100 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "c:/Users/Pranava/Documents/Aalborg/code/colab_experimental_results/FL_experiments_fixed/main.py", line 732, in <module>
+    accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
+  File "c:/Users/Pranava/Documents/Aalborg/code/colab_experimental_results/FL_experiments_fixed/main.py", line 667, in shapley_run
+    client_losses.append(client.loss(server.model, fed_avg_criterion()))
+  File "c:/Users/Pranava/Documents/Aalborg/code/colab_experimental_results/FL_experiments_fixed/main.py", line 75, in loss
+    loss = criterion(model, self.data, self.targets)
+  File "c:/Users/Pranava/Documents/Aalborg/code/colab_experimental_results/FL_experiments_fixed/main.py", line 425, in loss
+    scores = model(data)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\nn\modules\container.py", line 217, in forward
+    input = module(input)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\nn\modules\module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\nn\modules\linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_prims_common\wrappers.py", line 220, in _fn
+    result = fn(*args, **kwargs)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_decomp\decompositions.py", line 70, in inner
+    r = f(*tree_map(increase_prec, args), **tree_map(increase_prec, kwargs))
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_decomp\decompositions.py", line 1136, in addmm
+    return out + beta * self
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_prims_common\wrappers.py", line 220, in _fn
+    result = fn(*args, **kwargs)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_prims_common\wrappers.py", line 130, in _fn
+    result = fn(**bound.arguments)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_refs\__init__.py", line 975, in add
+    return prims.add(a, b)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_ops.py", line 287, in __call__
+    return self._op(*args, **kwargs or {})
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_prims\__init__.py", line 346, in _elementwise_meta
+    utils.check_same_device(*args_, allow_cpu_scalar_tensors=True)
+  File "C:\Users\Pranava\anaconda3\envs\niid-bench\lib\site-packages\torch\_prims_common\__init__.py", line 596, in check_same_device
+    raise RuntimeError(msg)
+RuntimeError: Tensor on device meta is not on the expected device cpu!
