@@ -888,6 +888,7 @@ T = 100  # number of communications rounds
 select_fraction = 0.1
 wandb_config["num_communication_rounds"] = T
 wandb_config["select_fraction"] = select_fraction
+random_seed = 1
 
 (
     accuracy_ucb,
@@ -901,7 +902,7 @@ wandb_config["select_fraction"] = select_fraction
     deepcopy(server),
     select_fraction,
     T,
-    random_seed=1,
+    random_seed,
 )
 
 accuracy_fedavg, _, _ = fed_avg_run(
@@ -909,7 +910,7 @@ accuracy_fedavg, _, _ = fed_avg_run(
     deepcopy(server),
     select_fraction,
     T,
-    random_seed=1,
+    random_seed,
 )
 
 accuracy_poc, _, _ = power_of_choice_run(
@@ -918,7 +919,7 @@ accuracy_poc, _, _ = power_of_choice_run(
     select_fraction,
     T,
     decay_factor=0.95,
-    random_seed=1,
+    random_seed=random_seed,
 )
 
 accuracy_poc_nodecay, _, _ = power_of_choice_run(
@@ -927,11 +928,16 @@ accuracy_poc_nodecay, _, _ = power_of_choice_run(
     select_fraction,
     T,
     decay_factor=1,
-    random_seed=1,
+    random_seed=random_seed,
 )
 
 accuracy_prox, _, _ = fed_prox_run(
-    deepcopy(clients), deepcopy(server), select_fraction, T, mu=0.1, random_seed=i
+    deepcopy(clients),
+    deepcopy(server),
+    select_fraction,
+    T,
+    mu=0.1,
+    random_seed=random_seed,
 )
 
 plt.plot(accuracy_ucb, label="UCB")
