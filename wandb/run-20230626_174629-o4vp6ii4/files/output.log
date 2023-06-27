@@ -1,0 +1,23 @@
+
+  0%|                                                                                                    | 0/100 [00:08<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 732, in <module>
+    accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
+                                                                        ^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 695, in shapley_run
+    indices = np.argpartition(client_losses, -num_selected)[-num_selected:]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/numpy/core/fromnumeric.py", line 858, in argpartition
+    return _wrapfunc(a, 'argpartition', kth, axis=axis, kind=kind, order=order)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/numpy/core/fromnumeric.py", line 56, in _wrapfunc
+    return _wrapit(obj, method, *args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/numpy/core/fromnumeric.py", line 45, in _wrapit
+    result = getattr(asarray(obj), method)(*args, **kwds)
+                     ^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/torch/_tensor.py", line 970, in __array__
+    return self.numpy()
+           ^^^^^^^^^^^^
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
+[0.04474657535552978, 0.005014533996582031, -0.03615652887444747, 0.005331368446350098, 0.012150354385375981, 0.008928413391113279, -0.05810526797645971, -0.014844944602564768, 0.0200525951385498, 0.01680474281311035, -0.01264400231210809, -0.003717571496963501, 0.0241445255279541, 0.013142080307006835, -0.05447867042139957, -0.011891841888427734, -0.04405488465961657, -0.010810036408273797, 0.010454416275024412, -0.008837273246363589]

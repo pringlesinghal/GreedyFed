@@ -1,0 +1,27 @@
+  0%|                                                                                                    | 0/100 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 732, in <module>
+    accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
+                                                                        ^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 666, in shapley_run
+    client_losses.append(client.loss(server.model, fed_avg_criterion()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 74, in loss
+    loss = criterion(model, self.data, self.targets)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 424, in loss
+    scores = model(data)
+             ^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/torch/nn/modules/container.py", line 217, in forward
+    input = module(input)
+            ^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/anaconda3/envs/federated-learning/lib/python3.11/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat1 in method wrapper_CUDA_addmm)
