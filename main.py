@@ -438,6 +438,9 @@ def fed_avg_run(
     learning_rate=0.01,
     momentum=0.5,
 ):
+    config = deepcopy(wandb_config)
+    config["algorithm"] = "FedAvg"
+    wandb.init(project="federated-learning", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -478,10 +481,21 @@ def fed_avg_run(
                 weights.append(weight)
 
         server.aggregate(client_states, weights)
-        accuracy.append(server.accuracy())
-        val_loss.append(server.val_loss(server.model, fed_avg_criterion()))
-        test_loss.append(server.test_loss(fed_avg_criterion()))
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
 
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        wandb.log(log_dict)
+
+    wandb.finish()
     return accuracy, val_loss, test_loss
 
 
@@ -497,6 +511,10 @@ def fed_prox_run(
     learning_rate=0.01,
     momentum=0.5,
 ):
+    config = deepcopy(wandb_config)
+    config["algorithm"] = "FedProx"
+    wandb.init(project="federated-learning", config=config)
+
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -537,9 +555,21 @@ def fed_prox_run(
                 weights.append(weight)
 
         server.aggregate(client_states, weights)
-        accuracy.append(server.accuracy())
-        val_loss.append(server.val_loss(server.model, fed_avg_criterion()))
-        test_loss.append(server.test_loss(fed_avg_criterion()))
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        wandb.log(log_dict)
+
+    wandb.finish()
 
     return accuracy, val_loss, test_loss
 
@@ -561,6 +591,9 @@ def power_of_choice_run(
     decay_factor (default = 1, no decay)
         determines the decay rate of number of clients to transmit the server model to (choose_from)
     """
+    config = deepcopy(wandb_config)
+    config["algorithm"] = "Power of Choice"
+    wandb.init(project="federated-learning", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -621,9 +654,21 @@ def power_of_choice_run(
                 weights.append(weight)
 
         server.aggregate(client_states, weights)
-        accuracy.append(server.accuracy())
-        val_loss.append(server.val_loss(server.model, fed_avg_criterion()))
-        test_loss.append(server.test_loss(fed_avg_criterion()))
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        wandb.log(log_dict)
+
+    wandb.finish()
 
     return accuracy, val_loss, test_loss
 
