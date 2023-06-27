@@ -212,7 +212,6 @@ class Server:
                     break
                 t += 1
         final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
-        print(final_shapley_values)
         return final_shapley_values
 
     def test_loss(self, criterion):
@@ -379,10 +378,10 @@ main code starts here
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
-dataset = "synthetic"
-num_clients = 20
+dataset = "mnist"
+num_clients = 100
 random_seed = 0
-alpha = 1
+alpha = 1e6
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
@@ -722,26 +721,196 @@ def shapley_run(
     return accuracy, val_loss, test_loss, shapley_values_T, selections_T
 
 
+def ucb_run(
+    clients,
+    server,
+    select_fraction,
+    T,
+    random_seed=0,
+    E=5,
+    B=10,
+    learning_rate=0.01,
+    momentum=0.5,
+):
+    config = deepcopy(wandb_config)
+    config["client_selection"] = "ucb"
+    wandb.init(project="federated-learning", config=config)
+    clients = deepcopy(clients)
+    server = deepcopy(server)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    num_clients = len(clients)
+    num_selected = int(np.ceil(select_fraction * num_clients))
+
+    accuracy = []
+    val_loss = []
+    test_loss = []
+    shapley_values_T = []
+    selections_T = []
+    draws_T = []
+
+    N_t = [0 for i in range(num_clients)]
+    UCB = [0 for i in range(num_clients)]
+    SV = [0 for i in range(num_clients)]
+    for t in tqdm(range(T)):
+        # select clients to transmit weights to
+        # initially sample every client atleast once
+        selected_status = [False for i in range(num_clients)]
+        if t < np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, (t + 1) * num_selected):
+                selected_status[idx] = True
+                N_t[idx] += 1
+        elif t == np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, num_clients):
+                selected_status[idx] = True
+                N_t[idx] += 1
+            remaining_selections = num_selected * (t + 1) - num_clients
+            if remaining_selections > 0:
+                unselected_indices = list(range(0, t * num_selected))
+                selected_indices_subset = np.random.choice(
+                    unselected_indices, size=remaining_selections, replace=False
+                )
+                for idx in selected_indices_subset:
+                    selected_status[idx] = True
+                    N_t[idx] += 1
+        else:
+            # do UCB selection
+            selected_indices = np.argpartition(UCB, -num_selected)[-num_selected:]
+            for idx in selected_indices:
+                selected_status[idx] = True
+                N_t[idx] += 1
+        # uniform random
+        client_states = []
+        weights = []
+
+        for idx, client in enumerate(clients):
+            if selected_status[idx]:
+                # perform descent at client
+                client_state = client.train(
+                    server.model,
+                    criterion=fed_avg_criterion(),
+                    E=E,
+                    B=B,
+                    learning_rate=learning_rate,
+                    momentum=momentum,
+                )
+                weight = client.length  # number of data points at client
+                client_states.append(client_state)
+                weights.append(weight)
+
+        # compute shapley values for each client BEFORE updating server model
+        shapley_values = server.shapley_values(
+            fed_avg_criterion(), client_states, weights
+        )
+        # update server model
+        server.aggregate(client_states, weights)
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+
+        # compute UCB for next round of selections
+        selections = [0 for i in range(num_clients)]
+        counter = 0
+        for i in range(num_clients):
+            if selected_status[i]:
+                SV[i] = ((N_t[i] - 1) * SV[i] + shapley_values[counter]) / N_t[i]
+                counter += 1
+                selections[i] = 1
+            UCB[i] = SV[i] + 0.1 * np.sqrt(np.log(t + 1) / N_t[i])
+        shapley_values_T.append(deepcopy(SV))
+        selections_T.append(deepcopy(selections))
+        draws_T.append(deepcopy(N_t))
+
+        for i in range(num_clients):
+            log_dict[f"shapley_value_{i}"] = SV[i]
+            log_dict[f"selection_{i}"] = selections[i]
+        wandb.log(log_dict)
+
+    wandb.finish()
+    return accuracy, val_loss, test_loss, shapley_values_T, selections_T, draws_T
+
+
 T = 100  # number of communications rounds
 select_fraction = 0.1
 wandb_config["num_communication_rounds"] = T
 wandb_config["select_fraction"] = select_fraction
 
-# client_selection_strategies = ["best", "fedavg", "worst", "power_of_choice"]
-client_selection_strategies = ["power_of_choice"]
-for client_selection in client_selection_strategies:
-    accuracy, val_loss, test_loss, shapley_heatmap, selection_heatmap = shapley_run(
-        deepcopy(clients),
-        deepcopy(server),
-        select_fraction,
-        T,
-        client_selection,
-        random_seed=0,
-    )
-    sns.heatmap(shapley_heatmap).set(title=client_selection + " client selection")
-    plt.show()
-    sns.heatmap(selection_heatmap).set(title=client_selection + " client selection")
-    plt.show()
+(
+    accuracy_ucb,
+    val_loss,
+    test_loss,
+    shapley_heatmap,
+    selection_heatmap,
+    draws_heatmap,
+) = ucb_run(
+    deepcopy(clients),
+    deepcopy(server),
+    select_fraction,
+    T,
+    random_seed=1,
+)
+
+accuracy_fedavg, _, _ = fed_avg_run(
+    deepcopy(clients),
+    deepcopy(server),
+    select_fraction,
+    T,
+    random_seed=1,
+)
+
+accuracy_poc, _, _ = power_of_choice_run(
+    deepcopy(clients),
+    deepcopy(server),
+    select_fraction,
+    T,
+    decay_factor=0.95,
+    random_seed=1,
+)
+
+accuracy_poc_nodecay, _, _ = power_of_choice_run(
+    deepcopy(clients),
+    deepcopy(server),
+    select_fraction,
+    T,
+    decay_factor=1,
+    random_seed=1,
+)
+
+accuracy_prox, _, _ = fed_prox_run(
+    deepcopy(clients), deepcopy(server), select_fraction, T, mu=0.1, random_seed=i
+)
+
+plt.plot(accuracy_ucb, label="UCB")
+plt.plot(accuracy_fedavg, label="fedavg")
+plt.plot(accuracy_prox, label="fedprox")
+plt.plot(accuracy_poc, label="fed-ada-poc")
+plt.plot(accuracy_poc_nodecay, label="fed-poc")
+plt.title(
+    f"Federated Learning with {num_clients} clients, select {select_fraction} per round, {dataset} dataset, Dirichlet alpha = {alpha}"
+)
+plt.legend()
+plt.show()
+
+sns.heatmap(draws_heatmap).set(title="draws")
+plt.show()
+sns.heatmap(shapley_heatmap).set(title="shapley values")
+plt.show()
+sns.heatmap(selection_heatmap).set(title="selections")
+plt.show()
+
+plt.plot(accuracy_ucb, label="UCB")
+plt.plot(accuracy_fedavg, label="fedavg")
+plt.legend()
+plt.show()
 
 # for i in range(5):
 #     accuracy_poc, _, _ = power_of_choice_run(
