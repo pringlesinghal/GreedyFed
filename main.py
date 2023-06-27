@@ -13,6 +13,8 @@ import seaborn as sns
 
 from copy import deepcopy
 from tqdm import tqdm
+import pickle
+import os
 
 from data_preprocess import (
     load_mnist_flat,
@@ -22,6 +24,11 @@ from data_preprocess import (
 )
 from model import NN, CNN
 from dshap import convergenceTest
+
+os.makedirs("./processed_data/mnist/", exist_ok=True)
+os.makedirs("./processed_data/cifar10/", exist_ok=True)
+os.makedirs("./processed_data/mnist_flat/", exist_ok=True)
+os.makedirs("./processed_data/cifar10_flat/", exist_ok=True)
 
 # global variables
 wandb_config = {}
@@ -375,6 +382,8 @@ def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
 main code starts here
 """
 
+# CONFIGURE
+
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
@@ -391,6 +400,12 @@ wandb_config["alpha"] = alpha
 wandb_config["beta"] = beta
 wandb_config["clients"] = clients
 wandb_config["server"] = server
+
+T = 100  # number of communications rounds
+select_fraction = 0.1
+wandb_config["num_communication_rounds"] = T
+wandb_config["select_fraction"] = select_fraction
+random_seed = 1
 
 
 # both may be same/different
@@ -427,6 +442,14 @@ def fed_avg_criterion():
     return loss
 
 
+def topk(values, k):
+    # returns indices of top-k values with ties broken at random
+    values = np.array(values)
+    p = np.random.permutation(len(values))
+    indices = p[np.argpartition(values[p], -k)[-k:]]
+    return indices
+
+
 def fed_avg_run(
     clients,
     server,
@@ -440,7 +463,7 @@ def fed_avg_run(
 ):
     config = deepcopy(wandb_config)
     config["algorithm"] = "FedAvg"
-    wandb.init(project="federated-learning", config=config)
+    wandb.init(project="federated-learning-summary", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -513,7 +536,8 @@ def fed_prox_run(
 ):
     config = deepcopy(wandb_config)
     config["algorithm"] = "FedProx"
-    wandb.init(project="federated-learning", config=config)
+    config["mu"] = mu
+    wandb.init(project="federated-learning-summary", config=config)
 
     clients = deepcopy(clients)
     server = deepcopy(server)
@@ -593,7 +617,8 @@ def power_of_choice_run(
     """
     config = deepcopy(wandb_config)
     config["algorithm"] = "Power of Choice"
-    wandb.init(project="federated-learning", config=config)
+    config["decay_factor"] = decay_factor
+    wandb.init(project="federated-learning-summary", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -626,7 +651,7 @@ def power_of_choice_run(
                 client_loss = client.loss(server.model, fed_avg_criterion())
                 client_losses.append(client_loss)
         # find indices of largest num_selected values in client_losses
-        indices = np.argpartition(client_losses, -num_selected)[-num_selected:]
+        indices = topk(client_losses, num_selected)
         selected_client_indices_2 = []  # will store array of size num_selected
         for i in indices:
             selected_client_indices_2.append(selected_client_indices[i])
@@ -687,7 +712,7 @@ def shapley_run(
 ):
     config = deepcopy(wandb_config)
     config["client_selection"] = client_selection
-    wandb.init(project="federated-learning", config=config)
+    wandb.init(project="federated-learning-summary", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -730,13 +755,13 @@ def shapley_run(
         # find indices of largest num_selected values in shapley_values
         selections = [0 for i in range(num_clients)]
         if client_selection == "best":
-            indices = np.argpartition(shapley_values, -num_selected)[-num_selected:]
+            indices = topk(shapley_values, num_selected)
         elif client_selection == "fedavg":
             indices = np.random.choice(num_clients, size=num_selected, replace=False)
         elif client_selection == "worst":
             indices = np.argpartition(shapley_values, num_selected)[:num_selected]
         elif client_selection == "power_of_choice":
-            indices = np.argpartition(client_losses, -num_selected)[-num_selected:]
+            indices = topk(client_losses, num_selected)
         client_states_chosen = [client_states[i] for i in indices]
         weights_chosen = [weights[i] for i in indices]
 
@@ -771,6 +796,7 @@ def ucb_run(
     server,
     select_fraction,
     T,
+    beta,
     random_seed=0,
     E=5,
     B=10,
@@ -779,7 +805,8 @@ def ucb_run(
 ):
     config = deepcopy(wandb_config)
     config["client_selection"] = "ucb"
-    wandb.init(project="federated-learning", config=config)
+    config["beta"] = beta
+    wandb.init(project="federated-learning-summary", config=config)
     clients = deepcopy(clients)
     server = deepcopy(server)
     torch.manual_seed(random_seed)
@@ -820,7 +847,7 @@ def ucb_run(
                     N_t[idx] += 1
         else:
             # do UCB selection
-            selected_indices = np.argpartition(UCB, -num_selected)[-num_selected:]
+            selected_indices = topk(UCB, num_selected)
             for idx in selected_indices:
                 selected_status[idx] = True
                 N_t[idx] += 1
@@ -870,7 +897,7 @@ def ucb_run(
                 SV[i] = ((N_t[i] - 1) * SV[i] + shapley_values[counter]) / N_t[i]
                 counter += 1
                 selections[i] = 1
-            UCB[i] = SV[i] + 0.1 * np.sqrt(np.log(t + 1) / N_t[i])
+            UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
         shapley_values_T.append(deepcopy(SV))
         selections_T.append(deepcopy(selections))
         draws_T.append(deepcopy(N_t))
@@ -884,84 +911,292 @@ def ucb_run(
     return accuracy, val_loss, test_loss, shapley_values_T, selections_T, draws_T
 
 
-T = 100  # number of communications rounds
-select_fraction = 0.1
-wandb_config["num_communication_rounds"] = T
-wandb_config["select_fraction"] = select_fraction
-random_seed = 1
-
-(
-    accuracy_ucb,
-    val_loss,
-    test_loss,
-    shapley_heatmap,
-    selection_heatmap,
-    draws_heatmap,
-) = ucb_run(
-    deepcopy(clients),
-    deepcopy(server),
+def sfedavg_run(
+    clients,
+    server,
     select_fraction,
     T,
-    random_seed,
-)
+    alpha,
+    beta,
+    random_seed=0,
+    E=5,
+    B=10,
+    learning_rate=0.01,
+    momentum=0.5,
+):
+    config = deepcopy(wandb_config)
+    config["client_selection"] = "S-FedAvg"
+    config["algo-alpha"] = alpha
+    config["algo-beta"] = beta
+    wandb.init(project="federated-learning-summary", config=config)
+    clients = deepcopy(clients)
+    server = deepcopy(server)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    num_clients = len(clients)
+    num_selected = int(np.ceil(select_fraction * num_clients))
 
-accuracy_fedavg, _, _ = fed_avg_run(
-    deepcopy(clients),
-    deepcopy(server),
-    select_fraction,
-    T,
-    random_seed,
-)
+    accuracy = []
+    val_loss = []
+    test_loss = []
+    shapley_values_T = []
+    selections_T = []
+    Phi_T = []
+    draws_T = []
 
-accuracy_poc, _, _ = power_of_choice_run(
-    deepcopy(clients),
-    deepcopy(server),
-    select_fraction,
-    T,
-    decay_factor=0.95,
-    random_seed=random_seed,
-)
+    N_t = [0 for i in range(num_clients)]
+    Phi = [1 / (num_clients) for i in range(num_clients)]
+    SV = [0 for i in range(num_clients)]
+    for t in tqdm(range(T)):
+        # select clients to transmit weights to
+        # initially sample every client atleast once
+        selected_status = [False for i in range(num_clients)]
+        if t < np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, (t + 1) * num_selected):
+                selected_status[idx] = True
+                N_t[idx] += 1
+        elif t == np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, num_clients):
+                selected_status[idx] = True
+                N_t[idx] += 1
+            remaining_selections = num_selected * (t + 1) - num_clients
+            if remaining_selections > 0:
+                unselected_indices = list(range(0, t * num_selected))
+                selected_indices_subset = np.random.choice(
+                    unselected_indices, size=remaining_selections, replace=False
+                )
+                for idx in selected_indices_subset:
+                    selected_status[idx] = True
+                    N_t[idx] += 1
+        else:
+            # do Game of Gradients Selection
+            all_indices = list(range(num_clients))
+            probs = np.exp(np.array(Phi))
+            probs = probs / np.sum(probs)
+            selected_indices = np.random.choice(
+                all_indices, size=num_selected, replace=False, p=probs
+            )
+            for idx in selected_indices:
+                selected_status[idx] = True
+                N_t[idx] += 1
+        # uniform random
+        client_states = []
+        weights = []
 
-accuracy_poc_nodecay, _, _ = power_of_choice_run(
-    deepcopy(clients),
-    deepcopy(server),
-    select_fraction,
-    T,
-    decay_factor=1,
-    random_seed=random_seed,
-)
+        for idx, client in enumerate(clients):
+            if selected_status[idx]:
+                # perform descent at client
+                client_state = client.train(
+                    server.model,
+                    criterion=fed_avg_criterion(),
+                    E=E,
+                    B=B,
+                    learning_rate=learning_rate,
+                    momentum=momentum,
+                )
+                weight = client.length  # number of data points at client
+                weight /= probs[idx]  # for unbiased averaging
+                client_states.append(client_state)
+                weights.append(weight)
 
-accuracy_prox, _, _ = fed_prox_run(
-    deepcopy(clients),
-    deepcopy(server),
-    select_fraction,
-    T,
-    mu=0.1,
-    random_seed=random_seed,
-)
+        # compute shapley values for each client BEFORE updating server model
+        shapley_values = server.shapley_values(
+            fed_avg_criterion(), client_states, weights
+        )
+        # update server model
+        server.aggregate(client_states, weights)
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
 
-plt.plot(accuracy_ucb, label="UCB")
-plt.plot(accuracy_fedavg, label="fedavg")
-plt.plot(accuracy_prox, label="fedprox")
-plt.plot(accuracy_poc, label="fed-ada-poc")
-plt.plot(accuracy_poc_nodecay, label="fed-poc")
-plt.title(
-    f"Federated Learning with {num_clients} clients, select {select_fraction} per round, {dataset} dataset, Dirichlet alpha = {alpha}"
-)
-plt.legend()
-plt.show()
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
 
-sns.heatmap(draws_heatmap).set(title="draws")
-plt.show()
-sns.heatmap(shapley_heatmap).set(title="shapley values")
-plt.show()
-sns.heatmap(selection_heatmap).set(title="selections")
-plt.show()
+        # compute Phi for next round of selections
+        selections = [0 for i in range(num_clients)]
+        counter = 0
+        # defined as function parameters now
+        # alpha = 0.75
+        # beta = 0.25
+        for i in range(num_clients):
+            if selected_status[i]:
+                SV[i] = ((N_t[i] - 1) * SV[i] + shapley_values[counter]) / N_t[i]
+                counter += 1
+                selections[i] = 1
+                Phi[i] = alpha * Phi[i] + beta * SV[i]
+        shapley_values_T.append(deepcopy(SV))
+        Phi_T.append(deepcopy(Phi))
+        selections_T.append(deepcopy(selections))
+        draws_T.append(deepcopy(N_t))
 
-plt.plot(accuracy_ucb, label="UCB")
-plt.plot(accuracy_fedavg, label="fedavg")
-plt.legend()
-plt.show()
+        for i in range(num_clients):
+            log_dict[f"shapley_value_{i}"] = SV[i]
+            log_dict[f"selection_{i}"] = selections[i]
+        wandb.log(log_dict)
+
+    wandb.finish()
+    return accuracy, val_loss, test_loss, shapley_values_T, Phi_T, selections_T, draws_T
+
+
+def ucb_runs(beta, runs):
+    avg_accuracy_list = []
+    for run in range(runs):
+        accuracy_list, *_ = ucb_run(
+            deepcopy(clients),
+            deepcopy(server),
+            select_fraction,
+            T,
+            beta=beta,
+            random_seed=run,
+        )
+        accuracy_list = np.array(accuracy_list)
+        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+    return avg_accuracy_list
+
+
+def sfedavg_runs(alpha, beta, runs):
+    avg_accuracy_list = []
+    for run in range(runs):
+        accuracy_list, *_ = sfedavg_run(
+            deepcopy(clients),
+            deepcopy(server),
+            select_fraction,
+            T,
+            alpha=alpha,
+            beta=beta,
+            random_seed=run,
+        )
+        accuracy_list = np.array(accuracy_list)
+        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+    return avg_accuracy_list
+
+
+def fedavg_runs(runs):
+    avg_accuracy_list = []
+    for run in runs:
+        accuracy_list, *_ = fed_avg_run(
+            deepcopy(clients),
+            deepcopy(server),
+            select_fraction,
+            T,
+            random_seed=run,
+        )
+        accuracy_list = np.array(accuracy_list)
+        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+    return avg_accuracy_list
+
+
+def poc_runs(decay_factor, runs):
+    avg_accuracy_list = []
+    for run in runs:
+        accuracy_list, *_ = power_of_choice_run(
+            deepcopy(clients),
+            deepcopy(server),
+            select_fraction,
+            T,
+            decay_factor=decay_factor,
+            random_seed=random_seed,
+        )
+        accuracy_list = np.array(accuracy_list)
+        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+    return avg_accuracy_list
+
+
+def fedprox_runs(mu, runs):
+    avg_accuracy_list = []
+    for run in runs:
+        accuracy_list, *_ = fed_prox_run(
+            deepcopy(clients),
+            deepcopy(server),
+            select_fraction,
+            T,
+            mu=mu,
+            random_seed=random_seed,
+        )
+        accuracy_list = np.array(accuracy_list)
+        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+    return avg_accuracy_list
+
+
+# UCB search
+
+beta_vals = [0, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4]
+accuracies_ucb = {}
+for beta in beta_vals:
+    accuracies_ucb[beta] = ucb_runs(beta, 10)
+
+with open(
+    f"./results/ucb_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle", "wb"
+) as f:
+    pickle.dump(accuracies_ucb, f)
+
+# S-FedAvg search
+
+alpha_vals = np.arange(0, 1, 0.1)
+beta_vals = np.arange(0, 1, 0.1)
+accuracies_sfedavg = {}
+for alpha in alpha_vals:
+    for beta in beta_vals:
+        accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 10)
+
+with open(
+    f"./results/sfedavg_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
+    "wb",
+) as f:
+    pickle.dump(accuracies_sfedavg, f)
+
+# FedAvg
+
+accuracies_fedavg = fedavg_runs(10)
+with open(
+    f"./results/fedavg_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
+    "wb",
+) as f:
+    pickle.dump(accuracies_fedavg, f)
+
+# Power-of-Choice
+
+decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
+accuracies_poc = {}
+for decay_factor in decay_factors:
+    accuracies_poc[decay_factor] = poc_runs(decay_factor, 10)
+
+with open(
+    f"./results/poc_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle", "wb"
+) as f:
+    pickle.dump(accuracies_poc, f)
+
+# FedProx
+
+mu_vals = [10**i for i in range(-5, 5)]
+accuracies_fedprox = {}
+for mu in mu_vals:
+    accuracies_fedprox[mu] = fedprox_runs(mu, 10)
+
+with open(
+    f"./results/fedprox_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
+    "wb",
+) as f:
+    pickle.dump(accuracies_fedprox, f)
+
+
+# sns.heatmap(draws_heatmap).set(title="draws")
+# plt.show()
+# sns.heatmap(shapley_heatmap).set(title="shapley values")
+# plt.show()
+# sns.heatmap(selection_heatmap).set(title="selections")
+# plt.show()
+
+# plt.plot(accuracy_ucb, label="UCB")
+# plt.plot(accuracy_fedavg, label="fedavg")
+# plt.legend()
+# plt.show()
 
 # for i in range(5):
 #     accuracy_poc, _, _ = power_of_choice_run(
