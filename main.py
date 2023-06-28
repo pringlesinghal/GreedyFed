@@ -389,7 +389,7 @@ main code starts here
 
 dataset = "mnist"
 num_clients = 100
-random_seed = 0
+random_seed = 2 
 alpha = 1e6
 beta = 1  # needed for synthetic dataset
 
@@ -951,34 +951,16 @@ def sfedavg_run(
         # select clients to transmit weights to
         # initially sample every client atleast once
         selected_status = [False for i in range(num_clients)]
-        if t < np.floor(num_clients / num_selected):
-            for idx in range(t * num_selected, (t + 1) * num_selected):
-                selected_status[idx] = True
-                N_t[idx] += 1
-        elif t == np.floor(num_clients / num_selected):
-            for idx in range(t * num_selected, num_clients):
-                selected_status[idx] = True
-                N_t[idx] += 1
-            remaining_selections = num_selected * (t + 1) - num_clients
-            if remaining_selections > 0:
-                unselected_indices = list(range(0, t * num_selected))
-                selected_indices_subset = np.random.choice(
-                    unselected_indices, size=remaining_selections, replace=False
-                )
-                for idx in selected_indices_subset:
-                    selected_status[idx] = True
-                    N_t[idx] += 1
-        else:
-            # do Game of Gradients Selection
-            all_indices = list(range(num_clients))
-            probs = np.exp(np.array(Phi))
-            probs = probs / np.sum(probs)
-            selected_indices = np.random.choice(
-                all_indices, size=num_selected, replace=False, p=probs
-            )
-            for idx in selected_indices:
-                selected_status[idx] = True
-                N_t[idx] += 1
+        # do Game of Gradients Selection
+        all_indices = list(range(num_clients))
+        probs = np.exp(np.array(Phi))
+        probs = probs / np.sum(probs)
+        selected_indices = np.random.choice(
+            all_indices, size=num_selected, replace=False, p=probs
+         )
+        for idx in selected_indices:
+            selected_status[idx] = True
+            N_t[idx] += 1
         # uniform random
         client_states = []
         weights = []
@@ -1056,7 +1038,9 @@ def ucb_runs(beta, runs):
             random_seed=run,
         )
         accuracy_list = np.array(accuracy_list)
-        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+        if run == 0:
+            avg_accuracy_list = deepcopy(accuracy_list)
+        avg_accuracy_list = (run * avg_accuracy_list + accuracy_list) / (run + 1)
     return avg_accuracy_list
 
 
@@ -1072,8 +1056,11 @@ def sfedavg_runs(alpha, beta, runs):
             beta=beta,
             random_seed=run,
         )
+
         accuracy_list = np.array(accuracy_list)
-        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+        if run == 0:
+            avg_accuracy_list = deepcopy(accuracy_list)
+        avg_accuracy_list = (run * avg_accuracy_list + accuracy_list) / (run + 1)
     return avg_accuracy_list
 
 
@@ -1088,7 +1075,9 @@ def fedavg_runs(runs):
             random_seed=run,
         )
         accuracy_list = np.array(accuracy_list)
-        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+        if run == 0:
+            avg_accuracy_list = deepcopy(accuracy_list)
+        avg_accuracy_list = (run * avg_accuracy_list + accuracy_list) / (run + 1)
     return avg_accuracy_list
 
 
@@ -1104,7 +1093,9 @@ def poc_runs(decay_factor, runs):
             random_seed=random_seed,
         )
         accuracy_list = np.array(accuracy_list)
-        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+        if run == 0:
+            avg_accuracy_list = deepcopy(accuracy_list)
+        avg_accuracy_list = (run * avg_accuracy_list + accuracy_list) / (run + 1)
     return avg_accuracy_list
 
 
@@ -1120,7 +1111,9 @@ def fedprox_runs(mu, runs):
             random_seed=random_seed,
         )
         accuracy_list = np.array(accuracy_list)
-        avg_accuracy_list = (runs * avg_accuracy_list + accuracy_list) / (runs + 1)
+        if run == 0:
+            avg_accuracy_list = deepcopy(accuracy_list)
+        avg_accuracy_list = (run * avg_accuracy_list + accuracy_list) / (run + 1)
     return avg_accuracy_list
 
 

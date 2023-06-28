@@ -271,8 +271,9 @@ def NIIDClientSplit(train_data, num_clients, alpha):
     # larger alpha leads to more uniformness
     alpha = torch.Tensor([alpha])
     target_distribution = Dirichlet(alpha.repeat(num_targets))
-
+    counter = 0
     while True:
+        counter += 1
         client_proportions = target_distribution.sample(
             [num_clients]
         )  # sample target distribution for each client
@@ -294,7 +295,7 @@ def NIIDClientSplit(train_data, num_clients, alpha):
         # D*qi datapoints are allocated to client i
         ## Power Law Distributed number of datapoints
         datapoints_allocated = torch.floor(D * client_datapoint_fractions).int()
-        if torch.min(datapoints_allocated) > 100:
+        if torch.min(datapoints_allocated) > 100 or counter > 100:
             # to prevent any client from getting too few datapoints
             break
 

@@ -1,0 +1,887 @@
+2023-06-28 02:24:07,797 INFO    StreamThr :61286 [internal.py:wandb_internal():86] W&B internal server running at pid: 61286, started at: 2023-06-28 02:24:07.796723
+2023-06-28 02:24:07,801 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status
+2023-06-28 02:24:07,802 INFO    WriterThread:61286 [datastore.py:open_for_write():85] open: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/run-r0wfy5z8.wandb
+2023-06-28 02:24:07,803 DEBUG   SenderThread:61286 [sender.py:send():369] send: header
+2023-06-28 02:24:07,804 DEBUG   SenderThread:61286 [sender.py:send():369] send: run
+2023-06-28 02:24:08,327 INFO    SenderThread:61286 [dir_watcher.py:__init__():211] watching files in: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files
+2023-06-28 02:24:08,327 INFO    SenderThread:61286 [sender.py:_start_run_threads():1100] run started: r0wfy5z8 with start time 1687911846.933146
+2023-06-28 02:24:08,330 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:08,331 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:08,334 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: check_version
+2023-06-28 02:24:08,334 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: check_version
+2023-06-28 02:24:08,485 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: run_start
+2023-06-28 02:24:08,486 DEBUG   HandlerThread:61286 [system_info.py:__init__():31] System info init
+2023-06-28 02:24:08,486 DEBUG   HandlerThread:61286 [system_info.py:__init__():46] System info init done
+2023-06-28 02:24:08,486 INFO    HandlerThread:61286 [system_monitor.py:start():181] Starting system monitor
+2023-06-28 02:24:08,486 INFO    SystemMonitor:61286 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-06-28 02:24:08,488 INFO    HandlerThread:61286 [system_monitor.py:probe():201] Collecting system info
+2023-06-28 02:24:08,488 INFO    SystemMonitor:61286 [interfaces.py:start():190] Started cpu monitoring
+2023-06-28 02:24:08,489 INFO    SystemMonitor:61286 [interfaces.py:start():190] Started disk monitoring
+2023-06-28 02:24:08,490 INFO    SystemMonitor:61286 [interfaces.py:start():190] Started gpu monitoring
+2023-06-28 02:24:08,493 INFO    SystemMonitor:61286 [interfaces.py:start():190] Started memory monitoring
+2023-06-28 02:24:08,494 INFO    SystemMonitor:61286 [interfaces.py:start():190] Started network monitoring
+2023-06-28 02:24:08,499 DEBUG   HandlerThread:61286 [system_info.py:probe():195] Probing system
+2023-06-28 02:24:08,500 DEBUG   HandlerThread:61286 [system_info.py:_probe_git():180] Probing git
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_info.py:_probe_git():188] Probing git done
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_info.py:probe():240] Probing system done
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_monitor.py:probe():210] {'os': 'Linux-5.15.0-75-generic-x86_64-with-glibc2.35', 'python': '3.11.3', 'heartbeatAt': '2023-06-28T00:24:08.500051', 'startedAt': '2023-06-28T00:24:06.926795', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py', 'codePath': 'main.py', 'git': {'remote': 'https://github.com/pringlesinghal/Goal_Oriented_Federated_Learning.git', 'commit': '9b61796c45ebb474fb5876af9ae252b3b610ff04'}, 'email': 'pranava227@gmail.com', 'root': '/home/ubuntu/Projects/Goal_Oriented_Federated_Learning', 'host': 'federated-learning-shapley', 'username': 'ubuntu', 'executable': '/home/ubuntu/anaconda3/envs/federated-learning/bin/python', 'cpu_count': 20, 'cpu_count_logical': 20, 'cpu_freq': {'current': 2994.260000000001, 'min': 0.0, 'max': 0.0}, 'cpu_freq_per_core': [{'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}, {'current': 2994.26, 'min': 0.0, 'max': 0.0}], 'disk': {'total': 96.73210144042969, 'used': 29.471046447753906}, 'gpu': 'NVIDIA A40', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA A40', 'memory_total': 48305799168}], 'memory': {'total': 62.79072189331055}}
+2023-06-28 02:24:08,509 INFO    HandlerThread:61286 [system_monitor.py:probe():211] Finished collecting system info
+2023-06-28 02:24:08,509 INFO    HandlerThread:61286 [system_monitor.py:probe():214] Publishing system info
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_info.py:_save_pip():67] Saving pip packages done
+2023-06-28 02:24:08,509 DEBUG   HandlerThread:61286 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2023-06-28 02:24:09,329 INFO    Thread-433:61286 [dir_watcher.py:_on_file_created():272] file/dir created: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/requirements.txt
+2023-06-28 02:24:09,330 INFO    Thread-433:61286 [dir_watcher.py:_on_file_created():272] file/dir created: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:09,330 INFO    Thread-433:61286 [dir_watcher.py:_on_file_created():272] file/dir created: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/conda-environment.yaml
+2023-06-28 02:24:12,018 DEBUG   HandlerThread:61286 [system_info.py:_save_conda():86] Saving conda packages done
+2023-06-28 02:24:12,018 INFO    HandlerThread:61286 [system_monitor.py:probe():216] Finished publishing system info
+2023-06-28 02:24:12,019 DEBUG   SenderThread:61286 [sender.py:send():369] send: files
+2023-06-28 02:24:12,019 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-metadata.json with policy now
+2023-06-28 02:24:12,027 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:24:12,027 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:24:12,269 DEBUG   SenderThread:61286 [sender.py:send():369] send: telemetry
+2023-06-28 02:24:12,329 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/conda-environment.yaml
+2023-06-28 02:24:12,329 INFO    Thread-433:61286 [dir_watcher.py:_on_file_created():272] file/dir created: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:12,329 INFO    Thread-433:61286 [dir_watcher.py:_on_file_created():272] file/dir created: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-metadata.json
+2023-06-28 02:24:12,583 INFO    wandb-upload_0:61286 [upload_job.py:push():133] Uploaded file /tmp/tmp5yv14fkkwandb/8koam65l-wandb-metadata.json
+2023-06-28 02:24:13,271 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:14,330 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:16,102 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:16,124 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:16,126 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:16,128 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:16,331 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:18,332 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:19,130 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:19,431 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:19,438 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:19,440 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:19,441 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:20,332 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:20,333 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:22,361 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:22,368 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:22,370 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:22,373 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:23,334 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:24,334 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:24,374 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:25,176 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:25,182 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:25,188 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:25,190 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:25,335 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:26,335 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:27,027 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:24:27,027 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:24:28,047 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:28,064 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:28,066 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:28,069 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:28,336 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:30,070 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:30,337 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:31,771 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:31,780 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:31,782 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:31,783 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:32,338 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:32,338 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:34,511 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:34,519 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:34,521 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:34,524 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:35,339 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:35,525 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:36,339 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:38,395 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:38,402 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:38,404 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:38,405 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:39,341 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:40,341 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:41,412 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:42,027 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:24:42,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:24:42,115 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:42,191 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:42,192 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:42,194 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:42,342 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:42,342 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/config.yaml
+2023-06-28 02:24:44,343 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:44,912 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:44,920 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:44,922 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:44,923 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:45,343 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:46,344 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:46,924 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:47,959 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:47,981 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:47,982 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:47,984 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:48,345 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:50,345 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:50,956 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:50,964 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:50,966 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:50,968 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:51,346 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:51,969 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:52,346 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:54,611 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:54,619 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:54,621 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:54,625 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:55,348 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:24:56,348 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:24:57,027 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:24:57,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:24:57,190 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:24:58,304 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:24:58,313 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:24:58,314 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:24:58,318 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:24:58,349 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:00,350 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:01,162 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:01,168 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:01,172 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:01,174 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:01,351 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:02,201 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:02,351 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:04,427 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:04,435 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:04,437 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:04,441 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:05,353 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:06,353 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:07,346 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:07,354 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:07,356 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:07,358 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:07,359 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:08,360 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:08,360 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:08,494 DEBUG   SystemMonitor:61286 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-06-28 02:25:08,496 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:25:10,214 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:10,222 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:10,224 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:10,226 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:10,360 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:12,027 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:25:12,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:25:12,361 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:13,080 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:13,089 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:13,090 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:13,092 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:13,093 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:13,362 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:14,362 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:15,852 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:15,883 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:15,885 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:15,889 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:16,363 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:18,364 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:18,409 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:18,417 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:18,419 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:18,420 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:18,421 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:19,365 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:20,365 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:21,024 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:21,031 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:21,033 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:21,035 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:21,366 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:22,366 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:23,894 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:23,902 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:23,904 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:23,906 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:23,906 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:24,367 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:26,368 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:26,725 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:26,733 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:26,734 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:26,736 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:27,028 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:25:27,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:25:27,369 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:28,369 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:29,195 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:29,424 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:29,441 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:29,442 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:29,444 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:30,370 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:30,371 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:32,150 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:32,157 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:32,159 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:32,161 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:32,371 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:34,372 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:34,963 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:34,970 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:34,972 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:34,974 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:34,975 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:35,372 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:36,373 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:37,750 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:37,758 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:37,760 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:37,762 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:38,374 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:38,374 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:38,497 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:25:40,259 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:40,267 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:40,269 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:40,270 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:40,271 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:40,375 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:42,028 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:25:42,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:25:42,376 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:42,800 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:42,822 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:42,823 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:42,825 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:43,376 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:44,376 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:45,249 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:45,257 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:45,259 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:45,261 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:45,377 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:46,261 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:46,377 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:47,833 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:47,841 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:47,842 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:47,844 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:48,378 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:48,379 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:50,600 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:50,607 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:50,609 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:50,611 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:51,380 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:51,612 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:52,380 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:53,377 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:53,385 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:53,387 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:53,389 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:54,386 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:54,386 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:25:56,947 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:25:56,955 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:25:56,956 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:25:56,957 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:25:56,961 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:25:57,028 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:25:57,028 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:25:57,387 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:25:58,388 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:00,469 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:00,481 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:00,483 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:00,484 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:01,389 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:02,390 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:02,485 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:04,521 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:04,529 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:04,531 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:04,533 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:05,392 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:06,393 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:07,387 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:07,395 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:07,397 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:07,402 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:07,402 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:08,402 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:08,402 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:08,498 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:26:10,212 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:10,230 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:10,232 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:10,233 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:10,403 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:12,028 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:26:12,029 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:26:12,405 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:13,062 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:13,071 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:13,072 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:13,074 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:13,405 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:14,075 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:14,406 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:15,871 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:15,879 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:15,881 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:15,883 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:16,408 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:18,409 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:18,680 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:18,688 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:18,690 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:18,692 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:19,410 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:19,693 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:20,410 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:21,520 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:21,529 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:21,531 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:21,532 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:22,412 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:22,412 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:24,345 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:24,363 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:24,364 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:24,366 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:24,413 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:25,367 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:26,414 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:27,029 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:26:27,030 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:26:27,164 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:27,186 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:27,188 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:27,190 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:27,415 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:28,416 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:29,993 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:30,001 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:30,002 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:30,004 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:30,417 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:31,034 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:32,419 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:32,811 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:32,819 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:32,820 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:32,823 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:33,420 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:34,421 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:35,642 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:35,650 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:35,651 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:35,653 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:36,422 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:36,422 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:36,654 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:38,461 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:38,482 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:38,484 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:38,488 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:38,499 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:26:39,424 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:40,425 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:41,324 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:41,333 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:41,334 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:41,336 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:41,426 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:42,029 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:26:42,030 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:26:42,181 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:42,427 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:44,183 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:44,191 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:44,192 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:44,193 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:44,428 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:46,430 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:47,194 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:47,652 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:47,659 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:47,661 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:47,663 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:48,432 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:48,432 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:50,436 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:50,453 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:50,454 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:50,458 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:51,434 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:52,434 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:52,459 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:53,202 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:53,210 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:53,211 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:53,213 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:53,434 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:54,435 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:26:56,798 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:26:56,806 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:26:56,807 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:26:56,808 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:26:57,029 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:26:57,030 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:26:57,436 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:26:58,191 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:26:58,437 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:00,411 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:00,419 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:00,421 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:00,423 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:00,438 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:02,438 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:03,251 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:03,258 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:03,260 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:03,261 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:03,262 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:03,439 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:04,439 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:05,969 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:05,985 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:05,987 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:05,988 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:06,440 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:08,441 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:08,500 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:27:08,501 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:09,701 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:09,709 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:09,711 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:09,713 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:10,442 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:10,442 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:12,029 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:27:12,030 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:27:13,182 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:13,189 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:13,191 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:13,195 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:13,443 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:14,196 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:14,443 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:16,717 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:16,725 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:16,727 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:16,728 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:17,445 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:18,445 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:19,583 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:19,591 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:19,593 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:19,594 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:19,595 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:20,446 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:20,447 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:23,338 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:23,355 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:23,357 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:23,360 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:23,448 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:24,448 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:25,362 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:26,220 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:26,228 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:26,230 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:26,232 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:26,449 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:27,030 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:27:27,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:27:28,450 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:29,097 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:29,104 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:29,106 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:29,108 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:29,450 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:30,450 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:31,109 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:31,979 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:31,987 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:31,989 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:31,991 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:32,451 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:34,455 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:34,863 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:34,871 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:34,873 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:34,875 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:35,455 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:36,455 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:36,876 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:37,781 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:37,808 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:37,810 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:37,812 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:38,456 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:38,456 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:38,501 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:27:40,667 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:40,675 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:40,677 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:40,679 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:41,457 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:42,030 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:27:42,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:27:42,187 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:42,459 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:43,560 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:43,567 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:43,569 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:43,571 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:44,463 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:44,463 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:46,435 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:46,443 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:46,444 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:46,446 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:46,464 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:47,447 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:48,465 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:49,231 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:49,261 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:49,263 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:49,264 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:49,465 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:50,466 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:52,149 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:52,156 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:52,158 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:52,160 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:52,468 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:53,161 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:54,472 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:55,046 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:55,054 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:55,056 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:55,058 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:55,472 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:27:56,473 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:27:57,030 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:27:57,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:27:58,192 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:27:58,338 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:27:58,346 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:27:58,347 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:27:58,349 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:27:58,474 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:00,475 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:01,213 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:01,221 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:01,223 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:01,225 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:01,476 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:02,476 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:03,226 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:04,126 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:04,144 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:04,146 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:04,147 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:04,478 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:06,481 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:07,023 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:07,031 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:07,033 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:07,034 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:07,481 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:08,482 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:08,502 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:28:08,503 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:09,944 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:09,952 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:09,954 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:09,956 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:10,483 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:10,483 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:12,031 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:28:12,032 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:28:13,168 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:13,176 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:13,178 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:13,180 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:13,485 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:14,180 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:14,485 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:17,385 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:17,393 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:17,395 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:17,399 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:17,487 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:18,488 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:19,407 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:21,436 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:21,443 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:21,445 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:21,447 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:21,490 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:22,491 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:24,411 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:24,419 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:24,421 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:24,422 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:24,423 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:24,493 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:26,494 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:27,031 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:28:27,032 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:28:28,054 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:28,062 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:28,064 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:28,068 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:28,496 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:30,069 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:30,497 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:31,005 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:31,012 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:31,014 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:31,016 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:31,498 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:32,498 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:33,954 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:33,973 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:33,975 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:33,977 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:34,500 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:34,501 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:35,978 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:37,423 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:37,431 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:37,433 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:37,435 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:37,503 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:38,504 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:38,507 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:28:40,327 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:40,335 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:40,337 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:40,338 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:40,506 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:41,339 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:42,031 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:28:42,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:28:42,506 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:44,211 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:44,220 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:44,222 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:44,223 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:44,508 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:46,509 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:47,225 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:47,675 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:47,683 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:47,685 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:47,687 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:48,514 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:48,514 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:50,565 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:50,583 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:50,585 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:50,586 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:51,515 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:52,517 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:52,587 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:54,168 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:54,175 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:54,177 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:54,179 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:54,519 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:56,520 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:57,031 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:28:57,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:28:57,045 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:57,186 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:57,188 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:57,190 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:28:57,521 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:28:58,191 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:28:58,524 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:28:59,931 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:28:59,939 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:28:59,941 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:28:59,942 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:00,527 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:00,527 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:02,803 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:02,811 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:02,813 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:02,815 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:03,529 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:03,816 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:29:04,530 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:05,619 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:05,646 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:05,647 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:05,649 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:06,532 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:06,533 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:08,505 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:29:09,167 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:09,175 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:09,176 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:09,178 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:29:09,179 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:09,535 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:10,535 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:11,916 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:11,923 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:11,925 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:11,926 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:12,031 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: stop_status
+2023-06-28 02:29:12,031 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: stop_status
+2023-06-28 02:29:12,537 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:12,538 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:14,182 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:29:14,664 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:14,673 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:14,675 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:14,676 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:15,539 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:16,540 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:17,411 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: partial_history
+2023-06-28 02:29:17,444 DEBUG   SenderThread:61286 [sender.py:send():369] send: history
+2023-06-28 02:29:17,446 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: summary_record
+2023-06-28 02:29:17,447 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:17,448 DEBUG   SenderThread:61286 [sender.py:send():369] send: telemetry
+2023-06-28 02:29:17,448 DEBUG   SenderThread:61286 [sender.py:send():369] send: exit
+2023-06-28 02:29:17,448 INFO    SenderThread:61286 [sender.py:send_exit():574] handling exit code: 0
+2023-06-28 02:29:17,448 INFO    SenderThread:61286 [sender.py:send_exit():576] handling runtime: 308
+2023-06-28 02:29:17,449 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:17,449 INFO    SenderThread:61286 [sender.py:send_exit():582] send defer
+2023-06-28 02:29:17,449 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,449 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 0
+2023-06-28 02:29:17,450 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,450 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 0
+2023-06-28 02:29:17,450 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 1
+2023-06-28 02:29:17,450 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,450 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 1
+2023-06-28 02:29:17,450 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,451 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 1
+2023-06-28 02:29:17,451 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 2
+2023-06-28 02:29:17,451 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,451 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 2
+2023-06-28 02:29:17,451 INFO    HandlerThread:61286 [system_monitor.py:finish():190] Stopping system monitor
+2023-06-28 02:29:17,451 DEBUG   SystemMonitor:61286 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2023-06-28 02:29:17,452 INFO    HandlerThread:61286 [interfaces.py:finish():202] Joined cpu monitor
+2023-06-28 02:29:17,452 DEBUG   SystemMonitor:61286 [system_monitor.py:_start():170] Publishing last batch of metrics
+2023-06-28 02:29:17,453 INFO    HandlerThread:61286 [interfaces.py:finish():202] Joined disk monitor
+2023-06-28 02:29:17,503 INFO    HandlerThread:61286 [interfaces.py:finish():202] Joined gpu monitor
+2023-06-28 02:29:17,503 INFO    HandlerThread:61286 [interfaces.py:finish():202] Joined memory monitor
+2023-06-28 02:29:17,503 INFO    HandlerThread:61286 [interfaces.py:finish():202] Joined network monitor
+2023-06-28 02:29:17,504 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,504 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 2
+2023-06-28 02:29:17,504 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 3
+2023-06-28 02:29:17,504 DEBUG   SenderThread:61286 [sender.py:send():369] send: stats
+2023-06-28 02:29:17,505 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,505 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 3
+2023-06-28 02:29:17,506 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,506 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 3
+2023-06-28 02:29:17,506 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 4
+2023-06-28 02:29:17,506 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,506 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 4
+2023-06-28 02:29:17,506 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,506 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 4
+2023-06-28 02:29:17,507 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 5
+2023-06-28 02:29:17,507 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,507 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 5
+2023-06-28 02:29:17,509 DEBUG   SenderThread:61286 [sender.py:send():369] send: summary
+2023-06-28 02:29:17,511 INFO    SenderThread:61286 [sender.py:_save_file():1354] saving file wandb-summary.json with policy end
+2023-06-28 02:29:17,511 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,511 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 5
+2023-06-28 02:29:17,511 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 6
+2023-06-28 02:29:17,511 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,512 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 6
+2023-06-28 02:29:17,512 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,512 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 6
+2023-06-28 02:29:17,517 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: status_report
+2023-06-28 02:29:17,542 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:17,723 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 7
+2023-06-28 02:29:17,723 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:17,724 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 7
+2023-06-28 02:29:17,724 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:17,724 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 7
+2023-06-28 02:29:18,413 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: poll_exit
+2023-06-28 02:29:18,542 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 8
+2023-06-28 02:29:18,542 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: poll_exit
+2023-06-28 02:29:18,542 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:18,543 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 8
+2023-06-28 02:29:18,543 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:18,544 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 8
+2023-06-28 02:29:18,544 INFO    SenderThread:61286 [job_builder.py:build():232] Attempting to build job artifact
+2023-06-28 02:29:18,544 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:18,544 INFO    Thread-433:61286 [dir_watcher.py:_on_file_modified():289] file/dir modified: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/config.yaml
+2023-06-28 02:29:18,545 INFO    SenderThread:61286 [job_builder.py:build():256] is repo sourced job
+2023-06-28 02:29:18,548 INFO    SenderThread:61286 [job_builder.py:build():297] adding wandb-job metadata file
+2023-06-28 02:29:18,560 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 9
+2023-06-28 02:29:18,561 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:18,561 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 9
+2023-06-28 02:29:18,561 DEBUG   SenderThread:61286 [sender.py:send():369] send: artifact
+2023-06-28 02:29:19,414 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: poll_exit
+2023-06-28 02:29:19,423 INFO    SenderThread:61286 [sender.py:send_artifact():1450] sent artifact job-https___github.com_pringlesinghal_Goal_Oriented_Federated_Learning.git_main.py - {'id': 'QXJ0aWZhY3Q6NTAwMDkwOTM0', 'digest': 'a2e2fa108bda3cad572e7c144b6cd26a', 'state': 'COMMITTED', 'aliases': [{'artifactCollectionName': 'job-https___github.com_pringlesinghal_Goal_Oriented_Federated_Learning.git_main.py', 'alias': 'latest'}, {'artifactCollectionName': 'job-https___github.com_pringlesinghal_Goal_Oriented_Federated_Learning.git_main.py', 'alias': 'v0'}], 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjc5NDYzODAx', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6NTAwMDkwOTM0', 'versionIndex': 0}}, 'version': 'v0'}
+2023-06-28 02:29:19,423 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:19,423 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 9
+2023-06-28 02:29:19,423 INFO    SenderThread:61286 [dir_watcher.py:finish():359] shutting down directory watcher
+2023-06-28 02:29:19,546 INFO    SenderThread:61286 [dir_watcher.py:finish():389] scan: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files
+2023-06-28 02:29:19,546 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/requirements.txt requirements.txt
+2023-06-28 02:29:19,546 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/conda-environment.yaml conda-environment.yaml
+2023-06-28 02:29:19,546 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json wandb-summary.json
+2023-06-28 02:29:19,547 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-metadata.json wandb-metadata.json
+2023-06-28 02:29:19,547 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log output.log
+2023-06-28 02:29:19,547 INFO    SenderThread:61286 [dir_watcher.py:finish():403] scan save: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/config.yaml config.yaml
+2023-06-28 02:29:19,548 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 10
+2023-06-28 02:29:19,548 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: poll_exit
+2023-06-28 02:29:19,552 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:19,552 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 10
+2023-06-28 02:29:19,561 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:19,561 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 10
+2023-06-28 02:29:19,561 INFO    SenderThread:61286 [file_pusher.py:finish():159] shutting down file pusher
+2023-06-28 02:29:20,029 INFO    wandb-upload_1:61286 [upload_job.py:push():133] Uploaded file /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/conda-environment.yaml
+2023-06-28 02:29:20,144 INFO    wandb-upload_0:61286 [upload_job.py:push():133] Uploaded file /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/requirements.txt
+2023-06-28 02:29:20,414 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: poll_exit
+2023-06-28 02:29:20,415 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: poll_exit
+2023-06-28 02:29:20,431 INFO    wandb-upload_2:61286 [upload_job.py:push():133] Uploaded file /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/wandb-summary.json
+2023-06-28 02:29:20,440 INFO    wandb-upload_4:61286 [upload_job.py:push():133] Uploaded file /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/config.yaml
+2023-06-28 02:29:20,545 INFO    wandb-upload_3:61286 [upload_job.py:push():133] Uploaded file /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/files/output.log
+2023-06-28 02:29:20,746 INFO    Thread-432 (_thread_body):61286 [sender.py:transition_state():602] send defer: 11
+2023-06-28 02:29:20,746 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:20,746 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 11
+2023-06-28 02:29:20,747 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:20,747 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 11
+2023-06-28 02:29:20,747 INFO    SenderThread:61286 [file_pusher.py:join():164] waiting for file pusher
+2023-06-28 02:29:20,747 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 12
+2023-06-28 02:29:20,748 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:20,748 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 12
+2023-06-28 02:29:20,748 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:20,748 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 12
+2023-06-28 02:29:21,373 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 13
+2023-06-28 02:29:21,374 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:21,374 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 13
+2023-06-28 02:29:21,374 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:21,374 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 13
+2023-06-28 02:29:21,374 INFO    SenderThread:61286 [sender.py:transition_state():602] send defer: 14
+2023-06-28 02:29:21,375 DEBUG   SenderThread:61286 [sender.py:send():369] send: final
+2023-06-28 02:29:21,375 DEBUG   SenderThread:61286 [sender.py:send():369] send: footer
+2023-06-28 02:29:21,375 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: defer
+2023-06-28 02:29:21,375 INFO    HandlerThread:61286 [handler.py:handle_request_defer():170] handle defer: 14
+2023-06-28 02:29:21,376 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: defer
+2023-06-28 02:29:21,376 INFO    SenderThread:61286 [sender.py:send_request_defer():598] handle sender defer: 14
+2023-06-28 02:29:21,377 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: poll_exit
+2023-06-28 02:29:21,377 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: poll_exit
+2023-06-28 02:29:21,378 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: server_info
+2023-06-28 02:29:21,378 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: get_summary
+2023-06-28 02:29:21,381 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: sampled_history
+2023-06-28 02:29:21,392 DEBUG   SenderThread:61286 [sender.py:send_request():396] send_request: server_info
+2023-06-28 02:29:21,540 DEBUG   HandlerThread:61286 [handler.py:handle_request():144] handle_request: shutdown
+2023-06-28 02:29:21,541 INFO    HandlerThread:61286 [handler.py:finish():854] shutting down handler
+2023-06-28 02:29:22,392 INFO    WriterThread:61286 [datastore.py:close():298] close: /home/ubuntu/Projects/Goal_Oriented_Federated_Learning/wandb/run-20230628_022406-r0wfy5z8/run-r0wfy5z8.wandb
+2023-06-28 02:29:22,540 INFO    SenderThread:61286 [sender.py:finish():1526] shutting down sender
+2023-06-28 02:29:22,540 INFO    SenderThread:61286 [file_pusher.py:finish():159] shutting down file pusher
+2023-06-28 02:29:22,540 INFO    SenderThread:61286 [file_pusher.py:join():164] waiting for file pusher

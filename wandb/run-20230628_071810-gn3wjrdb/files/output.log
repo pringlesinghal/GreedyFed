@@ -1,0 +1,12 @@
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 1157, in <module>
+    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 10)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 1068, in sfedavg_runs
+    accuracy_list, *_ = sfedavg_run(
+                        ^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 998, in sfedavg_run
+    weight /= probs[idx]  # for unbiased averaging
+              ^^^^^
+UnboundLocalError: cannot access local variable 'probs' where it is not associated with a value
