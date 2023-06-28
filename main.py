@@ -13,6 +13,8 @@ import seaborn as sns
 
 from copy import deepcopy
 from tqdm import tqdm
+from itertools import chain, combinations
+from math import comb
 import pickle
 import os
 
@@ -160,7 +162,7 @@ class Server:
         model.load_state_dict(model_state)
         return model
 
-    def shapley_values(self, criterion, client_states, weights=None):
+    def shapley_values_mc(self, criterion, client_states, weights=None):
         """
         client_states - list of client states
         weights - weights for averaging (uniform by default)
@@ -218,6 +220,110 @@ class Server:
                 if convergenceTest(shapley_values[idx]):
                     break
                 t += 1
+        final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
+        return final_shapley_values
+
+    def shapley_values_tmc(self, criterion, client_states, weights=None):
+        """
+        client_states - list of client states
+        weights - weights for averaging (uniform by default)
+
+        computes shapley values for the client updates on validation dataset
+        """
+        if weights is None:
+            # uniform weights by default
+            weights = [1 / len(client_states)] * len(client_states)
+        weights = np.array(weights)
+        wtsum = np.sum(weights)
+        weights = weights / wtsum  # normalize weights
+
+        num_clients = len(client_states)
+
+        shapley_values = [[0] for i in range(num_clients)]
+        converged = False
+
+        T = 50 * num_clients
+        t = 0
+        threshold = 1e-5
+        v_init = self.val_loss(self.model, criterion)  # initial server model loss
+        model_final = self.aggregate_(client_states, weights)
+        v_final = self.val_loss(model_final, criterion)  # final server model loss
+        while not converged and (t < T):
+            t += 1
+            client_permutation = np.random.permutation(num_clients)
+            v_j = v_init
+            for j in range(num_clients):
+                if np.abs(v_final - v_j) < threshold:
+                    v_jplus1 = v_j
+                else:
+                    subset = client_permutation[: (j + 1)]
+                    client_states_subset = [client_states[i] for i in subset]
+                    weights_subset = [weights[i] for i in subset]
+                    model_subset = self.aggregate_(client_states_subset, weights_subset)
+                    v_jplus1 = self.val_loss(model_subset, criterion)
+
+                phi_old = shapley_values[client_permutation[j]][-1]
+                phi_new = ((t - 1) * phi_old + (v_jplus1 - v_j)) / t
+                shapley_values[client_permutation[j]].append(phi_new)
+
+            flag = True
+            for j in range(num_clients):
+                if not convergenceTest(shapley_values):
+                    flag = False
+            if flag:
+                converged = True
+
+        final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
+        return final_shapley_values
+
+    def shapley_values_true(self, criterion, client_states, weights=None):
+        """
+        client_states - list of client states
+        weights - weights for averaging (uniform by default)
+
+        computes shapley values for the client updates on validation dataset
+        """
+
+        def powerset(iterable):
+            "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+            s = list(iterable)
+            return list(
+                chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
+            )
+
+        if weights is None:
+            # uniform weights by default
+            weights = [1 / len(client_states)] * len(client_states)
+        weights = np.array(weights)
+        wtsum = np.sum(weights)
+        weights = weights / wtsum  # normalize weights
+
+        num_clients = len(client_states)
+        client_subsets = powerset(range(num_clients))
+        subset_losses = {i: 0 for i in client_subsets}
+        shapley_values = [[0] for i in range(num_clients)]
+
+        for subset in client_subsets:
+            client_states_subset = [client_states[i] for i in subset]
+            weights_subset = [weights[i] for i in subset]
+            model_subset = self.aggregate_(client_states_subset, weights_subset)
+            loss_subset = self.val_loss(model_subset, criterion)
+            subset_losses[subset] = loss_subset
+
+        for subset in client_subsets:
+            for idx in range(num_clients):
+                L = len(subset)  # subset size
+                if idx in subset:
+                    nck = comb(num_clients - 1, L - 1)
+                    prev_val = shapley_values[idx][-1]
+                    new_val = prev_val + subset_losses[subset] / nck
+                    shapley_values[idx].append(new_val)
+                else:
+                    nck = comb(num_clients - 1, L)
+                    prev_val = shapley_values[idx][-1]
+                    new_val = prev_val - subset_losses[subset] / nck
+                    shapley_values[idx].append(new_val)
+
         final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
         return final_shapley_values
 
@@ -387,10 +493,10 @@ main code starts here
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
-dataset = "mnist"
-num_clients = 100
-random_seed = 2 
-alpha = 1e6
+dataset = "cifar10"
+num_clients = 40
+random_seed = 2
+alpha = 1
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
@@ -747,7 +853,13 @@ def shapley_run(
             client_states.append(client_state)
             weights.append(weight)
         # compute shapley values for each client
-        shapley_values = server.shapley_values(
+        # shapley_values = server.shapley_values_mc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # shapley_values = server.shapley_values_tmc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        shapley_values = server.shapley_values_true(
             fed_avg_criterion(), client_states, weights
         )
         shapley_values_T.append(shapley_values)
@@ -871,7 +983,13 @@ def ucb_run(
                 weights.append(weight)
 
         # compute shapley values for each client BEFORE updating server model
-        shapley_values = server.shapley_values(
+        # shapley_values = server.shapley_values_mc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # shapley_values = server.shapley_values_tmc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        shapley_values = server.shapley_values_true(
             fed_avg_criterion(), client_states, weights
         )
         # update server model
@@ -957,7 +1075,7 @@ def sfedavg_run(
         probs = probs / np.sum(probs)
         selected_indices = np.random.choice(
             all_indices, size=num_selected, replace=False, p=probs
-         )
+        )
         for idx in selected_indices:
             selected_status[idx] = True
             N_t[idx] += 1
@@ -982,7 +1100,13 @@ def sfedavg_run(
                 weights.append(weight)
 
         # compute shapley values for each client BEFORE updating server model
-        shapley_values = server.shapley_values(
+        # shapley_values = server.shapley_values_mc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # shapley_values = server.shapley_values_tmc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        shapley_values = server.shapley_values_true(
             fed_avg_criterion(), client_states, weights
         )
         # update server model
@@ -1117,66 +1241,123 @@ def fedprox_runs(mu, runs):
     return avg_accuracy_list
 
 
+dirichlet_alpha = alpha
+synthetic_alpha = alpha
+synthetic_beta = beta
+
 # UCB search
 
-beta_vals = [0, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4]
+beta_vals = [1e-1, 1, 1e1, 1e2]
 accuracies_ucb = {}
 for beta in beta_vals:
-    accuracies_ucb[beta] = ucb_runs(beta, 10)
+    accuracies_ucb[beta] = ucb_runs(beta, 3)
 
-with open(
-    f"./results/ucb_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle", "wb"
-) as f:
-    pickle.dump(accuracies_ucb, f)
+method = "ucb"
+accuracies_summary = accuracies_ucb
+
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+
 
 # S-FedAvg search
 
-alpha_vals = np.arange(0, 1, 0.1)
-beta_vals = np.arange(0, 1, 0.1)
+alpha_vals = np.arange(0.1, 1, 0.2)
+beta_vals = np.arange(0.1, 1, 0.2)
 accuracies_sfedavg = {}
 for alpha in alpha_vals:
-    for beta in beta_vals:
-        accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 10)
+    beta = 1 - alpha
+    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
 
-with open(
-    f"./results/sfedavg_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
-    "wb",
-) as f:
-    pickle.dump(accuracies_sfedavg, f)
+method = "sfedavg"
+accuracies_summary = accuracies_sfedavg
+
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 # FedAvg
 
-accuracies_fedavg = fedavg_runs(10)
-with open(
-    f"./results/fedavg_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
-    "wb",
-) as f:
-    pickle.dump(accuracies_fedavg, f)
+accuracies_fedavg = fedavg_runs(5)
+method = "fedavg"
+accuracies_summary = accuracies_fedavg
+
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 # Power-of-Choice
 
 decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
 accuracies_poc = {}
 for decay_factor in decay_factors:
-    accuracies_poc[decay_factor] = poc_runs(decay_factor, 10)
+    accuracies_poc[decay_factor] = poc_runs(decay_factor, 3)
 
-with open(
-    f"./results/poc_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle", "wb"
-) as f:
-    pickle.dump(accuracies_poc, f)
+method = "poc"
+accuracies_summary = accuracies_poc
+
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 # FedProx
 
-mu_vals = [10**i for i in range(-5, 5)]
+mu_vals = [10**i for i in range(-3, 3)]
 accuracies_fedprox = {}
 for mu in mu_vals:
-    accuracies_fedprox[mu] = fedprox_runs(mu, 10)
+    accuracies_fedprox[mu] = fedprox_runs(mu, 3)
 
-with open(
-    f"./results/fedprox_{dataset}_{num_clients}_{random_seed}_{alpha}_{beta}.pickle",
-    "wb",
-) as f:
-    pickle.dump(accuracies_fedprox, f)
+method = "fedprox"
+accuracies_summary = accuracies_fedprox
+
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 
 # sns.heatmap(draws_heatmap).set(title="draws")
