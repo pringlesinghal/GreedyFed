@@ -1,0 +1,48 @@
+
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s]/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py:900: RuntimeWarning: invalid value encountered in scalar divide
+  UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
+  1%|█▎                                                                                                                                | 1/100 [00:02<04:52,  2.95s/it]/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py:900: RuntimeWarning: divide by zero encountered in scalar divide
+  UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 28%|████████████████████████████████████                                                                                             | 28/100 [01:21<03:30,  2.92s/it]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 1125, in <module>
+    accuracies_ucb[beta] = ucb_runs(beta, 10)
+                           ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 1032, in ucb_runs
+    accuracy_list, *_ = ucb_run(
+                        ^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 874, in ucb_run
+    shapley_values = server.shapley_values(
+                     ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 204, in shapley_values
+    model_subset = self.aggregate_(client_states_subset, weights_subset)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/Projects/Goal_Oriented_Federated_Learning/main.py", line 158, in aggregate_
+    model_state[key] += weights[idx] * client_state[key]
+    ~~~~~~~~~~~^^^^^
+KeyboardInterrupt

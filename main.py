@@ -493,10 +493,10 @@ main code starts here
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
-dataset = "cifar10"
+dataset = "synthetic"
 num_clients = 40
 random_seed = 2
-alpha = 1
+alpha = 1 
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
@@ -1245,54 +1245,54 @@ dirichlet_alpha = alpha
 synthetic_alpha = alpha
 synthetic_beta = beta
 
-# # UCB search
+# UCB search
 
-# beta_vals = [1e-1, 1, 1e1, 1e2]
-# accuracies_ucb = {}
-# for beta in beta_vals:
-#     accuracies_ucb[beta] = ucb_runs(beta, 3)
+beta_vals = [1e-1, 1, 1e1, 1e2]
+accuracies_ucb = {}
+for beta in beta_vals:
+    accuracies_ucb[beta] = ucb_runs(beta, 3)
 
-# method = "ucb"
-# accuracies_summary = accuracies_ucb
+method = "ucb"
+accuracies_summary = accuracies_ucb
 
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 
-# # S-FedAvg search
+# S-FedAvg search
 
-# alpha_vals = np.arange(0.1, 1, 0.2)
-# beta_vals = np.arange(0.1, 1, 0.2)
-# accuracies_sfedavg = {}
-# for alpha in alpha_vals:
-#     beta = 1 - alpha
-#     accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
+alpha_vals = np.arange(0.1, 1, 0.2)
+beta_vals = np.arange(0.1, 1, 0.2)
+accuracies_sfedavg = {}
+for alpha in alpha_vals:
+    beta = 1 - alpha
+    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
 
-# method = "sfedavg"
-# accuracies_summary = accuracies_sfedavg
+method = "sfedavg"
+accuracies_summary = accuracies_sfedavg
 
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
+if dataset in ["mnist", "cifar10"]:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
+else:
+    with open(
+        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+        "wb",
+    ) as f:
+        pickle.dump(accuracies_summary, f)
 
 # FedAvg
 
