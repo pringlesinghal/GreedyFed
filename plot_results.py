@@ -39,11 +39,18 @@ for method in methods:
 # fedprox_mu = 1
 
 # best hyperparams for mnist_40_1_1
-ucb_beta = 10
+ucb_beta = 100
 sfedavg_alpha = 0.9
 sfedavg_beta = 0.1
-poc_lambda = 0.95
-fedprox_mu = 0.001
+poc_lambda = 0.9
+fedprox_mu = 0.01
+
+# # best hyperparams for mnist_40_1_1e6
+# ucb_beta = 100
+# sfedavg_alpha = 0.9
+# sfedavg_beta = 0.1
+# poc_lambda = 0.8
+# fedprox_mu = 0.01
 
 
 # fedprox plot
@@ -67,7 +74,7 @@ plt.plot(accuracies["fedavg"], label="FedAvg")
 acc_sfedavg = accuracies["sfedavg"]
 for key in acc_sfedavg.keys():
     alpha, beta = key
-    if np.abs(alpha - sfedavg_alpha) < 1e-5:
+    if np.abs(alpha - sfedavg_alpha) < 1e-6:
         plt.plot(
             acc_sfedavg[key],
             label="S-FedAvg: " + r"$\alpha$, $\beta = $" + f"{alpha:.1f},{beta:.1f}",
