@@ -496,7 +496,7 @@ main code starts here
 dataset = "mnist"
 num_clients = 40
 random_seed = 2
-alpha = 1 
+alpha = 1e6 
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
