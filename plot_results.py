@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 methods = ["ucb", "sfedavg", "fedavg", "poc", "fedprox"]
-dataset = "synthetic"
+dataset = "mnist"
 num_clients = 40
 random_seed = 1
 dirichlet_alpha = 1
@@ -31,12 +31,19 @@ for method in methods:
 # poc_lambda = 0.99
 # fedprox_mu = 1
 
-# best hyperparams for synthetic_40_1_1
-ucb_beta = 1
+# # best hyperparams for synthetic_40_1_1
+# ucb_beta = 1
+# sfedavg_alpha = 0.9
+# sfedavg_beta = 0.1
+# poc_lambda = 0.8
+# fedprox_mu = 1
+
+# best hyperparams for mnist_40_1_1
+ucb_beta = 10
 sfedavg_alpha = 0.9
 sfedavg_beta = 0.1
-poc_lambda = 0.8
-fedprox_mu = 1
+poc_lambda = 0.95
+fedprox_mu = 0.001
 
 
 # fedprox plot
