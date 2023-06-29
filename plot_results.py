@@ -7,8 +7,8 @@ dataset = "synthetic"
 num_clients = 40
 random_seed = 1
 dirichlet_alpha = 1
-synthetic_alpha = 0.5
-synthetic_beta = 0.5
+synthetic_alpha = 1
+synthetic_beta = 1
 accuracies = {}
 for method in methods:
     if dataset in ["mnist", "cifar10"]:
@@ -24,11 +24,18 @@ for method in methods:
 # poc_lambda = 0.95
 # fedprox_mu = 0.001
 
-# best hyperparams for synthetic_40_0.5_0.5
-ucb_beta = 100
-sfedavg_alpha = 0.5
-sfedavg_beta = 0.5
-poc_lambda = 0.99
+# # best hyperparams for synthetic_40_0.5_0.5
+# ucb_beta = 100
+# sfedavg_alpha = 0.5
+# sfedavg_beta = 0.5
+# poc_lambda = 0.99
+# fedprox_mu = 1
+
+# best hyperparams for synthetic_40_1_1
+ucb_beta = 1
+sfedavg_alpha = 0.9
+sfedavg_beta = 0.1
+poc_lambda = 0.8
 fedprox_mu = 1
 
 
