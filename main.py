@@ -493,7 +493,7 @@ main code starts here
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
-dataset = "mnist"
+dataset = "cifar10"
 num_clients = 40
 random_seed = 2
 alpha = 1e6 
