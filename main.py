@@ -493,11 +493,11 @@ main code starts here
 # generate/load data and distribute across clients and server
 # datasets = ["cifar10", "mnist", "synthetic"]
 
-dataset = "cifar10"
-num_clients = 40
+dataset = "synthetic"
+num_clients = 20
 random_seed = 2
-alpha = 1e6 
-beta = 1  # needed for synthetic dataset
+alpha = 0.5
+beta = 0.5  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
 wandb_config["dataset"] = dataset
@@ -626,6 +626,93 @@ def fed_avg_run(
 
     wandb.finish()
     return accuracy, val_loss, test_loss
+
+
+def fed_avg_run_analysis(
+    clients,
+    server,
+    select_fraction,
+    T,
+    random_seed=0,
+    E=5,
+    B=10,
+    learning_rate=0.01,
+    momentum=0.5,
+):
+    # config = deepcopy(wandb_config)
+    # config["algorithm"] = "FedAvg"
+    # wandb.init(project="federated-learning-summary", config=config)
+    clients = deepcopy(clients)
+    server = deepcopy(server)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    num_clients = len(clients)
+    num_selected = int(np.ceil(select_fraction * num_clients))
+
+    accuracy = []
+    val_loss = []
+    test_loss = []
+    client_losses_init = {i: [] for i in range(num_clients)}
+    client_losses_final = {i: [] for i in range(num_clients)}
+    for t in tqdm(range(T)):
+        # select clients to transmit weights to
+
+        # uniform random
+        all_clients = [i for i in range(num_clients)]
+        np.random.shuffle(all_clients)
+        selected_client_indices = all_clients[0:num_selected]
+        selected_status = [False for i in range(num_clients)]
+        for i in range(num_clients):
+            if i in selected_client_indices:
+                selected_status[i] = True
+
+        client_states = []
+        weights = []
+        for idx, client in enumerate(clients):
+            client_losses_init[idx].append(
+                client.loss(server.model, fed_avg_criterion())
+            )
+            # if selected_status[idx]:
+            # perform descent at client
+            client_state = client.train(
+                server.model,
+                criterion=fed_avg_criterion(),
+                E=E,
+                B=B,
+                learning_rate=learning_rate,
+                momentum=momentum,
+            )
+            weight = client.length  # number of data points at client
+            client_states.append(client_state)
+            weights.append(weight)
+            client_losses_final[idx].append(
+                client.loss(client.model, fed_avg_criterion())
+            )
+
+        client_states_subset = []
+        weights_subset = []
+        for idx in range(num_clients):
+            if selected_status[idx]:
+                client_states_subset.append(client_states[idx])
+                weights_subset.append(weights[idx])
+
+        server.aggregate(client_states_subset, weights_subset)
+        accuracy_now = server.accuracy()
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+        accuracy.append(accuracy_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        log_dict = {
+            "accuracy": accuracy_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        # wandb.log(log_dict)
+
+    # wandb.finish()
+    return accuracy, val_loss, test_loss, client_losses_init, client_losses_final
 
 
 def fed_prox_run(
@@ -1241,123 +1328,132 @@ def fedprox_runs(mu, runs):
     return avg_accuracy_list
 
 
-dirichlet_alpha = alpha
-synthetic_alpha = alpha
-synthetic_beta = beta
+# """
+# Hyperparameter search starts here
+# """
 
-# UCB search
+# dirichlet_alpha = alpha
+# synthetic_alpha = alpha
+# synthetic_beta = beta
 
-beta_vals = [1e-1, 1, 1e1, 1e2]
-accuracies_ucb = {}
-for beta in beta_vals:
-    accuracies_ucb[beta] = ucb_runs(beta, 3)
+# # UCB search
 
-method = "ucb"
-accuracies_summary = accuracies_ucb
+# beta_vals = [1e-1, 1, 1e1, 1e2]
+# accuracies_ucb = {}
+# for beta in beta_vals:
+#     accuracies_ucb[beta] = ucb_runs(beta, 3)
 
-if dataset in ["mnist", "cifar10"]:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
-else:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
+# method = "ucb"
+# accuracies_summary = accuracies_ucb
+
+# if dataset in ["mnist", "cifar10"]:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+# else:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
 
 
-# S-FedAvg search
+# # S-FedAvg search
 
-alpha_vals = np.arange(0.1, 1, 0.2)
-beta_vals = np.arange(0.1, 1, 0.2)
-accuracies_sfedavg = {}
-for alpha in alpha_vals:
-    beta = 1 - alpha
-    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
+# alpha_vals = np.arange(0.1, 1, 0.2)
+# beta_vals = np.arange(0.1, 1, 0.2)
+# accuracies_sfedavg = {}
+# for alpha in alpha_vals:
+#     beta = 1 - alpha
+#     accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
 
-method = "sfedavg"
-accuracies_summary = accuracies_sfedavg
+# method = "sfedavg"
+# accuracies_summary = accuracies_sfedavg
 
-if dataset in ["mnist", "cifar10"]:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
-else:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
+# if dataset in ["mnist", "cifar10"]:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+# else:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
 
-# FedAvg
+# # FedAvg
 
-accuracies_fedavg = fedavg_runs(5)
-method = "fedavg"
-accuracies_summary = accuracies_fedavg
+# accuracies_fedavg = fedavg_runs(5)
+# method = "fedavg"
+# accuracies_summary = accuracies_fedavg
 
-if dataset in ["mnist", "cifar10"]:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
-else:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
+# if dataset in ["mnist", "cifar10"]:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+# else:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
 
-# Power-of-Choice
+# # Power-of-Choice
 
-decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
-accuracies_poc = {}
-for decay_factor in decay_factors:
-    accuracies_poc[decay_factor] = poc_runs(decay_factor, 3)
+# decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
+# accuracies_poc = {}
+# for decay_factor in decay_factors:
+#     accuracies_poc[decay_factor] = poc_runs(decay_factor, 3)
 
-method = "poc"
-accuracies_summary = accuracies_poc
+# method = "poc"
+# accuracies_summary = accuracies_poc
 
-if dataset in ["mnist", "cifar10"]:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
-else:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
+# if dataset in ["mnist", "cifar10"]:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+# else:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
 
-# FedProx
+# # FedProx
 
-mu_vals = [10**i for i in range(-3, 3)]
-accuracies_fedprox = {}
-for mu in mu_vals:
-    accuracies_fedprox[mu] = fedprox_runs(mu, 3)
+# mu_vals = [10**i for i in range(-3, 3)]
+# accuracies_fedprox = {}
+# for mu in mu_vals:
+#     accuracies_fedprox[mu] = fedprox_runs(mu, 3)
 
-method = "fedprox"
-accuracies_summary = accuracies_fedprox
+# method = "fedprox"
+# accuracies_summary = accuracies_fedprox
 
-if dataset in ["mnist", "cifar10"]:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
-else:
-    with open(
-        f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-        "wb",
-    ) as f:
-        pickle.dump(accuracies_summary, f)
+# if dataset in ["mnist", "cifar10"]:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+# else:
+#     with open(
+#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
+#         "wb",
+#     ) as f:
+#         pickle.dump(accuracies_summary, f)
+
+
+# """""""""""""""""
+# Hyperparameter search ends here
+# """""""""""""""""
 
 
 # sns.heatmap(draws_heatmap).set(title="draws")
@@ -1391,9 +1487,15 @@ else:
 #         random_seed=i,
 #     )
 
-#     accuracy, _, _ = fed_avg_run(
-#         deepcopy(clients), deepcopy(server), select_fraction, T, random_seed=i
-#     )
+(
+    accuracy,
+    val_loss,
+    test_loss,
+    client_losses_init,
+    client_losses_final,
+) = fed_avg_run_analysis(
+    deepcopy(clients), deepcopy(server), select_fraction, T, random_seed=1
+)
 
 #     accuracy_prox, _, _ = fed_prox_run(
 #         deepcopy(clients), deepcopy(server), select_fraction, T, mu=0.1, random_seed=i
@@ -1415,9 +1517,9 @@ else:
 #             accuracy_poc_nodecay
 #         ) * (1 / (i + 1))
 
-# plt.plot(accuracy_avg, label="FedAvg")
-# plt.plot(accuracy_prox_avg, label="FedProx")
-# plt.plot(accuracy_poc_avg, label="Power of Choice")
-# plt.plot(accuracy_poc_nodecay_avg, label="Power of Choice no decay")
-# plt.legend()
-# plt.show()
+plt.plot(val_loss, label="val loss")
+plt.plot(test_loss, label="test loss")
+for i in range(num_clients):
+    plt.plot(client_losses[i], label=f"client loss {i}")
+plt.legend()
+plt.show()
