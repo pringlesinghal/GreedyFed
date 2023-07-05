@@ -494,9 +494,9 @@ main code starts here
 # datasets = ["cifar10", "mnist", "synthetic"]
 
 dataset = "cifar10"
-num_clients = 40
-random_seed = 2
-alpha = 1e6 
+num_clients = 50
+random_seed = 5
+alpha = 0.01 
 beta = 1  # needed for synthetic dataset
 
 clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
@@ -1244,13 +1244,13 @@ def fedprox_runs(mu, runs):
 dirichlet_alpha = alpha
 synthetic_alpha = alpha
 synthetic_beta = beta
-
+num_runs = 10
 # UCB search
 
-beta_vals = [1e-1, 1, 1e1, 1e2]
+beta_vals = [1e-4, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2]
 accuracies_ucb = {}
 for beta in beta_vals:
-    accuracies_ucb[beta] = ucb_runs(beta, 3)
+    accuracies_ucb[beta] = ucb_runs(beta, num_runs)
 
 method = "ucb"
 accuracies_summary = accuracies_ucb
@@ -1271,12 +1271,12 @@ else:
 
 # S-FedAvg search
 
-alpha_vals = np.arange(0.1, 1, 0.2)
-beta_vals = np.arange(0.1, 1, 0.2)
+alpha_vals = np.arange(0, 1, 0.1)
+beta_vals = np.arange(0, 1, 0.1)
 accuracies_sfedavg = {}
 for alpha in alpha_vals:
     beta = 1 - alpha
-    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
+    accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, num_runs)
 
 method = "sfedavg"
 accuracies_summary = accuracies_sfedavg
@@ -1296,7 +1296,7 @@ else:
 
 # FedAvg
 
-accuracies_fedavg = fedavg_runs(5)
+accuracies_fedavg = fedavg_runs(num_runs)
 method = "fedavg"
 accuracies_summary = accuracies_fedavg
 
@@ -1318,7 +1318,7 @@ else:
 decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
 accuracies_poc = {}
 for decay_factor in decay_factors:
-    accuracies_poc[decay_factor] = poc_runs(decay_factor, 3)
+    accuracies_poc[decay_factor] = poc_runs(decay_factor, num_runs)
 
 method = "poc"
 accuracies_summary = accuracies_poc
@@ -1341,7 +1341,7 @@ else:
 mu_vals = [10**i for i in range(-3, 3)]
 accuracies_fedprox = {}
 for mu in mu_vals:
-    accuracies_fedprox[mu] = fedprox_runs(mu, 3)
+    accuracies_fedprox[mu] = fedprox_runs(mu, num_runs)
 
 method = "fedprox"
 accuracies_summary = accuracies_fedprox
