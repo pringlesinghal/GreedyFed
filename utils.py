@@ -1,12 +1,13 @@
 import torch
 import numpy as np
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def convergenceTest(values):
     """
     Compute average change in last 20 iterations and if it less that 1% it has converged
     """
-    device = values.device.type
     if len(values) < 20:
         return False
     else:

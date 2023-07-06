@@ -340,13 +340,14 @@ dataset_config = {
 """
 Then configure the algorithm
 """
-# algorithm in ['fedavg', 'fedprox', 'sfedavg', 'poc', 'ucb']
+algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
+
 algorithm = "fedavg"
 select_fraction = 10 / 1000
 
 E = 5
 B = 5
-T = 10
+T = 400
 lr = 0.01
 momentum = 0.5
 mu = None
@@ -367,401 +368,96 @@ elif algorithm == "ucb":
 """
 Perform runs
 """
-algo_seed = 0
-data_seed = 0
-test_run = AlgoRun(
-    dataset_config, algorithm, select_fraction, algo_seed, data_seed, E=E, B=B, T=T
-)
-
-avg_runs(3, test_run, logging=True)
-
-# test_acc[f'fedavg_{dirichlet_alpha}'], train_acc[f'fedavg_{dirichlet_alpha}'], train_loss[f'fedavg_{dirichlet_alpha}'], val_loss[f'fedavg_{dirichlet_alpha}'], test_loss[f'fedavg_{dirichlet_alpha}'] = runs(3, 'fedavg', parameters)
-
-# mus = [0.001, 0.01, 0.1, 1]
-# mus = [5,10]
-# for mu in mus:
-#     parameters['mu'] = mu
-#     test_acc[f'fedprox_{mu}'], train_acc[f'fedprox_{mu}'], train_loss[f'fedprox_{mu}'], val_loss[f'fedprox_{mu}'], test_loss[f'fedprox_{mu}'] = runs(3, 'fedprox', parameters)
-
-# decay_factors = [1, 0.9]
-# for decay_factor in decay_factors:
-#   parameters['decay_factor'] = decay_factor
-#   test_acc[f'poc_{decay_factor}'], train_acc[f'poc_{decay_factor}'], train_loss[f'poc_{decay_factor}'], val_loss[f'poc_{decay_factor}'], test_loss[f'poc_{decay_factor}'] = runs(1, 'poc', parameters)
-
-# betas = [1]
-# for beta in betas:
-#     parameters['beta'] = beta
-#     test_acc[f'ucb_{beta}'], train_acc[f'ucb_{beta}'], train_loss[f'ucb_{beta}'], val_loss[f'ucb_{beta}'], test_loss[f'ucb_{beta}'] = runs(1, 'ucb', parameters)
-
-# # for mu in mus:
-# #     plt.plot(train_acc[f'fedprox_{mu}'], label = 'train accuracy'+f' fedprox mu = {mu}')
-# for beta in betas:
-#     plt.plot(train_acc[f'ucb_{beta}'], label = 'train accuracy'+f' ucb beta = {beta}')
-# plt.plot(train_acc['fedavg'], label = 'train accuracy'+ f' fedavg')
-# plt.legend()
-# plt.show()
-
-# # for mu in mus:
-# #     plt.plot(test_acc[f'fedprox_{mu}'], label ='test accuracy'+f' fedprox mu = {mu}')
-# for beta in betas:
-#     plt.plot(test_acc[f'ucb_{beta}'], label = 'test accuracy'+f' ucb beta = {beta}')
-# plt.plot(test_acc['fedavg'], label ='test accuracy'+ f' fedavg')
-# plt.legend()
-# plt.show()
-
-# # for mu in mus:
-# #     plt.plot(train_loss[f'fedprox_{mu}'], label = 'train loss: '+f'fedprox_{mu}')
-# #     plt.plot(test_loss[f'fedprox_{mu}'], label = 'test_loss: '+f'fedprox_{mu}')
-# #     plt.plot(val_loss[f'fedprox_{mu}'], label = 'val loss: '+f'fedprox_{mu}')
-
-# for beta in betas:
-#     plt.plot(train_loss[f'ucb_{beta}'], label = 'train loss: '+f'ucb beta = {beta}')
-#     plt.plot(test_loss[f'ucb_{beta}'], label = 'test_loss: '+f'ucb beta = {beta}')
-#     plt.plot(val_loss[f'ucb_{beta}'], label = 'val loss: '+f'ucb beta = {beta}')
-
-
-# plt.plot(train_loss['fedavg'], label='train loss '+ 'fedavg')
-# plt.plot(val_loss['fedavg'], label='val loss '+ 'fedavg')
-# plt.plot(test_loss['fedavg'], label='test loss '+ 'fedavg')
-# plt.legend()
-# plt.plot()
-
-# (train_acc['fedavg'] - test_acc['fedavg'])*100
-
-# """## Experimentation"""
-
-# dataset = "synthetic"
-# # dataset from ["cifar10", "mnist", "synthetic"]
-# num_clients = 100
-# random_seed = 10
-# alpha = 0.5
-# beta = 0.5  # needed for synthetic dataset
-
-# clients, server = initNetworkData(dataset, num_clients, random_seed, alpha, beta)
-# # wandb_config["dataset"] = dataset
-# # wandb_config["num_clients"] = num_clients
-# # wandb_config["alpha"] = alpha
-# # wandb_config["beta"] = beta
-# # wandb_config["clients"] = clients
-# # wandb_config["server"] = server
-
-# T = 101  # number of communications rounds
-# select_fraction = 0.03
-# # wandb_config["num_communication_rounds"] = T
-# # wandb_config["select_fraction"] = select_fraction
-# random_seed = 1
-
-# num_samples = [client.length for client in clients]
-# (np.mean(num_samples), np.std(num_samples))
-
-# acc_fedprox = {}
-# mus = [0.001, 0.01, 0.1, 1, 10, 100]
-# for mu in mus:
-#   acc_fedprox[mu], loss_fedprox[mu] = fedprox_runs(mu, runs)
-
-# # initialise some dataset split
-# # run fedavg
-# # run power of choice
-# acc_fedavg = fedavg_runs(10)
-
-# decay_factor = 0.9
-# acc_poc = poc_runs(0.9, 10)
-
-# plt.plot(acc_fedavg, label = 'fedavg')
-
-# plt.plot(acc_poc, label = 'poc')
-# plt.legend()
-# plt.show()
-
-# # poc runs
-# runs = 10
-# for run in range(runs):
-#     clients, server = initNetworkData(dataset, num_clients, run, alpha, beta)
-#     accuracy_list_poc, val_loss_poc, test_loss_poc, client_accuracies_poc = power_of_choice_run(
-#         deepcopy(clients),
-#         deepcopy(server),
-#         select_fraction,
-#         T,
-#         decay_factor=1,
-#         random_seed=random_seed,
-#         E = 1
-#     )
-#     accuracy_list_fedavg, val_loss_fedavg, test_loss_fedavg, client_accuracies_fedavg = fed_avg_run(
-#         deepcopy(clients),
-#         deepcopy(server),
-#         select_fraction,
-#         T,
-#         random_seed=run,
-#         E = 1
-#     )
-#     accuracy_list_fedprox, val_loss_fedprox, test_loss_fedprox, client_accuracies_fedprox = fed_prox_run(
-#             deepcopy(clients),
-#             deepcopy(server),
-#             select_fraction,
-#             T,
-#             mu=mu,
-#             random_seed=random_seed,
-#         )
-#     accuracy_list_poc = np.array(accuracy_list_poc)
-#     accuracy_list_fedavg = np.array(accuracy_list_fedavg)
-
-#     val_loss_poc = np.array(val_loss_poc)
-#     val_loss_fedavg = np.array(val_loss_fedavg)
-
-#     test_loss_poc = np.array(test_loss_poc)
-#     test_loss_fedavg = np.array(test_loss_fedavg)
-
-#     client_accuracies_poc = np.array([np.array(x) for x in client_accuracies_poc])
-#     client_accuracies_fedavg = np.array([np.array(x) for x in client_accuracies_fedavg])
-
-#     weights = np.array([client.length for client in clients])
-#     weights = weights/np.sum(weights)
-#     train_accuracy_poc = weights @ client_accuracies_poc
-#     train_accuracy_fedavg = weights @ client_accuracies_fedavg
-
-#     if run == 0:
-#         avg_accuracy_list_fedavg = deepcopy(accuracy_list_fedavg)
-#         avg_accuracy_list_poc = deepcopy(accuracy_list_poc)
-
-#         avg_val_loss_poc = deepcopy(val_loss_poc)
-#         avg_test_loss_poc = deepcopy(test_loss_poc)
-
-#         avg_val_loss_fedavg = deepcopy(val_loss_fedavg)
-#         avg_test_loss_fedavg = deepcopy(test_loss_fedavg)
-
-#         avg_client_accuracies_poc = [deepcopy(x) for x in client_accuracies_poc]
-#         avg_client_accuracies_fedavg = [deepcopy(x) for x in client_accuracies_fedavg]
-
-#         avg_train_accuracy_poc = deepcopy(train_accuracy_poc)
-#         avg_train_accuracy_fedavg = deepcopy(train_accuracy_fedavg)
-
-#     avg_accuracy_list_fedavg = (run * avg_accuracy_list_fedavg + accuracy_list_fedavg) / (run + 1)
-#     avg_accuracy_list_poc = (run * avg_accuracy_list_poc + accuracy_list_poc) / (run + 1)
-
-#     avg_val_loss_poc = (run * avg_val_loss_poc + val_loss_poc) / (run + 1)
-#     avg_test_loss_poc = (run * avg_test_loss_poc + test_loss_poc) / (run + 1)
-
-#     avg_val_loss_fedavg = (run * avg_val_loss_fedavg + val_loss_fedavg) / (run + 1)
-#     avg_test_loss_fedavg = (run * avg_test_loss_fedavg + test_loss_fedavg) / (run + 1)
-
-#     avg_client_accuracies_poc = [(run*avg_client_accuracies_poc[i] + client_accuracies_poc[i])/(run + 1) for i in range(num_clients)]
-#     avg_client_accuracies_fedavg = [(run*avg_client_accuracies_fedavg[i] + client_accuracies_fedavg[i])/(run + 1) for i in range(num_clients)]
-
-#     avg_train_accuracy_poc = (run*avg_train_accuracy_poc + train_accuracy_poc)/(run+1)
-#     avg_train_accuracy_fedavg = (run*avg_train_accuracy_fedavg + train_accuracy_fedavg)/(run+1)
-
-# avg_train_accuracy_fedavg - avg_accuracy_list_fedavg
-
-# plt.plot(avg_test_loss_poc,label='poc-test')
-# plt.plot(avg_test_loss_fedavg,label='fedavg-test')
-# # plt.plot(avg_val_loss_poc,label='poc-val')
-# # plt.plot(avg_val_loss_fedavg,label='fedavg-val')
-# plt.legend()
-# plt.show()
-
-# """## Hyperparameter Search"""
-
-# """
-# Hyperparameter search starts here
-# """
-
-# dirichlet_alpha = alpha
-# synthetic_alpha = alpha
-# synthetic_beta = beta
-
-# # UCB search
-
-# beta_vals = [1e-1, 1, 1e1, 1e2]
-# accuracies_ucb = {}
-# for beta in beta_vals:
-#     accuracies_ucb[beta] = ucb_runs(beta, 3)
-
-# method = "ucb"
-# accuracies_summary = accuracies_ucb
-
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-
-
-# # S-FedAvg search
-
-# alpha_vals = np.arange(0.1, 1, 0.2)
-# beta_vals = np.arange(0.1, 1, 0.2)
-# accuracies_sfedavg = {}
-# for alpha in alpha_vals:
-#     beta = 1 - alpha
-#     accuracies_sfedavg[(alpha, beta)] = sfedavg_runs(alpha, beta, 3)
-
-# method = "sfedavg"
-# accuracies_summary = accuracies_sfedavg
-
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-
-# # FedAvg
-
-# accuracies_fedavg = fedavg_runs(5)
-# method = "fedavg"
-# accuracies_summary = accuracies_fedavg
-
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-
-# # Power-of-Choice
-
-# decay_factors = [1, 0.99, 0.95, 0.9, 0.8]
-# accuracies_poc = {}
-# for decay_factor in decay_factors:
-#     accuracies_poc[decay_factor] = poc_runs(decay_factor, 3)
-
-# method = "poc"
-# accuracies_summary = accuracies_poc
-
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-
-# # FedProx
-
-# mu_vals = [10**i for i in range(-3, 3)]
-# accuracies_fedprox = {}
-# for mu in mu_vals:
-#     accuracies_fedprox[mu] = fedprox_runs(mu, 3)
-
-# method = "fedprox"
-# accuracies_summary = accuracies_fedprox
-
-# if dataset in ["mnist", "cifar10"]:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{dirichlet_alpha}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-# else:
-#     with open(
-#         f"./results/{method}_{dataset}_{num_clients}_{random_seed}_{synthetic_alpha}_{synthetic_beta}.pickle",
-#         "wb",
-#     ) as f:
-#         pickle.dump(accuracies_summary, f)
-
-
-# """""""""""""""""
-# Hyperparameter search ends here
-# """""""""""""""""
-
-# """## Extra Plotting Code"""
-
-# sns.heatmap(draws_heatmap).set(title="draws")
-# plt.show()
-# sns.heatmap(shapley_heatmap).set(title="shapley values")
-# plt.show()
-# sns.heatmap(selection_heatmap).set(title="selections")
-# plt.show()
-
-# plt.plot(accuracy_ucb, label="UCB")
-# plt.plot(accuracy_fedavg, label="fedavg")
-# plt.legend()
-# plt.show()
-
-# for i in range(5):
-#     accuracy_poc, _, _ = power_of_choice_run(
-#         deepcopy(clients),
-#         deepcopy(server),
-#         select_fraction,
-#         T,
-#         decay_factor=0.95,
-#         random_seed=i,
-#     )
-
-#     accuracy_poc_nodecay, _, _ = power_of_choice_run(
-#         deepcopy(clients),
-#         deepcopy(server),
-#         select_fraction,
-#         T,
-#         decay_factor=1,
-#         random_seed=i,
-#     )
-
-# (
-#     accuracy,
-#     val_loss,
-#     test_loss,
-#     client_losses_init,
-#     client_losses_final,
-# ) = fed_avg_run_analysis(
-#     deepcopy(clients), deepcopy(server), select_fraction, T, random_seed=1
-# )
-
-# for i in range(5):
-#     accuracy_prox, _, _ = fed_prox_run(
-#         deepcopy(clients), deepcopy(server), select_fraction, T, mu=0.1, random_seed=i
-#     )
-#     if i == 0:
-#         accuracy_avg = np.array(accuracy)
-#         accuracy_prox_avg = np.array(accuracy_prox)
-#         accuracy_poc_avg = np.array(accuracy_poc)
-#         accuracy_poc_nodecay_avg = np.array(accuracy_poc_nodecay)
-#     else:
-#         accuracy_avg = accuracy_avg * (i / (i + 1)) + np.array(accuracy) * (1 / (i + 1))
-#         accuracy_prox_avg = accuracy_prox_avg * (i / (i + 1)) + np.array(
-#             accuracy_prox
-#         ) * (1 / (i + 1))
-#         accuracy_poc_avg = accuracy_poc_avg * (i / (i + 1)) + np.array(accuracy_poc) * (
-#             1 / (i + 1)
-#         )
-#         accuracy_poc_nodecay_avg = accuracy_poc_nodecay_avg * (i / (i + 1)) + np.array(
-#             accuracy_poc_nodecay
-#         ) * (1 / (i + 1))
-
-# i = 10
-# plt.plot(client_losses_init[i], label = 'init')
-# plt.plot(client_losses_final[i], label = 'final')
-# plt.ylim((0,5))
-# plt.legend()
-
-# plt.plot(val_loss, label="val loss")
-# plt.plot(test_loss, label="test loss")
-# for i in range(num_clients):
-#     plt.plot(client_losses_init[i], label=f"client loss init {i}")
-
-# plt.legend()
-# plt.show()
+# algo_seed = 0
+# data_seed = 0
+
+num_runs = 5
+
+for algorithm in algorithms:
+    if algorithm == "sfedavg":
+        for alpha in [0, 0.1, 0.25, 0.5, 0.75, 0.9]:
+            beta = 1 - alpha
+
+            test_run = AlgoRun(
+                dataset_config,
+                algorithm,
+                select_fraction,
+                E=E,
+                B=B,
+                T=T,
+                lr=lr,
+                momentum=momentum,
+                mu=mu,
+                alpha=alpha,
+                beta=beta,
+                decay_factor=decay_factor,
+            )
+            avg_runs(num_runs, test_run, logging=True)
+
+    elif algorithm == "fedavg":
+        test_run = AlgoRun(
+            dataset_config,
+            algorithm,
+            select_fraction,
+            E=E,
+            B=B,
+            T=T,
+            lr=lr,
+            momentum=momentum,
+            mu=mu,
+            alpha=alpha,
+            beta=beta,
+            decay_factor=decay_factor,
+        )
+        avg_runs(num_runs, test_run, logging=True)
+    elif algorithm == "poc":
+        for decay_factor in [1, 0.99, 0.9, 0.8]:
+            test_run = AlgoRun(
+                dataset_config,
+                algorithm,
+                select_fraction,
+                E=E,
+                B=B,
+                T=T,
+                lr=lr,
+                momentum=momentum,
+                mu=mu,
+                alpha=alpha,
+                beta=beta,
+                decay_factor=decay_factor,
+            )
+            avg_runs(num_runs, test_run, logging=True)
+    elif algorithm == "fedprox":
+        for mu in [0.001, 0.01, 0.1, 0.5, 1, 5]:
+            test_run = AlgoRun(
+                dataset_config,
+                algorithm,
+                select_fraction,
+                E=E,
+                B=B,
+                T=T,
+                lr=lr,
+                momentum=momentum,
+                mu=mu,
+                alpha=alpha,
+                beta=beta,
+                decay_factor=decay_factor,
+            )
+            avg_runs(num_runs, test_run, logging=True)
+    elif algorithm == "ucb":
+        for beta in [0.001, 0.01, 0.1, 0.5, 1, 5]:
+            test_run = AlgoRun(
+                dataset_config,
+                algorithm,
+                select_fraction,
+                E=E,
+                B=B,
+                T=T,
+                lr=lr,
+                momentum=momentum,
+                mu=mu,
+                alpha=alpha,
+                beta=beta,
+                decay_factor=decay_factor,
+            )
+            avg_runs(num_runs, test_run, logging=True)
