@@ -2,11 +2,12 @@ import torch
 from torch.utils.data import DataLoader
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-import numpy as np
-from os.path import exists
 from torch.distributions.dirichlet import Dirichlet
 from torch.distributions.multivariate_normal import MultivariateNormal
-import torch.nn as nn
+import numpy as np
+
+import os
+from os.path import exists
 
 
 def data_transform_images(x):
@@ -58,6 +59,7 @@ def load_mnist():
     """
     if not exists("processed_data/mnist/test_data_global.pt"):
         train_data_global, val_data_global, test_data_global = download_mnist()
+        os.makedirs("./processed_data/mnist/", exist_ok=True)
         torch.save(train_data_global, "processed_data/mnist/train_data_global.pt")
         torch.save(val_data_global, "processed_data/mnist/val_data_global.pt")
         torch.save(test_data_global, "processed_data/mnist/test_data_global.pt")
@@ -113,6 +115,7 @@ def load_cifar10():
     """
     if not exists("processed_data/cifar10/test_data_global.pt"):
         train_data_global, val_data_global, test_data_global = download_cifar10()
+        os.makedirs("./processed_data/cifar10/", exist_ok=True)
         torch.save(train_data_global, "processed_data/cifar10/train_data_global.pt")
         torch.save(val_data_global, "processed_data/cifar10/val_data_global.pt")
         torch.save(test_data_global, "processed_data/cifar10/test_data_global.pt")
@@ -167,6 +170,7 @@ def load_mnist_flat():
     """
     if not exists("processed_data/mnist_flat/test_data_global.pt"):
         train_data_global, val_data_global, test_data_global = download_mnist_flat()
+        os.makedirs("./processed_data/mnist_flat/", exist_ok=True)
         torch.save(train_data_global, "processed_data/mnist_flat/train_data_global.pt")
         torch.save(val_data_global, "processed_data/mnist_flat/val_data_global.pt")
         torch.save(test_data_global, "processed_data/mnist_flat/test_data_global.pt")
@@ -222,6 +226,7 @@ def load_cifar10_flat():
     """
     if not exists("processed_data/cifar10_flat/test_data_global.pt"):
         train_data_global, val_data_global, test_data_global = download_cifar10_flat()
+        os.makedirs("./processed_data/cifar10_flat/", exist_ok=True)
         torch.save(
             train_data_global, "processed_data/cifar10_flat/train_data_global.pt"
         )
