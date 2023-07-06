@@ -643,11 +643,11 @@ def ucb_run(
         if logging == True:
             wandb.log(log_dict)
 
-        if t % 10 == 0:
-            sns.heatmap(selections_T).set(title="selections")
-            plt.show()
-            sns.heatmap(shapley_values_T).set(title="SV")
-            plt.show()
+        # if t % 10 == 0:
+        #     sns.heatmap(selections_T).set(title="selections")
+        #     plt.show()
+        #     sns.heatmap(shapley_values_T).set(title="SV")
+        #     plt.show()
 
     if logging == True:
         wandb.finish()
