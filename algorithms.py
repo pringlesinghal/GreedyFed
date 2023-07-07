@@ -164,6 +164,8 @@ def fed_prox_run(
     train_loss = []
     val_loss = []
     test_loss = []
+
+    selections = []
     for t in tqdm(range(T)):
         # select clients to transmit weights to
 
@@ -175,6 +177,8 @@ def fed_prox_run(
         for i in range(num_clients):
             if i in selected_client_indices:
                 selected_status[i] = True
+
+        selections.append(np.array(selected_status).astype(int))
 
         client_states = []
         weights = []
@@ -240,7 +244,7 @@ def fed_prox_run(
     if logging == True:
         wandb.finish()
 
-    return test_acc, train_acc, train_loss, val_loss, test_loss
+    return test_acc, train_acc, train_loss, val_loss, test_loss, selections
 
 
 def power_of_choice_run(
@@ -276,6 +280,8 @@ def power_of_choice_run(
     val_loss = []
     test_loss = []
 
+    selections = []
+
     choose_from = num_clients  # the size of initial client subset to query for loss
     for t in tqdm(range(T)):
         # select clients to transmit weights to
@@ -290,6 +296,8 @@ def power_of_choice_run(
         for i in range(num_clients):
             if i in selected_client_indices:
                 selected_status[i] = True
+
+        selections.append(np.array(selected_status).astype(int))
 
         client_losses = []  # will store array of size choose_from
         for idx, client in enumerate(clients):
@@ -361,7 +369,7 @@ def power_of_choice_run(
     if logging == True:
         wandb.finish()
 
-    return test_acc, train_acc, train_loss, val_loss, test_loss
+    return test_acc, train_acc, train_loss, val_loss, test_loss, selections
 
 
 """
@@ -496,8 +504,11 @@ def ucb_run(
     test_loss = []
 
     shapley_values_T = []
+    ucb_values_T = []
     selections_T = []
     draws_T = []
+    sv_rounds = {"gtg": [], "tmc": [], "true": []}
+    num_model_evaluations = {"gtg": [], "tmc": [], "true": []}
 
     N_t = [0 for i in range(num_clients)]
     UCB = [0 for i in range(num_clients)]
@@ -558,38 +569,37 @@ def ucb_run(
         # print(f'SV = {shapley_values}')
         # print(f'server evaluations = {server.model_evaluations}')
 
-        # print('starting TMC')
+        # print("starting TMC")
         # server.model_evaluations = 0
-        # shapley_values = server.shapley_values_tmc(
-        #     fed_avg_criterion(), client_states, weights
+        # shapley_values_tmc = server.shapley_values_tmc(
+        #     fed_avg_criterion(), deepcopy(client_states), deepcopy(weights)
         # )
-        # print(f'SV = {shapley_values}')
-        # print(f'server evaluations = {server.model_evaluations}')
+        # print(f"server evaluations = {server.model_evaluations}")
+        # # print(f"SV = {shapley_values_tmc}")
+        # num_model_evaluations["tmc"].append(server.model_evaluations)
 
         print("starting GTG")
         server.model_evaluations = 0
         shapley_values_gtg = server.shapley_values_gtg(
             fed_avg_criterion(), client_states, weights
         )
-        print(f"SV = {shapley_values_gtg}")
         print(f"server evaluations = {server.model_evaluations}")
+        # print(f"SV = {shapley_values_gtg}")
+        num_model_evaluations["gtg"].append(server.model_evaluations)
 
-        print("starting True")
-        server.model_evaluations = 0
-        shapley_values_true = server.shapley_values_true(
-            fed_avg_criterion(), client_states, weights
-        )
-        print(f"SV = {shapley_values_true}")
-        print(f"server evaluations = {server.model_evaluations}")
+        # print("starting True")
+        # server.model_evaluations = 0
+        # shapley_values_true = server.shapley_values_true(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # print(f"server evaluations = {server.model_evaluations}")
+        # # print(f"SV = {shapley_values_true}")
+        # num_model_evaluations["true"].append(server.model_evaluations)
 
-        gtg_shap_norm = np.linalg.norm(np.array(shapley_values_gtg))
-        true_shap_norm = np.linalg.norm(np.array(shapley_values_true))
-        cosine_distance = 1 - np.dot(
-            np.array(shapley_values_gtg), np.array(shapley_values_true)
-        ) / (gtg_shap_norm * true_shap_norm)
-        print(f"GTG Shap Norm = {gtg_shap_norm}")
-        print(f"True Shap Norm = {true_shap_norm}")
-        print(f"Cosine Distance = {cosine_distance}")
+        sv_rounds["gtg"].append(shapley_values_gtg)
+        # sv_rounds["tmc"].append(shapley_values_tmc)
+        # sv_rounds["true"].append(shapley_values_true)
+
         shapley_values = shapley_values_gtg
 
         # update server model
@@ -626,6 +636,7 @@ def ucb_run(
                 selections[i] = 1
             UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
         shapley_values_T.append(deepcopy(SV))
+        ucb_values_T.append(deepcopy(UCB))
         selections_T.append(deepcopy(selections))
         draws_T.append(deepcopy(N_t))
         log_dict = {
@@ -652,7 +663,18 @@ def ucb_run(
     if logging == True:
         wandb.finish()
 
-    return test_acc, train_acc, train_loss, val_loss, test_loss
+    return (
+        test_acc,
+        train_acc,
+        train_loss,
+        val_loss,
+        test_loss,
+        selections_T,
+        shapley_values_T,
+        sv_rounds,
+        num_model_evaluations,
+        ucb_values_T,
+    )
 
 
 def sfedavg_run(
@@ -733,7 +755,7 @@ def sfedavg_run(
         # shapley_values = server.shapley_values_tmc(
         #     fed_avg_criterion(), client_states, weights
         # )
-        shapley_values = server.shapley_values_true(
+        shapley_values = server.shapley_values_gtg(
             fed_avg_criterion(), client_states, weights
         )
         # update server model
@@ -794,4 +816,12 @@ def sfedavg_run(
     if logging == True:
         wandb.finish()
 
-    return test_acc, train_acc, train_loss, val_loss, test_loss
+    return (
+        test_acc,
+        train_acc,
+        train_loss,
+        val_loss,
+        test_loss,
+        selections_T,
+        shapley_values_T,
+    )

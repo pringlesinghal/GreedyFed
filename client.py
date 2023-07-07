@@ -7,11 +7,14 @@ import numpy as np
 
 
 class Client:
-    def __init__(self, data, targets, device):
+    def __init__(self, data, targets, device, noise_level=0):
         self.data = data.to(device)
         self.targets = targets.to(device)
         self.device = device
         self.length = len(self.data)
+        if noise_level is None:
+            noise_level = 0
+        self.noise_level = noise_level
 
     def train(self, serverModel, criterion, E, B, learning_rate, momentum):
         """
@@ -38,8 +41,22 @@ class Client:
                 loss.backward()
                 clientOptimiser.step()
 
-        self.model = clientModel
+        self.model = deepcopy(clientModel)
+        if self.noise_level > 0:
+            clientModel = self.add_noise(clientModel, self.noise_level)
         return clientModel.state_dict()
+
+    def add_noise(self, model, noise_level):
+        """
+        add noise to all model parameters with given noise_level
+        """
+        model_state = model.state_dict()
+        for key in model_state.keys():
+            model_state[key] += torch.normal(
+                mean=torch.zeros_like(model_state[key]), std=noise_level
+            )
+        model.load_state_dict(model_state)
+        return model
 
     def loss(self, model, criterion):
         """

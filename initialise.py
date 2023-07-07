@@ -17,7 +17,9 @@ from server import Server
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
+def initNetworkData(
+    dataset, num_clients, random_seed, alpha, beta=0, update_noise_level=None
+):
     """
     choose dataset from ["synthetic", "mnist", "cifar10"]
     num_clients - number of clients
@@ -50,7 +52,14 @@ def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
         for i in range(num_clients):
             N_i = int(num_datapoints[i])
             train_i, test_val_i = synthetic_samples(alpha, beta, N_i)
-            clients.append(Client(train_i["data"], train_i["targets"], device))
+            clients.append(
+                Client(
+                    train_i["data"],
+                    train_i["targets"],
+                    device,
+                    noise_level=update_noise_level,
+                )
+            )
             test_val_data.extend(test_val_i["data"])
             test_val_targets.extend(test_val_i["targets"])
 
@@ -86,6 +95,7 @@ def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
+                    noise_level=update_noise_level,
                 )
             )
 
@@ -113,6 +123,7 @@ def initNetworkData(dataset, num_clients, random_seed, alpha, beta=0):
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
+                    noise_level=update_noise_level,
                 )
             )
         in_channels = 3

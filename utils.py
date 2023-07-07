@@ -12,8 +12,13 @@ def convergenceTest(values):
         return False
     else:
         return (
-            torch.mean(torch.abs(torch.Tensor(values[-10:]).to(device) - values[-1]))
-            / values[-1]
+            torch.mean(
+                torch.abs(
+                    torch.Tensor(values[-10:]).to(device)
+                    - torch.Tensor([values[-1]]).to(device)
+                )
+            )
+            / torch.abs(torch.Tensor([values[-1]]).to(device))
         ) < 0.01
 
 

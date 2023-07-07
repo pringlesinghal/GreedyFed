@@ -37,6 +37,8 @@ class Server:
         does not modify the server model
         only returns the updated model
         """
+        if len(client_states) == 0:
+            return deepcopy(self.model).to(device=self.device)
         if weights is None:
             # uniform weights by default
             weights = [1 / len(client_states)] * len(client_states)
@@ -44,7 +46,7 @@ class Server:
         wtsum = np.sum(weights)
         weights = weights / wtsum  # normalize weights
         # initialise model parameters to zero
-        model_state = self.model.state_dict()
+        model_state = deepcopy(self.model).state_dict()
         for key in model_state.keys():
             model_state[key] -= model_state[key]
         # find updated model - weighted averaging
@@ -168,15 +170,14 @@ class Server:
                 v_j = v_jplus1
 
             flag = True
-            for j in range(num_clients):
-                if not convergenceTest(shapley_values[j]):
-                    flag = False
+            shapley_avg = np.mean(shapley_values, axis=0)
+            if not convergenceTest(shapley_avg):
+                flag = False
             if flag:
                 converged = True
         if converged == False:
             print("not converged in SV TMC")
         final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
-        print(f"SV_TMC = {final_shapley_values}")
         return final_shapley_values
 
     def shapley_values_gtg(self, criterion, client_states, weights=None):
@@ -210,7 +211,9 @@ class Server:
             print(
                 f"between round truncation: {v_final} - {v_init} = {np.abs(v_final - v_init)}"
             )
-            return [0 for i in range(num_clients)]
+
+            epsilon = 1e-9
+            return [epsilon for i in range(num_clients)]
 
         while not converged and (t < T):
             for client_idx in range(num_clients):
@@ -241,16 +244,15 @@ class Server:
                     shapley_values[client_permutation[j]].append(phi_new)
                     v_j = v_jplus1
 
-                flag = True
-                for j in range(num_clients):
-                    if not convergenceTest(shapley_values[j]):
-                        flag = False
-                if flag:
-                    converged = True
+            flag = True
+            shapley_avg = np.mean(shapley_values, axis=0)
+            if not convergenceTest(shapley_avg):
+                flag = False
+            if flag:
+                converged = True
         if converged == False:
             print("not converged in SV GTG")
         final_shapley_values = [shapley_values[i][-1] for i in range(num_clients)]
-        print(f"SV_GTG = {final_shapley_values}")
         return final_shapley_values
 
     def shapley_values_true(self, criterion, client_states, weights=None):
