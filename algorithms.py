@@ -67,6 +67,8 @@ def fed_avg_run(
     train_loss = []
     val_loss = []
     test_loss = []
+
+    selections = []
     for t in tqdm(range(T)):
         # select clients to transmit weights to
 
@@ -78,6 +80,8 @@ def fed_avg_run(
         for i in range(num_clients):
             if i in selected_client_indices:
                 selected_status[i] = True
+
+        selections.append(np.array(selected_status).astype(int))
 
         client_states = []
         weights = []
@@ -134,7 +138,7 @@ def fed_avg_run(
         print("finishing")
         wandb.finish()
 
-    return test_acc, train_acc, train_loss, val_loss, test_loss
+    return test_acc, train_acc, train_loss, val_loss, test_loss, selections
 
 
 def fed_prox_run(
@@ -220,16 +224,16 @@ def fed_prox_run(
         val_loss.append(val_loss_now)
         test_loss.append(test_loss_now)
 
-        # adpative mu
-        try:
-            if val_loss[-1] > val_loss[-2]:
-                mu += 0.1
-            elif val_loss[-1] < val_loss[-5]:
-                mu -= 0.1
-        except IndexError:
-            pass
-        finally:
-            print(f"mu = {mu}")
+        # # adpative mu
+        # try:
+        #     if val_loss[-1] > val_loss[-2]:
+        #         mu += 0.1
+        #     elif val_loss[-1] < val_loss[-5]:
+        #         mu -= 0.1
+        # except IndexError:
+        #     pass
+        # finally:
+        #     print(f"mu = {mu}")
 
         log_dict = {
             "train_accuracy": train_acc_now,

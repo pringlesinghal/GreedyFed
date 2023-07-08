@@ -244,7 +244,7 @@ class AlgoRun:
             return self.results.get_results()
 
         if logging:
-            wandb.init(project="FL-AAU", config=wandb_config)
+            wandb.init(project="FL-AAU-final", config=wandb_config)
 
         if algorithm == "fedavg":
             (
@@ -445,7 +445,7 @@ select_fraction = 10 / 1000
 
 E = 5
 B = 5
-T = 200
+T = 400
 lr = 0.01
 momentum = 0.5
 mu = None
@@ -471,7 +471,7 @@ Perform runs
 # algo_seed = 0
 # data_seed = 0
 
-num_runs = 3
+num_runs = 5
 
 # noise_levels = [0, 1e-2, 5e-2, 1e-1]
 noise_levels = [0]
@@ -612,7 +612,7 @@ select_fraction = 10 / 1000
 
 E = 5
 B = 5
-T = 200
+T = 400
 lr = 0.01
 momentum = 0.5
 mu = None
@@ -638,7 +638,7 @@ Perform runs
 # algo_seed = 0
 # data_seed = 0
 
-num_runs = 3
+num_runs = 5
 
 noise_levels = [1e-2, 5e-2, 1e-1]
 sfedavg_alphas = [0, 0.25, 0.5, 0.75]
