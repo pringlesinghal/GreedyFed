@@ -438,7 +438,7 @@ dataset_config = {
 """
 Then configure the algorithm
 """
-algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
+algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
 
 algorithm = "fedavg"
 select_fraction = 10 / 1000
