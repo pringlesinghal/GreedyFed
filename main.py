@@ -158,11 +158,17 @@ class AlgoRun:
         # noise parameters
         self.noise_level = noise_level
         if self.algorithm == "fedavg":
-            pass
+            self.mu = None
+            self.alpha = None
+            self.beta = None
+            self.decay_factor = None
         elif self.algorithm == "fedprox":
             if mu is None:
                 raise Exception("FedProx requires mu to be passed")
             self.mu = mu
+            self.alpha = None
+            self.beta = None
+            self.decay_factor = None
         elif self.algorithm == "sfedavg":
             if (alpha is None) and (beta is None):
                 raise Exception(
@@ -177,14 +183,22 @@ class AlgoRun:
             else:
                 self.alpha = alpha
                 self.beta = beta
+                self.mu = None
+                self.decay_factor = None
         elif algorithm == "poc":
             if decay_factor is None:
                 raise Exception("poc requires decay_factor to be specified")
             self.decay_factor = decay_factor
+            self.mu = None
+            self.alpha = None
+            self.beta = None
         elif algorithm == "ucb":
             if self.beta is None:
                 raise Exception("ucb requires beta to be specified")
             self.beta = beta
+            self.alpha = None
+            self.mu = None
+            self.decay_factor = None
         else:
             raise Exception("Unknown algorithm")
 
