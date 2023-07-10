@@ -440,7 +440,7 @@ First configure dataset and split
 # dataset from ["cifar10", "mnist", "synthetic"]
 dataset = "mnist"
 num_clients = 100
-dirichlet_alpha = 0.001 
+dirichlet_alpha = 0.001
 dataset_alpha = 1
 dataset_beta = 1  # needed for synthetic dataset
 if dataset != "synthetic":
