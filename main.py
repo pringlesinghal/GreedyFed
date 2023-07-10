@@ -438,9 +438,9 @@ Experiment 1
 First configure dataset and split
 """
 # dataset from ["cifar10", "mnist", "synthetic"]
-dataset = "mnist"
+dataset = "cifar10"
 num_clients = 100
-dirichlet_alpha = 0.001
+dirichlet_alpha = 0.01
 dataset_alpha = 1
 dataset_beta = 1  # needed for synthetic dataset
 if dataset != "synthetic":
@@ -457,7 +457,7 @@ dataset_config = {
 Then configure the algorithm
 """
 # algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
-algorithms = ["ucb", "fedavg","poc"]
+algorithms = ["ucb", "fedavg", "poc"]
 
 algorithm = "fedavg"
 select_fraction = 10 / 100
@@ -493,13 +493,12 @@ Perform runs
 num_runs = 1
 
 # noise_levels = [1e-2, 5e-2, 1e-1]
-noise_levels = [0]
+noise_levels = [0, 5e-2]
 # noisy_client_fraction = 0.5
 sfedavg_alphas = [0, 0.25, 0.5, 0.75]
 poc_decay_factors = [1, 0.9]
 fedprox_mus = [0.001, 0.01, 0.1, 1]
-# ucb_betas = [0.001, 0.01, 0.1, 1]
-ucb_betas = [0.1, 1, 10]
+ucb_betas = [0.01, 0.1, 1, 5]
 
 
 for algorithm in algorithms:
