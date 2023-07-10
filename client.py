@@ -105,4 +105,6 @@ class Client:
         np.random.shuffle(indices)
         k = int(np.floor(length / B))
         # drops the last few datapoints, if needed, to keep batch size fixed
+        if k == 0:
+            return [indices for _ in range(B)]  # use all datapoints in each batch
         return [indices[i : i + k] for i in range(0, len(indices), k)]

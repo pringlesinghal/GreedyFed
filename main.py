@@ -421,7 +421,7 @@ First configure dataset and split
 """
 # dataset from ["cifar10", "mnist", "synthetic"]
 dataset = "cifar10"
-num_clients = 1000
+num_clients = 100
 dirichlet_alpha = 0.001
 dataset_alpha = 1
 dataset_beta = 1  # needed for synthetic dataset
@@ -441,7 +441,7 @@ Then configure the algorithm
 algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
 
 algorithm = "fedavg"
-select_fraction = 15 / 1000
+select_fraction = 3 / 100
 
 E = 5
 B = 5
@@ -588,7 +588,7 @@ First configure dataset and split
 """
 # dataset from ["cifar10", "mnist", "synthetic"]
 dataset = "cifar10"
-num_clients = 1000
+num_clients = 100
 dirichlet_alpha = 0.001
 dataset_alpha = 1
 dataset_beta = 1  # needed for synthetic dataset
@@ -608,7 +608,7 @@ Then configure the algorithm
 algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
 
 algorithm = "fedavg"
-select_fraction = 15 / 1000
+select_fraction = 3 / 100
 
 E = 5
 B = 5

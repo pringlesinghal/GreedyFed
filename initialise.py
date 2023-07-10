@@ -39,11 +39,11 @@ def initNetworkData(
         np.random.seed(random_seed)
 
         # # distribute data points to num_clients clients by the power law
-        # client_datapoint_fractions = np.random.uniform(0, 1, num_clients) ** (
-        #     1 / 3
-        # )  # inverse CDF sampling
+        client_datapoint_fractions = np.random.uniform(0, 1, num_clients) ** (
+            1 / 3
+        )  # inverse CDF sampling
         # distribute datapoints uniformly
-        client_datapoint_fractions = np.array([1 for i in range(num_clients)])
+        # client_datapoint_fractions = np.array([1 for i in range(num_clients)])
         client_datapoint_fractions = client_datapoint_fractions / np.sum(
             client_datapoint_fractions
         )

@@ -261,16 +261,6 @@ def NIIDClientSplit(train_data, num_clients, alpha):
     for idx, target in enumerate(train_data.targets):
         target_indices[int(target)].append(idx)
 
-    # number of data points at each client is in proportion given by power law P(x) = 3x^2 (0<x<1)
-    # let the total datapoints D be divided as [q0, q1, ..., qN]*D, where N is the number of clients
-    # below we sample [q0, q1, ..., qN]
-    client_datapoint_fractions = np.random.uniform(0, 1, num_clients) ** (
-        1 / 3
-    )  # inverse CDF sampling
-    client_datapoint_fractions = client_datapoint_fractions / np.sum(
-        client_datapoint_fractions
-    )
-
     # split targets across each client using the dirichlet distribution
     # let client i have labels distributed with proportions [p0-i, p1-i, ..., pM-i] where M is the number of targets
     # larger alpha leads to more uniformness
@@ -279,6 +269,15 @@ def NIIDClientSplit(train_data, num_clients, alpha):
     counter = 0
     while True:
         counter += 1
+        # number of data points at each client is in proportion given by power law P(x) = 3x^2 (0<x<1)
+        # let the total datapoints D be divided as [q0, q1, ..., qN]*D, where N is the number of clients
+        # below we sample [q0, q1, ..., qN]
+        client_datapoint_fractions = np.random.uniform(0, 1, num_clients) ** (
+            1 / 3
+        )  # inverse CDF sampling
+        client_datapoint_fractions = client_datapoint_fractions / np.sum(
+            client_datapoint_fractions
+        )
         client_proportions = target_distribution.sample(
             [num_clients]
         )  # sample target distribution for each client
@@ -302,6 +301,8 @@ def NIIDClientSplit(train_data, num_clients, alpha):
         datapoints_allocated = torch.floor(D * client_datapoint_fractions).int()
         if torch.min(datapoints_allocated) > 100 or counter > 100:
             # to prevent any client from getting too few datapoints
+            if counter > 100:
+                raise Warning("Unable to allocate sufficient datapoints to each client")
             break
 
     # now distribute allocated datapoints by Dirichlet distribution
