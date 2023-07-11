@@ -64,7 +64,7 @@ ucb_betas = [0.01, 0.1, 1, 10]
 # for num_selected = 10
 sfedavg_alpha = 0.5
 poc_decay_factor = 1
-fedprox_mu = 0.1
+fedprox_mu = 1
 ucb_beta = 10
 
 for subdir, dirs, files in os.walk(rootdir):
@@ -188,10 +188,10 @@ for num_selected in num_selected_arr[0:1]:
         elif algorithm == "sfedavg":
             algotext = r"S-FedAvg"
 
-        plt.plot(summary_results.test_acc, label=algotext + f" {num_selected}")
-plt.ylabel("Test accuracy")
+        plt.plot(summary_results.test_loss, label=algotext + f" {num_selected}")
+plt.ylabel("Test Loss")
 plt.xlabel("Communication Rounds")
-plt.ylim(0, 0.4)
+plt.ylim(2, 3)
 plt.legend()
 plt.show()  # comment this for .tex generation
 # generate .tex
