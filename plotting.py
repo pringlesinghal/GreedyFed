@@ -14,61 +14,218 @@ from utils import dict_hash
 rc("mathtext", default="regular")
 
 
-def myplot():
-    f = plt.figure()
-    ax = f.add_subplot(111)
-    for idx in range(4):
-        val[idx] = np.log(1 + np.multiply(x, a[idx]))  # toy utility model
-        plt.plot(
-            x, val[idx], color_array[idx] + "-", lw=1.2, label=r"$a={}$".format(a[idx])
-        )
-    plt.xlabel(r"$\mathbf{x}$", fontsize=13)
-    plt.ylabel(r"$\mathbf{v(x)}$", fontsize=13)
-    # plt.legend()
-    # f.savefig(
-    #     "toytex.pdf", bbox_inches="tight", dpi=400
-    # )  # comment this for .tex generation
-    # plt.show()  # comment this for .tex generation
+def average_results(results):
+    """
+    takes input as list of AlgoResults objects
+    returns a single AlgoResults object with the average results
+    """
+    test_acc_avg = []
+    train_acc_avg = []
+    train_loss_avg = []
+    val_loss_avg = []
+    test_loss_avg = []
 
-    # generate .tex
-    import tikzplotlib
+    for run, result in enumerate(results):
+        test_acc, train_acc, train_loss, val_loss, test_loss = result.get_results()
+        if run == 0:
+            test_acc_avg = np.array(test_acc)
+            train_acc_avg = np.array(train_acc)
+            train_loss_avg = np.array(train_loss)
+            val_loss_avg = np.array(val_loss)
+            test_loss_avg = np.array(test_loss)
+        else:
+            test_acc_avg = (run * test_acc_avg + np.array(test_acc)) / (run + 1)
+            train_acc_avg = (run * train_acc_avg + np.array(train_acc)) / (run + 1)
+            train_loss_avg = (run * train_loss_avg + np.array(train_loss)) / (run + 1)
+            val_loss_avg = (run * val_loss_avg + np.array(val_loss)) / (run + 1)
+            test_loss_avg = (run * test_loss_avg + np.array(test_loss)) / (run + 1)
+    return AlgoResults(
+        test_acc_avg, train_acc_avg, train_loss_avg, val_loss_avg, test_loss_avg
+    )
 
-    tikzplotlib.save("toytex.tex")
-    import matplotlib as mpl
 
-    plt.close()
-    mpl.rcParams.update(mpl.rcParamsDefault)
+rootdir = "results-synthetic11"
+algorithms = ["ucb", "fedprox", "fedavg", "poc", "sfedavg"]
+select_fractions = [10 / 700, 20 / 700, 30 / 700]
+num_clients = 700
+num_selected_arr = [10, 20, 30]
+
+results_dict = {}
+for i in algorithms:
+    results_dict[i] = {}
+    for j in num_selected_arr:
+        results_dict[i][j] = []
+
+sfedavg_alphas = [0, 0.25, 0.5, 0.75]
+poc_decay_factors = [1, 0.9]
+fedprox_mus = [0.001, 0.01, 0.1, 1]
+ucb_betas = [0.01, 0.1, 1, 10]
+
+# for num_selected = 10
+sfedavg_alpha = 0.5
+poc_decay_factor = 1
+fedprox_mu = 0.1
+ucb_beta = 10
+
+for subdir, dirs, files in os.walk(rootdir):
+    for file in files:
+        file_path = os.path.join(subdir, file)
+        with open(file_path, "rb") as f:
+            results = pickle.load(f)
+            algorithm = results.config["algorithm"]
+            select_fraction = results.config["select_fraction"]
+            num_selected = int(select_fraction * num_clients)
+            flag = False
+            if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
+                flag = True
+            elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
+                flag = True
+            elif (
+                algorithm == "sfedavg" and results.config["algo_alpha"] == sfedavg_alpha
+            ):
+                flag = True
+            elif (
+                algorithm == "poc"
+                and results.config["decay_factor"] == poc_decay_factor
+            ):
+                flag = True
+            elif algorithm == "fedavg":
+                flag = True
+
+            if num_selected != 10:
+                flag = False
+
+            if flag:
+                (results_dict[algorithm][num_selected]).append(results)
+
+# for num_selected = 20
+sfedavg_alpha = 0.5
+poc_decay_factor = 1
+fedprox_mu = 0.1
+ucb_beta = 10
+
+for subdir, dirs, files in os.walk(rootdir):
+    for file in files:
+        file_path = os.path.join(subdir, file)
+        with open(file_path, "rb") as f:
+            results = pickle.load(f)
+            algorithm = results.config["algorithm"]
+            select_fraction = results.config["select_fraction"]
+            num_selected = int(select_fraction * num_clients)
+            flag = False
+            if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
+                flag = True
+            elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
+                flag = True
+            elif (
+                algorithm == "sfedavg" and results.config["algo_alpha"] == sfedavg_alpha
+            ):
+                flag = True
+            elif (
+                algorithm == "poc"
+                and results.config["decay_factor"] == poc_decay_factor
+            ):
+                flag = True
+            elif algorithm == "fedavg":
+                flag = True
+
+            if num_selected != 10:
+                flag = False
+
+            if flag:
+                (results_dict[algorithm][num_selected]).append(results)
+
+# for num_selected = 30
+sfedavg_alpha = 0.5
+poc_decay_factor = 1
+fedprox_mu = 0.1
+ucb_beta = 10
+
+for subdir, dirs, files in os.walk(rootdir):
+    for file in files:
+        file_path = os.path.join(subdir, file)
+        with open(file_path, "rb") as f:
+            results = pickle.load(f)
+            algorithm = results.config["algorithm"]
+            select_fraction = results.config["select_fraction"]
+            num_selected = int(select_fraction * num_clients)
+            flag = False
+            if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
+                flag = True
+            elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
+                flag = True
+            elif (
+                algorithm == "sfedavg" and results.config["algo_alpha"] == sfedavg_alpha
+            ):
+                flag = True
+            elif (
+                algorithm == "poc"
+                and results.config["decay_factor"] == poc_decay_factor
+            ):
+                flag = True
+            elif algorithm == "fedavg":
+                flag = True
+
+            if num_selected != 10:
+                flag = False
+
+            if flag:
+                (results_dict[algorithm][num_selected]).append(results)
+# f = plt.figure()
+# ax = f.add_subplot(111)
+for num_selected in num_selected_arr[0:1]:
+    for algorithm in algorithms:
+        algo_results = results_dict[algorithm][num_selected]
+        summary_results = average_results(algo_results)
+        if algorithm == "ucb":
+            algotext = r"""Fed-Shap-UCB"""
+        elif algorithm == "poc":
+            algotext = r"""Power-Of-Choice"""
+        elif algorithm == "fedavg":
+            algotext = r"""FedAvg"""
+        elif algorithm == "fedprox":
+            algotext = r"FedProx"
+        elif algorithm == "sfedavg":
+            algotext = r"S-FedAvg"
+
+        plt.plot(summary_results.test_acc, label=algotext + f" {num_selected}")
+plt.ylabel("Test accuracy")
+plt.xlabel("Communication Rounds")
+plt.ylim(0, 0.4)
+plt.legend()
+plt.show()  # comment this for .tex generation
+# generate .tex
+# import tikzplotlib
+
+# tikzplotlib.save(f"plots/test-acc-{rootdir}.tex")
+# import matplotlib as mpl
+
+# plt.close()
+# mpl.rcParams.update(mpl.rcParamsDefault)
 
 
-# # init
-# a = [0.1, 0.2, 0.3, 0.4]
-# color_array = ["b", "g", "r", "c"]
-# x = np.arange(0, 10, 0.1)
-# val = np.zeros((np.size(a), np.size(x)))
-# myplot()
+# config = {
+#     "algorithm": "ucb",
+#     "dataset": "synthetic",
+#     "num_clients": 1000,
+#     "dataset_alpha": 1,
+#     "dataset_beta": 1,
+#     "algo_seed": 0,
+#     "data_seed": 0,
+#     "E": 10,
+#     "B": 10,
+#     "select_fraction": 0.01,
+#     "T": 100,
+#     "lr": 0.01,
+#     "momentum": 0.5,
+#     "mu": None,
+#     "algo_alpha": None,
+#     "algo_beta": 1,
+#     "decay_factor": None,
+#     "noise_level": 0,
+# }
 
-config = {
-    "algorithm": "ucb",
-    "dataset": "synthetic",
-    "num_clients": 1000,
-    "dataset_alpha": 1,
-    "dataset_beta": 1,
-    "algo_seed": 0,
-    "data_seed": 0,
-    "E": 10,
-    "B": 10,
-    "select_fraction": 0.01,
-    "T": 100,
-    "lr": 0.01,
-    "momentum": 0.5,
-    "mu": None,
-    "algo_alpha": None,
-    "algo_beta": 1,
-    "decay_factor": None,
-    "noise_level": 0,
-}
-
-with open(f"results\{dict_hash(config)}.pickle", "rb") as f:
-    results = pickle.load(f)
-    test_acc, train_acc, train_loss, val_loss, test_loss = results.get_results()
-    results.plot_accuracy()
+# with open(f"results\{dict_hash(config)}.pickle", "rb") as f:
+#     results = pickle.load(f)
+#     test_acc, train_acc, train_loss, val_loss, test_loss = results.get_results()
+#     results.plot_accuracy()
