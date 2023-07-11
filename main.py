@@ -443,7 +443,7 @@ if __name__ == "__main__":
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
     dataset = "cifar10"
-    num_clients = 700
+    num_clients = 300
     dirichlet_alpha = 0.01
     dataset_alpha = 1
     dataset_beta = 1  # needed for synthetic dataset
@@ -461,8 +461,7 @@ if __name__ == "__main__":
     Then configure the algorithm
     """
     algorithm = "fedavg"
-    select_fraction = 10 / 700
-
+    select_fraction = 10 / 300
     E = 10
     B = 10
     T = 400
@@ -482,8 +481,8 @@ if __name__ == "__main__":
 
     noise_levels = [0]
     algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
-    # select_fractions = [10 / 700, 30 / 700, 50 / 700, 70 / 700, 90 / 700]
-    select_fractions = [10 / 700, 90 / 700]
+    # select_fractions = [10 / 300, 30 / 300, 50 / 300, 70 / 300, 90 / 300]
+    select_fractions = [10 / 300, 90 / 300]
     # dirichlet_alphas = [1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3]
     dirichlet_alphas = [1e-3, 1e3]
 
@@ -589,5 +588,5 @@ if __name__ == "__main__":
                         avg_runs(num_runs, test_run, logging=True)
 
     wandb.init(project="FL-AAU-11-7", name="finishing-2")
-    wandb.alert(title="finished run 1", text="Finishing synthetic(1,1) run")
+    wandb.alert(title="finished run 2", text="Finishing cifar10 hyperparam search")
     wandb.finish()
