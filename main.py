@@ -251,7 +251,7 @@ class AlgoRun:
             wandb_config["noise_level"] = self.noise_level
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-        result_path = f'results-synthetic11/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+        result_path = f'results-cifar10/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
             print("this run has been performed earlier")
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
@@ -395,7 +395,7 @@ class AlgoRun:
         if logging == True:
             self.results.config = wandb_config
             # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-            result_path = f'results-synthetic11/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+            result_path = f'results-cifar10/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
             os.makedirs(result_path, exist_ok=True)
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "wb") as f:
                 pickle.dump(self.results, f)
