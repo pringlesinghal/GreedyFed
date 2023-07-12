@@ -442,11 +442,11 @@ if __name__ == "__main__":
     First configure dataset and split
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
-    dataset = "synthetic"
-    num_clients = 1000
+    dataset = "cifar10"
+    num_clients = 300
     dirichlet_alpha = 0.01
-    dataset_alpha = 0.5
-    dataset_beta = 0.5  # needed for synthetic dataset
+    dataset_alpha = 1
+    dataset_beta = 1  # needed for synthetic dataset
     if dataset != "synthetic":
         dataset_alpha = dirichlet_alpha
 
@@ -461,8 +461,7 @@ if __name__ == "__main__":
     Then configure the algorithm
     """
     algorithm = "fedavg"
-    select_fraction = 10 / 700
-
+    select_fraction = 10 / 300
     E = 10
     B = 10
     T = 400
@@ -481,59 +480,42 @@ if __name__ == "__main__":
     num_runs = 1
 
     noise_levels = [0]
-    # algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
-    algorithms = ["ucb", "sfedavg", "poc"]
-    select_fractions = [10 / 1000]
-    # sfedavg_alphas = [0, 0.25, 0.5, 0.75]
-    sfedavg_alphas = [0.25]
-    # poc_decay_factors = [1, 0.9]
+    algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
+    # select_fractions = [10 / 300, 30 / 300, 50 / 300, 70 / 300, 90 / 300]
+    select_fractions = [10 / 300, 90 / 300]
+    # dirichlet_alphas = [1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3]
+    dirichlet_alphas = [1e-3, 1e3]
+
+    sfedavg_alphas = [0.5]
     poc_decay_factors = [1]
-    # fedprox_mus = [0.001, 0.01, 0.1, 1]
-    fedprox_mus = [1]
-    ucb_betas = [10, 100]
+    fedprox_mus = [0.001, 0.01, 0.1, 1]
+    ucb_betas = [0.01, 0.1, 1, 10, 100]
 
     for select_fraction in select_fractions:
-        for algorithm in algorithms:
-            if algorithm == "sfedavg":
-                for alpha in sfedavg_alphas:
-                    beta = 1 - alpha
+        for dataset_alpha in dirichlet_alphas:
+            for algorithm in algorithms:
+                if algorithm == "sfedavg":
+                    for alpha in sfedavg_alphas:
+                        beta = 1 - alpha
 
-                    test_run = AlgoRun(
-                        dataset_config,
-                        algorithm,
-                        select_fraction,
-                        E=E,
-                        B=B,
-                        T=T,
-                        lr=lr,
-                        momentum=momentum,
-                        mu=mu,
-                        alpha=alpha,
-                        beta=beta,
-                        decay_factor=decay_factor,
-                        noise_level=noise_level,
-                    )
-                    avg_runs(num_runs, test_run, logging=True)
+                        test_run = AlgoRun(
+                            dataset_config,
+                            algorithm,
+                            select_fraction,
+                            E=E,
+                            B=B,
+                            T=T,
+                            lr=lr,
+                            momentum=momentum,
+                            mu=mu,
+                            alpha=alpha,
+                            beta=beta,
+                            decay_factor=decay_factor,
+                            noise_level=noise_level,
+                        )
+                        avg_runs(num_runs, test_run, logging=True)
 
-            elif algorithm == "fedavg":
-                test_run = AlgoRun(
-                    dataset_config,
-                    algorithm,
-                    select_fraction,
-                    E=E,
-                    B=B,
-                    T=T,
-                    lr=lr,
-                    momentum=momentum,
-                    mu=mu,
-                    alpha=alpha,
-                    beta=beta,
-                    decay_factor=decay_factor,
-                    noise_level=noise_level,
-                )
-                avg_runs(num_runs, test_run, logging=True)
-            elif algorithm == "poc":
-                for decay_factor in poc_decay_factors:
+                elif algorithm == "fedavg":
                     test_run = AlgoRun(
                         dataset_config,
                         algorithm,
@@ -550,43 +532,61 @@ if __name__ == "__main__":
                         noise_level=noise_level,
                     )
                     avg_runs(num_runs, test_run, logging=True)
-            elif algorithm == "fedprox":
-                for mu in fedprox_mus:
-                    test_run = AlgoRun(
-                        dataset_config,
-                        algorithm,
-                        select_fraction,
-                        E=E,
-                        B=B,
-                        T=T,
-                        lr=lr,
-                        momentum=momentum,
-                        mu=mu,
-                        alpha=alpha,
-                        beta=beta,
-                        decay_factor=decay_factor,
-                        noise_level=noise_level,
-                    )
-                    avg_runs(num_runs, test_run, logging=True)
-            elif algorithm == "ucb":
-                for beta in ucb_betas:
-                    test_run = AlgoRun(
-                        dataset_config,
-                        algorithm,
-                        select_fraction,
-                        E=E,
-                        B=B,
-                        T=T,
-                        lr=lr,
-                        momentum=momentum,
-                        mu=mu,
-                        alpha=alpha,
-                        beta=beta,
-                        decay_factor=decay_factor,
-                        noise_level=noise_level,
-                    )
-                    avg_runs(num_runs, test_run, logging=True)
+                elif algorithm == "poc":
+                    for decay_factor in poc_decay_factors:
+                        test_run = AlgoRun(
+                            dataset_config,
+                            algorithm,
+                            select_fraction,
+                            E=E,
+                            B=B,
+                            T=T,
+                            lr=lr,
+                            momentum=momentum,
+                            mu=mu,
+                            alpha=alpha,
+                            beta=beta,
+                            decay_factor=decay_factor,
+                            noise_level=noise_level,
+                        )
+                        avg_runs(num_runs, test_run, logging=True)
+                elif algorithm == "fedprox":
+                    for mu in fedprox_mus:
+                        test_run = AlgoRun(
+                            dataset_config,
+                            algorithm,
+                            select_fraction,
+                            E=E,
+                            B=B,
+                            T=T,
+                            lr=lr,
+                            momentum=momentum,
+                            mu=mu,
+                            alpha=alpha,
+                            beta=beta,
+                            decay_factor=decay_factor,
+                            noise_level=noise_level,
+                        )
+                        avg_runs(num_runs, test_run, logging=True)
+                elif algorithm == "ucb":
+                    for beta in ucb_betas:
+                        test_run = AlgoRun(
+                            dataset_config,
+                            algorithm,
+                            select_fraction,
+                            E=E,
+                            B=B,
+                            T=T,
+                            lr=lr,
+                            momentum=momentum,
+                            mu=mu,
+                            alpha=alpha,
+                            beta=beta,
+                            decay_factor=decay_factor,
+                            noise_level=noise_level,
+                        )
+                        avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-11-7", name="finishing-2")
-    wandb.alert(title="finished run 1", text="Finishing synthetic(0.5,0.5) run")
+    wandb.init(project="FL-AAU-11-7", name="finishing-5")
+    wandb.alert(title="finished run 5", text="Finishing cifar10 hyperparam search")
     wandb.finish()
