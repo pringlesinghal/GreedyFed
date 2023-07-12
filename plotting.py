@@ -202,30 +202,3 @@ plt.show()  # comment this for .tex generation
 
 # plt.close()
 # mpl.rcParams.update(mpl.rcParamsDefault)
-
-
-# config = {
-#     "algorithm": "ucb",
-#     "dataset": "synthetic",
-#     "num_clients": 1000,
-#     "dataset_alpha": 1,
-#     "dataset_beta": 1,
-#     "algo_seed": 0,
-#     "data_seed": 0,
-#     "E": 10,
-#     "B": 10,
-#     "select_fraction": 0.01,
-#     "T": 100,
-#     "lr": 0.01,
-#     "momentum": 0.5,
-#     "mu": None,
-#     "algo_alpha": None,
-#     "algo_beta": 1,
-#     "decay_factor": None,
-#     "noise_level": 0,
-# }
-
-# with open(f"results\{dict_hash(config)}.pickle", "rb") as f:
-#     results = pickle.load(f)
-#     test_acc, train_acc, train_loss, val_loss, test_loss = results.get_results()
-#     results.plot_accuracy()
