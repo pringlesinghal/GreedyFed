@@ -480,7 +480,7 @@ if __name__ == "__main__":
     num_runs = 1
 
     noise_levels = [0]
-    algorithms = ["fedavg", "fedprox", "ucb", "sfedavg", "poc"]
+    algorithms = ["fedprox", "ucb"]
     # select_fractions = [10 / 300, 30 / 300, 50 / 300, 70 / 300, 90 / 300]
     select_fractions = [10 / 300, 90 / 300]
     # dirichlet_alphas = [1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3]
