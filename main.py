@@ -251,7 +251,7 @@ class AlgoRun:
             wandb_config["noise_level"] = self.noise_level
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-        result_path = f'results-synthetic11/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+        result_path = f'results-mnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
             print("this run has been performed earlier")
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
@@ -395,7 +395,7 @@ class AlgoRun:
         if logging == True:
             self.results.config = wandb_config
             # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-            result_path = f'results-synthetic11/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+            result_path = f'results-mnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
             os.makedirs(result_path, exist_ok=True)
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "wb") as f:
                 pickle.dump(self.results, f)
@@ -442,11 +442,11 @@ if __name__ == "__main__":
     First configure dataset and split
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
-    dataset = "synthetic"
-    num_clients = 700
+    dataset = "mnist"
+    num_clients = 200
     dirichlet_alpha = 0.01
-    dataset_alpha = 1
-    dataset_beta = 1  # needed for synthetic dataset
+    dataset_alpha = 0.5
+    dataset_beta = 0.5  # needed for synthetic dataset
     if dataset != "synthetic":
         dataset_alpha = dirichlet_alpha
 
@@ -465,7 +465,7 @@ if __name__ == "__main__":
 
     E = 10
     B = 10
-    T = 10
+    T = 150
     lr = 0.01
     momentum = 0.5
     mu = None
@@ -478,15 +478,15 @@ if __name__ == "__main__":
     """
     Perform runs
     """
-    num_runs = 1
+    num_runs = 3
 
     noise_levels = [0]
-    algorithms = ["ucb"]
-    select_fractions = [10 / 700, 20 / 700, 30 / 700]
-    sfedavg_alphas = [0, 0.25, 0.5, 0.75]
-    poc_decay_factors = [1, 0.9]
-    fedprox_mus = [0.001, 0.01, 0.1, 1]
-    ucb_betas = [100]
+    algorithms = ["ucb", "fedavg"]
+    select_fractions = [0.05]
+    sfedavg_alphas = [0.5]
+    poc_decay_factors = [1]
+    fedprox_mus = [0.1]
+    ucb_betas = [10]
 
     for select_fraction in select_fractions:
         for algorithm in algorithms:
