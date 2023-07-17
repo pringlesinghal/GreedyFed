@@ -591,18 +591,18 @@ def ucb_run(
         # print(f"SV = {shapley_values_gtg}")
         num_model_evaluations["gtg"].append(server.model_evaluations)
 
-        print("starting True")
-        server.model_evaluations = 0
-        shapley_values_true = server.shapley_values_true(
-            fed_avg_criterion(), client_states, weights
-        )
-        print(f"server evaluations = {server.model_evaluations}")
-        # print(f"SV = {shapley_values_true}")
-        num_model_evaluations["true"].append(server.model_evaluations)
+        # print("starting True")
+        # server.model_evaluations = 0
+        # shapley_values_true = server.shapley_values_true(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # print(f"server evaluations = {server.model_evaluations}")
+        # # print(f"SV = {shapley_values_true}")
+        # num_model_evaluations["true"].append(server.model_evaluations)
 
         sv_rounds["gtg"].append(shapley_values_gtg)
         # sv_rounds["tmc"].append(shapley_values_tmc)
-        sv_rounds["true"].append(shapley_values_true)
+        # sv_rounds["true"].append(shapley_values_true)
 
         shapley_values = shapley_values_gtg
         shapley_values = shapley_values / np.sum(shapley_values)
