@@ -443,7 +443,7 @@ if __name__ == "__main__":
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
     dataset = "mnist"
-    num_clients = 200
+    num_clients = 360
     dirichlet_alpha = 0.01
     dataset_alpha = 0.5
     dataset_beta = 0.5  # needed for synthetic dataset
@@ -461,11 +461,11 @@ if __name__ == "__main__":
     Then configure the algorithm
     """
     algorithm = "fedavg"
-    select_fraction = 10 / 700
+    select_fraction = 10 / 360
 
-    E = 10
-    B = 10
-    T = 150
+    E = 5
+    B = 5
+    T = 200
     lr = 0.01
     momentum = 0.5
     mu = None
@@ -478,15 +478,15 @@ if __name__ == "__main__":
     """
     Perform runs
     """
-    num_runs = 3
+    num_runs = 5
 
     noise_levels = [0]
-    algorithms = ["ucb", "fedavg"]
-    select_fractions = [0.05]
-    sfedavg_alphas = [0.5]
-    poc_decay_factors = [1]
-    fedprox_mus = [0.1]
-    ucb_betas = [10]
+    algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
+    select_fractions = [10 / 360, 30 / 360, 60 / 360]
+    sfedavg_alphas = [0.25, 0.75]
+    poc_decay_factors = [1, 0.9]
+    fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
+    ucb_betas = [1, 5, 0.1, 10, 0.01, 100, 0.001, 0]
 
     for select_fraction in select_fractions:
         for algorithm in algorithms:
@@ -583,6 +583,8 @@ if __name__ == "__main__":
                     )
                     avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-11-7", name="finishing-1x")
-    wandb.alert(title="finished run 1", text="Finishing synthetic(1,1) run")
+            print(test_run.results.config)
+
+    wandb.init(project="FL-AAU-11-7", name="finishing-mnist")
+    wandb.alert(title="finished run M", text="Finishing mnist run")
     wandb.finish()
