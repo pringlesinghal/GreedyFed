@@ -443,8 +443,8 @@ if __name__ == "__main__":
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
     dataset = "mnist"
-    num_clients = 360
-    dirichlet_alpha = 0.01
+    num_clients = 180
+    dirichlet_alpha = 0.0001
     dataset_alpha = 0.5
     dataset_beta = 0.5  # needed for synthetic dataset
     if dataset != "synthetic":
