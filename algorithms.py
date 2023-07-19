@@ -291,7 +291,7 @@ def power_of_choice_run(
         # select clients to transmit weights to
         if choose_from > num_selected:
             choose_from *= decay_factor
-            choose_from = int(np.ceil(choose_from))
+            choose_from = np.max([int(np.ceil(choose_from)), num_selected])
         # uniform random
         all_clients = [i for i in range(num_clients)]
         np.random.shuffle(all_clients)
