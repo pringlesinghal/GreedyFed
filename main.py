@@ -252,12 +252,12 @@ class AlgoRun:
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         result_path = f'results-mnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-        if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
-            print("this run has been performed earlier")
-            with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
-                self.results = pickle.load(f)
+        # if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
+        #     print("this run has been performed earlier")
+        #     with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
+        #         self.results = pickle.load(f)
 
-            return self.results.get_results()
+        #     return self.results.get_results()
 
         if logging:
             wandb.init(project="FL-AAU-11-7", config=wandb_config)
@@ -465,7 +465,7 @@ if __name__ == "__main__":
 
     E = 5
     B = 5
-    T = 200
+    T = 199
     lr = 0.01
     momentum = 0.5
     mu = None
@@ -585,6 +585,6 @@ if __name__ == "__main__":
 
             print(test_run.results.config)
 
-    wandb.init(project="FL-AAU-11-7", name="finishing-mnist")
+    wandb.init(project="FL-AAU-11-7", name="finishing-mnist-noisy")
     wandb.alert(title="finished run M", text="Finishing mnist run")
     wandb.finish()

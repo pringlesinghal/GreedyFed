@@ -605,7 +605,7 @@ def ucb_run(
         # sv_rounds["true"].append(shapley_values_true)
 
         shapley_values = shapley_values_gtg
-        shapley_values = shapley_values / np.sum(shapley_values)
+        # shapley_values = shapley_values / np.sum(shapley_values)
 
         # update server model
         server.aggregate(client_states, weights)
