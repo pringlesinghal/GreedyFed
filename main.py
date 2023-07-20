@@ -251,7 +251,7 @@ class AlgoRun:
             wandb_config["noise_level"] = self.noise_level
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-        result_path = f'results-mnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+        result_path = f'results-mnist-final/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         # if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
         #     print("this run has been performed earlier")
         #     with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
@@ -260,7 +260,7 @@ class AlgoRun:
         #     return self.results.get_results()
 
         if logging:
-            wandb.init(project="FL-AAU-11-7", config=wandb_config)
+            wandb.init(project="FL-AAU-MNIST", config=wandb_config)
 
         if algorithm == "fedavg":
             (
@@ -395,7 +395,7 @@ class AlgoRun:
         if logging == True:
             self.results.config = wandb_config
             # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-            result_path = f'results-mnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+            result_path = f'results-mnist-final/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
             os.makedirs(result_path, exist_ok=True)
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "wb") as f:
                 pickle.dump(self.results, f)
@@ -585,6 +585,6 @@ if __name__ == "__main__":
                             )
                             avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-11-7", name="finishing-mnist-full-search")
+    wandb.init(project="FL-AAU-MNIST", name="finishing-mnist-full-search")
     wandb.alert(title="finishing mnist full search", text="Finishing mnist run")
     wandb.finish()
