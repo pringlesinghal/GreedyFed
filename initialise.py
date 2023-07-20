@@ -57,7 +57,7 @@ def initNetworkData(
                     train_i["data"],
                     train_i["targets"],
                     device,
-                    noise_level=update_noise_level,
+                    noise_level=update_noise_level * (i / num_clients),
                 )
             )
             test_val_data.extend(test_val_i["data"])
@@ -95,7 +95,7 @@ def initNetworkData(
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
-                    noise_level=update_noise_level,
+                    noise_level=update_noise_level * (i / num_clients),
                 )
             )
 
@@ -123,7 +123,7 @@ def initNetworkData(
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
-                    noise_level=update_noise_level,
+                    noise_level=update_noise_level * (i / num_clients),
                 )
             )
         in_channels = 3
