@@ -473,7 +473,7 @@ if __name__ == "__main__":
     beta = None
     decay_factor = None
 
-    noise_level = 0
+    noise_level = 1e-1
 
     """
     Perform runs
