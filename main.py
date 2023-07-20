@@ -482,7 +482,7 @@ if __name__ == "__main__":
 
     noise_levels = [0]
     algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
-    select_fractions = [2 / 360, 6 / 360]
+    select_fractions = [10 / 360, 6 / 360]
     sfedavg_alphas = [0.25, 0.75]
     poc_decay_factors = [1, 0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
