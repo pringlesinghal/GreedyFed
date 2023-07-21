@@ -299,9 +299,9 @@ def NIIDClientSplit(train_data, num_clients, alpha):
         # D*qi datapoints are allocated to client i
         ## Power Law Distributed number of datapoints
         datapoints_allocated = torch.floor(D * client_datapoint_fractions).int()
-        if torch.min(datapoints_allocated) > 30 or counter > 100:
+        if torch.min(datapoints_allocated) > 30 or counter > 200:
             # to prevent any client from getting too few datapoints
-            if counter > 100:
+            if counter > 200:
                 raise Warning("Unable to allocate sufficient datapoints to each client")
             break
 

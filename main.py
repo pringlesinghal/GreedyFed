@@ -443,7 +443,7 @@ if __name__ == "__main__":
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
     dataset = "mnist"
-    num_clients = 420
+    num_clients = 300
     dirichlet_alpha = 0.0001
     dataset_alpha = 0.5
     dataset_beta = 0.5  # needed for synthetic dataset
@@ -476,7 +476,7 @@ if __name__ == "__main__":
     noise_levels = [0, 1e-3, 1e-1]
     dataset_alphas = [1e-3, 1, 1e3]
     algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
-    select_fractions = [5 / 420, 25 / 420, 125 / 420]
+    select_fractions = [5 / 300, 25 / 300, 125 / 300]
     sfedavg_alphas = [0.25, 0.5, 0.75]
     poc_decay_factors = [1, 0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
