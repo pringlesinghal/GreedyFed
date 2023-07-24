@@ -248,6 +248,8 @@ class AlgoRun:
 
         if self.noise_level is not None:
             wandb_config["noise_level"] = self.noise_level
+        else:
+            wandb_config["noise_level"] = 0
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         result_path = f'results-mnist-final/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
@@ -259,7 +261,7 @@ class AlgoRun:
         #     return self.results.get_results()
 
         if logging:
-            wandb.init(project="FL-AAU-MNIST", config=wandb_config)
+            wandb.init(project="FL-AAU-MNIST-2", config=wandb_config)
 
         if algorithm == "fedavg":
             (
@@ -473,10 +475,10 @@ if __name__ == "__main__":
     """
     num_runs = 5
 
-    noise_levels = [0, 1e-3, 1e-1]
-    dataset_alphas = [1e-3, 1, 1e3]
+    noise_levels = [0, 1e-1]
+    dataset_alphas = [1e-4, 1e-2, 1]
     algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
-    select_fractions = [5 / 300, 25 / 300, 125 / 300]
+    select_fractions = [5 / 300, 10 / 300, 30 / 300]
     sfedavg_alphas = [0.25, 0.5, 0.75]
     poc_decay_factors = [1, 0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
@@ -585,6 +587,6 @@ if __name__ == "__main__":
                             )
                             avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-MNIST", name="finishing-mnist-full-search")
+    wandb.init(project="FL-AAU-MNIST-2", name="finishing-mnist-full-search")
     wandb.alert(title="finishing mnist full search", text="Finishing mnist run")
     wandb.finish()

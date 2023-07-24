@@ -93,13 +93,14 @@ def initNetworkData(
 
         client_indices = NIIDClientSplit(train_dataset, num_clients, alpha)
         clients = []
+        perms = np.random.permutation(list(range(num_clients)))
         for i in range(num_clients):
             clients.append(
                 Client(
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
-                    noise_level=update_noise_level * (i / num_clients),
+                    noise_level=update_noise_level * (perms[i] / num_clients),
                 )
             )
 
@@ -121,13 +122,14 @@ def initNetworkData(
 
         client_indices = NIIDClientSplit(train_dataset, num_clients, alpha)
         clients = []
+        perms = np.random.permutation(list(range(num_clients)))
         for i in range(num_clients):
             clients.append(
                 Client(
                     train_dataset.data[client_indices[i]],
                     train_dataset.targets[client_indices[i]],
                     device,
-                    noise_level=update_noise_level * (i / num_clients),
+                    noise_level=update_noise_level * (perms[i] / num_clients),
                 )
             )
         in_channels = 3
