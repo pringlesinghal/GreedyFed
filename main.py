@@ -21,7 +21,6 @@ Original file is located at
 
 import wandb
 
-wandb.login()
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -433,6 +432,7 @@ def avg_runs(num_runs, algorun, logging):
 
 
 if __name__ == "__main__":
+    wandb.login()
     """Experiments"""
 
     """

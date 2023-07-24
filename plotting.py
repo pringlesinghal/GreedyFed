@@ -1,8 +1,12 @@
 import numpy as np
 from scipy import stats
+import pandas as pd
+import wandb
 
 import pickle
 import os
+import pprint
+from copy import deepcopy
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -44,240 +48,254 @@ def average_results(results):
     )
 
 
-algorithms = ["ucb", "fedprox", "fedavg", "poc", "sfedavg"]
-# select_fractions = [10 / 700, 20 / 700, 30 / 700]
-select_fractions = [10 / 700]
-num_clients = 700
-num_selected_arr = [10]
+# Login to your wandb account (only needed once)
 
-results_dict = {}
-for i in algorithms:
-    results_dict[i] = {}
-    for j in num_selected_arr:
-        results_dict[i][j] = []
+# Set your project name and entity (if applicable)
+project_name = "FL-AAU-MNIST-2"
+download_again = False
+# entity = "your_entity"  # Optional if the project is in your default entity
+# Fetch run data from wandb
+result_path = "mnist-runs.pkl"
+if os.path.exists(result_path) and download_again == False:
+    with open(result_path, "rb") as f:
+        runs = pickle.load(f)
+else:
+    wandb.login()
+    runs = wandb.Api().runs(f"{project_name}")
+    with open(result_path, "wb") as f:
+        pickle.dump(runs, f)
 
-sfedavg_alphas = [0, 0.25, 0.5, 0.75]
-poc_decay_factors = [1, 0.9]
-fedprox_mus = [0.001, 0.01, 0.1, 1]
-ucb_betas = [0.01, 0.1, 1, 10, 100]
+result_df_path = "mnist-runs-df.pkl"
+if os.path.exists(result_df_path) and download_again == False:
+    with open(result_df_path, "rb") as f:
+        result_df = pickle.load(f)
+else:
+    completed_runs = []
+    print(len(runs))
+    for run in runs:
+        config = run.config
 
-# for num_selected = 10
+        if (
+            len(config) > 0
+            and config["T"] == 200
+            and config["num_clients"] == 300
+            and config["dataset"] == "mnist"
+        ):
+            run_data = run.history(
+                keys=[
+                    "test_accuracy",
+                    "train_accuracy",
+                    "train_loss",
+                    "val_loss",
+                    "test_loss",
+                ]
+            )
+            run_config = pd.DataFrame.from_dict([config])
+            merged_df = (
+                run_data.assign(key=1)
+                .merge(run_config.assign(key=1), on="key")
+                .drop("key", axis=1)
+            )
+            completed_runs.append(merged_df)
+            print(len(completed_runs))
+
+    result_df = pd.concat(completed_runs, ignore_index=True)
+    with open(result_df_path, "wb") as f:
+        pickle.dump(result_df, f)
+
+noise_level = 0.1
+select_fraction = 2 / 300
+dataset_alpha = 1e-2
+
+ucb_beta = 0.1
+poc_decay_factor = 0.9
 sfedavg_alpha = 0.5
-poc_decay_factor = 1
-fedprox_mu = 1
-ucb_beta = 100
+fedprox_mu = 0.01
 
-rootdir = "results-cifar10"
-for subdir, dirs, files in os.walk(rootdir):
-    for file in files:
-        file_path = os.path.join(subdir, file)
-        with open(file_path, "rb") as f:
-            results = pickle.load(f)
-            algorithm = results.config["algorithm"]
-            select_fraction = results.config["select_fraction"]
-            num_selected = int(select_fraction * num_clients)
-            if (
-                results.config["dataset"] == "synthetic"
-                and results.config["dataset_alpha"] == 0.5
-                and results.config["T"] == 400
-            ):
-                print(results.config["algorithm"])
+df_filter_global = (
+    (result_df["noise_level"] == noise_level)
+    & (result_df["select_fraction"] == select_fraction)
+    & (result_df["dataset_alpha"] == dataset_alpha)
+)
 
-                flag = False
-                if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
-                    flag = True
-                elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
-                    flag = True
-                elif (
-                    algorithm == "sfedavg"
-                    and results.config["algo_alpha"] == sfedavg_alpha
-                ):
-                    flag = True
-                elif (
-                    algorithm == "poc"
-                    and results.config["decay_factor"] == poc_decay_factor
-                ):
-                    flag = True
-                elif algorithm == "fedavg":
-                    flag = True
+df_filter_ucb = (result_df["algorithm"] == "ucb") & (result_df["algo_beta"] == ucb_beta)
+df_filter_poc = (result_df["algorithm"] == "poc") & (
+    result_df["decay_factor"] == poc_decay_factor
+)
+df_filter_sfedavg = (result_df["algorithm"] == "sfedavg") & (
+    result_df["algo_alpha"] == sfedavg_alpha
+)
+df_filter_fedprox = (result_df["algorithm"] == "fedprox") & (
+    result_df["mu"] == fedprox_mu
+)
+df_filter_fedavg = result_df["algorithm"] == "fedavg"
 
-                if num_selected != 10:
-                    flag = False
+df_filter = df_filter_global & (
+    df_filter_fedavg
+    | df_filter_fedprox
+    | df_filter_ucb
+    | df_filter_poc
+    | df_filter_sfedavg
+)
+# print(f"ucb = {(df_filter_ucb & df_filter_global).sum()}")
+# print(f"poc = {(df_filter_poc & df_filter_global).sum()}")
+# print(f"fedprox = {(df_filter_fedprox & df_filter_global).sum()}")
+# print(f"fedavg = {(df_filter_fedavg & df_filter_global).sum()}")
+# print(f"sfedavg = {(df_filter_sfedavg & df_filter_global).sum()}")
 
-                if flag:
-                    (results_dict[algorithm][num_selected]).append(results)
 
-rootdir = "results-synthetic-point5"
-for subdir, dirs, files in os.walk(rootdir):
-    for file in files:
-        file_path = os.path.join(subdir, file)
-        with open(file_path, "rb") as f:
-            results = pickle.load(f)
-            algorithm = results.config["algorithm"]
-            select_fraction = results.config["select_fraction"]
-            num_selected = int(select_fraction * num_clients)
-            if (
-                results.config["dataset"] == "synthetic"
-                and results.config["dataset_alpha"] == 0.5
-                and results.config["T"] == 400
-            ):
-                print(results.config["algorithm"])
-
-                flag = False
-                if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
-                    flag = True
-                elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
-                    flag = True
-                elif (
-                    algorithm == "sfedavg"
-                    and results.config["algo_alpha"] == sfedavg_alpha
-                ):
-                    flag = True
-                elif (
-                    algorithm == "poc"
-                    and results.config["decay_factor"] == poc_decay_factor
-                ):
-                    flag = True
-                elif algorithm == "fedavg":
-                    flag = True
-
-                if num_selected != 10:
-                    flag = False
-
-                if flag:
-                    (results_dict[algorithm][num_selected]).append(results)
-
-# # for num_selected = 20
-# sfedavg_alpha = 0.5
-# poc_decay_factor = 1
-# fedprox_mu = 0.1
-# ucb_beta = 10
-
-# for subdir, dirs, files in os.walk(rootdir):
-#     for file in files:
-#         file_path = os.path.join(subdir, file)
-#         with open(file_path, "rb") as f:
-#             results = pickle.load(f)
-#             algorithm = results.config["algorithm"]
-#             select_fraction = results.config["select_fraction"]
-#             num_selected = int(select_fraction * num_clients)
-#             flag = False
-#             if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
-#                 flag = True
-#             elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
-#                 flag = True
-#             elif (
-#                 algorithm == "sfedavg" and results.config["algo_alpha"] == sfedavg_alpha
-#             ):
-#                 flag = True
-#             elif (
-#                 algorithm == "poc"
-#                 and results.config["decay_factor"] == poc_decay_factor
-#             ):
-#                 flag = True
-#             elif algorithm == "fedavg":
-#                 flag = True
-
-#             if num_selected != 10:
-#                 flag = False
-
-#             if flag:
-#                 (results_dict[algorithm][num_selected]).append(results)
-
-# # for num_selected = 30
-# sfedavg_alpha = 0.5
-# poc_decay_factor = 1
-# fedprox_mu = 0.1
-# ucb_beta = 10
-
-# for subdir, dirs, files in os.walk(rootdir):
-#     for file in files:
-#         file_path = os.path.join(subdir, file)
-#         with open(file_path, "rb") as f:
-#             results = pickle.load(f)
-#             algorithm = results.config["algorithm"]
-#             select_fraction = results.config["select_fraction"]
-#             num_selected = int(select_fraction * num_clients)
-#             flag = False
-#             if algorithm == "ucb" and results.config["algo_beta"] == ucb_beta:
-#                 flag = True
-#             elif algorithm == "fedprox" and results.config["mu"] == fedprox_mu:
-#                 flag = True
-#             elif (
-#                 algorithm == "sfedavg" and results.config["algo_alpha"] == sfedavg_alpha
-#             ):
-#                 flag = True
-#             elif (
-#                 algorithm == "poc"
-#                 and results.config["decay_factor"] == poc_decay_factor
-#             ):
-#                 flag = True
-#             elif algorithm == "fedavg":
-#                 flag = True
-
-#             if num_selected != 10:
-#                 flag = False
-
-#             if flag:
-#                 (results_dict[algorithm][num_selected]).append(results)
-# f = plt.figure()
-# ax = f.add_subplot(111)
-for num_selected in num_selected_arr[0:1]:
-    for algorithm in algorithms:
-        algo_results = results_dict[algorithm][num_selected]
-        summary_results = average_results(algo_results)
-        if algorithm == "ucb":
-            algotext = r"""Fed-Shap-UCB, $\beta = 100$"""
-        elif algorithm == "poc":
-            algotext = r"""Power-Of-Choice"""
-        elif algorithm == "fedavg":
-            algotext = r"""FedAvg"""
-        elif algorithm == "fedprox":
-            algotext = r"FedProx, $\mu = 1$"
-        elif algorithm == "sfedavg":
-            algotext = r"S-FedAvg"
-
-        plt.plot(summary_results.test_loss, label=algotext)
-plt.ylabel("Test Loss")
+g = sns.lineplot(
+    data=result_df[df_filter],
+    x="_step",
+    y="train_accuracy",
+    hue="algorithm",
+)
+plt.ylabel("Training Accuracy")
 plt.xlabel("Communication Rounds")
-# plt.ylim(2, 3)
-plt.legend()
-# plt.show()  # comment this for .tex generation
-# generate .tex
+fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
+fedavg_text = "FedAvg"
+ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
+poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
+sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
+g.legend_.set_title("Algorithm")
+# ensure labels are in correct order
+new_labels = [poc_text, sfedavg_text, fedprox_text, fedavg_text, ucb_text]
+for t, l in zip(g.legend_.texts, new_labels):
+    t.set_text(l)
+plt.show()
 
-import tikzplotlib
 
-tikzplotlib.save(f"plots/test-loss-{rootdir}.tex")
-import matplotlib as mpl
+# noise_levels = [0, 1e-3, 1e-1]
+# dataset_alphas = [1e-3, 1, 1e3]
+# algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
+# select_fractions = [5 / 300, 25 / 300, 125 / 300]
+# sfedavg_alphas = [0.25, 0.5, 0.75]
+# poc_decay_factors = [1, 0.9]
+# fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
+# ucb_betas = [0.001, 0.01, 0.1, 0.5, 1, 5, 10]
 
-plt.close()
-mpl.rcParams.update(mpl.rcParamsDefault)
 
-# a = []
-# err = []
-# print(a)
+# result_data = []
+
+# rootdir = "results-mnist-final"
 # for subdir, dirs, files in os.walk(rootdir):
 #     for file in files:
 #         file_path = os.path.join(subdir, file)
 #         with open(file_path, "rb") as f:
 #             results = pickle.load(f)
 #             algorithm = results.config["algorithm"]
-#             dataset = results.config["dataset"]
-#             num_clients = results.config["num_clients"]
 #             select_fraction = results.config["select_fraction"]
+#             num_clients = results.config["num_clients"]
 #             num_selected = int(select_fraction * num_clients)
-#             T = results.config["T"]
-#             if num_selected == 12 and T == 20:
-#                 if algorithm == "ucb":
-#                     x = np.mean(results.num_model_evaluations["gtg"])
-#                     cosine_distance_gtg = np.mean(
-#                         results.cosine_distance(
-#                             results.sv_rounds["gtg"], results.sv_rounds["true"]
-#                         )
-#                     )
-#                     print(f"distances = {cosine_distance_gtg}")
-#                     a.append(x)
-#                     err.append(cosine_distance_gtg)
-# print(a)
-# print(np.mean(a))
-# print(np.mean(err))
+#             try:
+#                 noise_level = results.config["noise_level"]
+#             except KeyError:
+#                 noise_level = 0
+#             results.config["noise_level"] = noise_level
+#             if (
+#                 results.config["T"] == 200
+#                 and results.config["num_clients"] == 300
+#                 and results.config["dataset"] == "mnist"
+#             ):
+#                 dict_common = deepcopy(results.config)
+#                 (
+#                     test_acc,
+#                     train_acc,
+#                     train_loss,
+#                     val_loss,
+#                     test_loss,
+#                 ) = results.get_results()
+#                 T = dict_common["T"]
+#                 communication_rounds = list(range(T))
+#                 plot_vals = {
+#                     "rounds": communication_rounds,
+#                     "test_acc": test_acc,
+#                     "train_acc": train_acc,
+#                     "train_loss": train_loss,
+#                     "val_loss": val_loss,
+#                     "test_loss": test_loss,
+#                 }
+#                 for i in range(T):
+#                     dict_common_copy = deepcopy(dict_common)
+#                     for key in plot_vals.keys():
+#                         dict_common_copy[key] = plot_vals[key][i]
+#                         result_data.append(dict_common_copy)
+
+# result_df = pd.DataFrame(result_data)
+# df_filter = result_df["dataset_alpha"] == 1
+# df_filter = (
+#     (result_df["algorithm"] == "fedavg")
+#     & (result_df["rounds"] == 1)
+#     & (result_df["algo_seed"] == 0)
+# )
+# print(result_df[df_filter]["noise_level"])
+# # sns.lineplot(
+# #     data=filtered_result_df,
+# #     x="rounds",
+# #     y="train_acc",
+# #     hue="algorithm",
+# # )
+# # plt.show()
+# # for algorithm in algorithms:
+# #     algo_results = result_dict[algorithm][num_selected]
+# #     summary_results = average_results(algo_results)
+# #     if algorithm == "ucb":
+# #         algotext = r"""Fed-Shap-UCB, $\beta = 100$"""
+# #     elif algorithm == "poc":
+# #         algotext = r"""Power-Of-Choice"""
+# #     elif algorithm == "fedavg":
+# #         algotext = r"""FedAvg"""
+# #     elif algorithm == "fedprox":
+# #         algotext = r"FedProx, $\mu = 1$"
+# #     elif algorithm == "sfedavg":
+# #         algotext = r"S-FedAvg"
+
+# # plt.plot(summary_results.test_loss, label=algotext)
+# # plt.ylabel("Test Loss")
+# # plt.xlabel("Communication Rounds")
+# # # plt.ylim(2, 3)
+# # plt.legend()
+# # # plt.show()  # comment this for .tex generation
+# # # generate .tex
+
+# # import tikzplotlib
+
+# # tikzplotlib.save(f"plots/test-loss-{rootdir}.tex")
+# # import matplotlib as mpl
+
+# # plt.close()
+# # mpl.rcParams.update(mpl.rcParamsDefault)
+
+
+# """
+
+# """
+
+# # a = []
+# # err = []
+# # print(a)
+# # for subdir, dirs, files in os.walk(rootdir):
+# #     for file in files:
+# #         file_path = os.path.join(subdir, file)
+# #         with open(file_path, "rb") as f:
+# #             results = pickle.load(f)
+# #             algorithm = results.config["algorithm"]
+# #             dataset = results.config["dataset"]
+# #             num_clients = results.config["num_clients"]
+# #             select_fraction = results.config["select_fraction"]
+# #             num_selected = int(select_fraction * num_clients)
+# #             T = results.config["T"]
+# #             if num_selected == 12 and T == 20:
+# #                 if algorithm == "ucb":
+# #                     x = np.mean(results.num_model_evaluations["gtg"])
+# #                     cosine_distance_gtg = np.mean(
+# #                         results.cosine_distance(
+# #                             results.sv_rounds["gtg"], results.sv_rounds["true"]
+# #                         )
+# #                     )
+# #                     print(f"distances = {cosine_distance_gtg}")
+# #                     a.append(x)
+# #                     err.append(cosine_distance_gtg)
+# # print(a)
+# # print(np.mean(a))
+# # print(np.mean(err))

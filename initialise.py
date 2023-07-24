@@ -4,6 +4,7 @@ import numpy as np
 
 from data_preprocess import (
     load_mnist_flat,
+    load_fmnist_flat,
     load_cifar10,
     NIIDClientSplit,
     synthetic_samples,
@@ -27,7 +28,7 @@ def initNetworkData(
     alpha - Dirichlet parameter (for mnist, cifar10) / Variance (for synthetic)
     beta - Variance parameter (for synthetic only, not needed for mnist, cifar10)
     """
-    if dataset not in ["synthetic", "mnist", "cifar10"]:
+    if dataset not in ["synthetic", "mnist", "cifar10", "fmnist"]:
         raise Exception("Invalid dataset")
 
     elif dataset == "synthetic":
@@ -81,8 +82,11 @@ def initNetworkData(
             serverModel, val_data, val_targets, test_data, test_targets, device
         )
 
-    elif dataset == "mnist":
-        train_dataset, val_dataset, test_dataset = load_mnist_flat()
+    elif dataset in ["mnist", "fmnist"]:
+        if dataset == "mnist":
+            train_dataset, val_dataset, test_dataset = load_mnist_flat()
+        else:
+            train_dataset, val_dataset, test_dataset = load_fmnist_flat()
 
         torch.manual_seed(random_seed)
         np.random.seed(random_seed)

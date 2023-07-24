@@ -183,6 +183,63 @@ def load_mnist_flat():
     return train_data_global, val_data_global, test_data_global
 
 
+def download_fmnist_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    train_data_global = datasets.FashionMNIST(
+        root="dataset/", train=True, transform=data_transform_images, download=True
+    )  # 60000 samples
+    test_val_data_global = datasets.FashionMNIST(
+        root="dataset/", train=False, transform=data_transform_images, download=True
+    )  # 10000 samples
+    val_data_global, test_data_global = torch.utils.data.random_split(
+        test_val_data_global, [0.5, 0.5]
+    )
+
+    num_train_points = train_data_global.__len__()
+    num_val_points = val_data_global.__len__()
+    num_test_points = test_data_global.__len__()
+
+    # random permutation of train indices
+    indices = np.random.permutation(num_train_points)
+    # shuffle the data
+    train_data_global.data = train_data_global.data[indices]
+    train_data_global.targets = train_data_global.targets[indices]
+    # apply transforms through DataLoader (cheap trick)
+    train_dataloader = DataLoader(train_data_global, batch_size=num_train_points)
+    train_data_global.data, train_data_global.targets = next(iter(train_dataloader))
+
+    val_dataloader = DataLoader(val_data_global, batch_size=num_val_points)
+    val_data_global.data, val_data_global.targets = next(iter(val_dataloader))
+
+    test_dataloader = DataLoader(test_data_global, batch_size=num_test_points)
+    test_data_global.data, test_data_global.targets = next(iter(test_dataloader))
+
+    return train_data_global, val_data_global, test_data_global
+
+
+def load_fmnist_flat():
+    """
+    returns a tuple of (train_dataset, validation_dataset, test_dataset)
+    """
+    if not exists("processed_data/fmnist_flat/test_data_global.pt"):
+        train_data_global, val_data_global, test_data_global = download_fmnist_flat()
+        os.makedirs("./processed_data/fmnist_flat/", exist_ok=True)
+        torch.save(train_data_global, "processed_data/fmnist_flat/train_data_global.pt")
+        torch.save(val_data_global, "processed_data/fmnist_flat/val_data_global.pt")
+        torch.save(test_data_global, "processed_data/fmnist_flat/test_data_global.pt")
+    else:
+        print("files already downloaded")
+        train_data_global = torch.load(
+            "processed_data/fmnist_flat/train_data_global.pt"
+        )
+        val_data_global = torch.load("processed_data/fmnist_flat/val_data_global.pt")
+        test_data_global = torch.load("processed_data/fmnist_flat/test_data_global.pt")
+
+    return train_data_global, val_data_global, test_data_global
+
+
 def download_cifar10_flat():
     """
     returns a tuple of (train_dataset, validation_dataset, test_dataset)
