@@ -475,14 +475,14 @@ if __name__ == "__main__":
     """
     num_runs = 5
 
-    noise_levels = [0, 1e-1]
-    dataset_alphas = [1e-4, 1e-2, 1]
-    algorithms = ["ucb", "fedavg", "fedprox", "sfedavg", "poc"]
-    select_fractions = [5 / 300, 10 / 300, 30 / 300]
+    noise_levels = [1e-1]
+    dataset_alphas = [1e-4, 1e-1, 1e2]
+    algorithms = ["poc", "sfedavg","fedprox"]
+    select_fractions = [4/300, 7/ 300, 30 / 300]
     sfedavg_alphas = [0.25, 0.5, 0.75]
     poc_decay_factors = [1, 0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
-    ucb_betas = [0.001, 0.01, 0.1, 0.5, 1, 5, 10]
+    ucb_betas = [0.001, 0.01, 0.1, 1, 10]
 
     for select_fraction in select_fractions:
         for noise_level in noise_levels:
