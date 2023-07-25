@@ -61,7 +61,13 @@ if os.path.exists(result_path) and download_again == False:
         runs = pickle.load(f)
 else:
     wandb.login()
-    runs = wandb.Api().runs(f"{project_name}")
+    runs = wandb.Api().runs(
+        f"{project_name}",
+        filters={
+            "config.noise_level": {"$in": [0.1]},
+            "config.select_fraction": {"$gte": 4 / 300},
+        },
+    )
     with open(result_path, "wb") as f:
         pickle.dump(runs, f)
 
@@ -104,10 +110,10 @@ else:
         pickle.dump(result_df, f)
 
 noise_level = 0.1
-select_fraction = 2 / 300
-dataset_alpha = 1e-2
+select_fraction = 4 / 300
+dataset_alpha = 1e-4
 
-ucb_beta = 0.1
+ucb_beta = 0.001
 poc_decay_factor = 0.9
 sfedavg_alpha = 0.5
 fedprox_mu = 0.01
@@ -143,13 +149,42 @@ df_filter = df_filter_global & (
 # print(f"fedavg = {(df_filter_fedavg & df_filter_global).sum()}")
 # print(f"sfedavg = {(df_filter_sfedavg & df_filter_global).sum()}")
 
+result_df = result_df[df_filter]
+# Create a new DataFrame to store the smoothed data
+smoothed_df = pd.DataFrame()
 
+# Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
+alpha = (
+    1  # The smoothing factor (you can adjust this to control the level of smoothing)
+)
+
+for (algorithm, algo_seed), group in result_df.groupby(["algorithm", "algo_seed"]):
+    algorithm_df = group
+    # Sort the unique step values for interpolation
+    sorted_steps = np.sort(algorithm_df["_step"].unique())
+
+    # Perform EWMA smoothing on the accuracy
+    smoothed_accuracy = algorithm_df["train_accuracy"].ewm(alpha=alpha).mean()
+
+    algorithm_smoothed_df = pd.DataFrame(
+        {
+            "_step": sorted_steps,
+            "train_accuracy": smoothed_accuracy,
+            "algorithm": algorithm,
+            "algo_seed": algo_seed,
+        }
+    )
+    smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
+
+# Create the line plot with seaborn using the smoothed data
 g = sns.lineplot(
-    data=result_df[df_filter],
+    data=smoothed_df,
     x="_step",
     y="train_accuracy",
     hue="algorithm",
 )
+
+
 plt.ylabel("Training Accuracy")
 plt.xlabel("Communication Rounds")
 fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
@@ -159,10 +194,14 @@ poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
 sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
 g.legend_.set_title("Algorithm")
 # ensure labels are in correct order
-new_labels = [poc_text, sfedavg_text, fedprox_text, fedavg_text, ucb_text]
+# new_labels = [poc_text, sfedavg_text, fedprox_text, fedavg_text, ucb_text]
+new_labels = [
+    fedavg_text,
+    ucb_text,
+]
 for t, l in zip(g.legend_.texts, new_labels):
     t.set_text(l)
-plt.show()
+plt.savefig("plots/mnist-noisy-1.png", format="png")
 
 
 # noise_levels = [0, 1e-3, 1e-1]
@@ -258,13 +297,13 @@ plt.show()
 # # # plt.show()  # comment this for .tex generation
 # # # generate .tex
 
-# # import tikzplotlib
+import tikzplotlib
 
-# # tikzplotlib.save(f"plots/test-loss-{rootdir}.tex")
-# # import matplotlib as mpl
+tikzplotlib.save(f"plots/mnist-noisy-1.tex")
+import matplotlib as mpl
 
-# # plt.close()
-# # mpl.rcParams.update(mpl.rcParamsDefault)
+plt.close()
+mpl.rcParams.update(mpl.rcParamsDefault)
 
 
 # """

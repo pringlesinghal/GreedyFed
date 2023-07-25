@@ -36,6 +36,7 @@ from algorithms import (
     sfedavg_run,
     ucb_run,
     power_of_choice_run,
+    centralised_run,
 )
 from utils import dict_hash
 
@@ -156,7 +157,7 @@ class AlgoRun:
         self.decay_factor = decay_factor
         # noise parameters
         self.noise_level = noise_level
-        if self.algorithm == "fedavg":
+        if self.algorithm in ["fedavg", "centralised"]:
             self.mu = None
             self.alpha = None
             self.beta = None
@@ -263,7 +264,28 @@ class AlgoRun:
         if logging:
             wandb.init(project="FL-AAU-MNIST-2", config=wandb_config)
 
-        if algorithm == "fedavg":
+        if algorithm == "centralised":
+            (
+                test_acc,
+                train_acc,
+                train_loss,
+                val_loss,
+                test_loss,
+                selections,
+            ) = centralised_run(
+                clients,
+                server,
+                select_fraction,
+                T,
+                random_seed=random_seed,
+                E=E,
+                B=B,
+                learning_rate=lr,
+                momentum=momentum,
+                logging=logging,
+            )
+
+        elif algorithm == "fedavg":
             (
                 test_acc,
                 train_acc,

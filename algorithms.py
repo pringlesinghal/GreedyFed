@@ -1,4 +1,5 @@
 import torch
+import torch.optim as optim
 import numpy as np
 from tqdm import tqdm
 import wandb
@@ -39,6 +40,93 @@ def fed_avg_criterion():
         return criterion(scores, targets)
 
     return loss
+
+
+def centralised_run(
+    clients,
+    server,
+    select_fraction,
+    T,
+    random_seed=0,
+    E=5,
+    B=10,
+    learning_rate=0.01,
+    momentum=0.5,
+    logging=False,
+):
+    clients = deepcopy(clients)
+    server = deepcopy(server)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    data = []
+    targets = []
+    for client in clients:
+        data.append(client.data)
+        targets.append(client.targets)
+    data = torch.cat(data)
+    targets = torch.cat(targets)
+    num_datapoints = len(data)
+    num_selected = np.floor(select_fraction * num_datapoints)
+
+    test_acc = []
+    train_acc = []
+    train_loss = []
+    val_loss = []
+    test_loss = []
+
+    selections = []
+    for t in tqdm(range(T)):
+        server_model = deepcopy(server.model)
+        for iteration in range(E * B):
+            server_model.to(device=server.device)
+            server_model.load_state_dict(server.model.state_dict())
+            optimiser = optim.SGD(
+                server_model.parameters(), lr=learning_rate, momentum=momentum
+            )
+            all_indices = np.random.permutation(list(range(num_datapoints)))
+            indices = all_indices[:num_selected]
+            data_raw = [data[j] for j in indices]
+            targets_raw = [int(targets[j]) for j in indices]
+            # prepare data and targets for training
+            data_batch = (
+                torch.stack(data_raw, 0).to(device=server.device).to(torch.float32)
+            )
+            targets_batch = torch.tensor(targets_raw).to(device=server.device)
+            optimiser.zero_grad()
+            loss = fed_avg_criterion(server_model, data_batch, targets_batch)
+            loss.backward()
+            optimiser.step()
+
+        server.aggregate(server_model.state_dict())
+
+        test_acc_now = server.accuracy()
+        train_acc_now = server.accuracy()
+        with torch.no_grad():
+            train_loss_now = fed_avg_criterion(server.model, data, targets)
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+
+        train_acc.append(train_acc_now)
+        test_acc.append(test_acc_now)
+        train_loss.append(train_loss_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        log_dict = {
+            "train_accuracy": train_acc_now,
+            "test_accuracy": test_acc_now,
+            "train_loss": train_loss_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+        if logging == True:
+            wandb.log(log_dict)
+
+    if logging == True:
+        print("finishing")
+        wandb.finish()
+
+    return test_acc, train_acc, train_loss, val_loss, test_loss, selections
 
 
 def fed_avg_run(
