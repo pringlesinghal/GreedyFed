@@ -66,7 +66,9 @@ def centralised_run(
     data = torch.cat(data)
     targets = torch.cat(targets)
     num_datapoints = len(data)
-    num_selected = np.floor(select_fraction * num_datapoints)
+    print(num_datapoints)
+    num_selected = int(np.floor(select_fraction * num_datapoints))
+    print(num_selected)
 
     test_acc = []
     train_acc = []
@@ -75,14 +77,11 @@ def centralised_run(
     test_loss = []
 
     selections = []
+    optimiser = optim.SGD(
+        server.model.parameters(), lr=learning_rate, momentum=momentum
+    )
     for t in tqdm(range(T)):
-        server_model = deepcopy(server.model)
         for iteration in range(E * B):
-            server_model.to(device=server.device)
-            server_model.load_state_dict(server.model.state_dict())
-            optimiser = optim.SGD(
-                server_model.parameters(), lr=learning_rate, momentum=momentum
-            )
             all_indices = np.random.permutation(list(range(num_datapoints)))
             indices = all_indices[:num_selected]
             data_raw = [data[j] for j in indices]
@@ -93,16 +92,14 @@ def centralised_run(
             )
             targets_batch = torch.tensor(targets_raw).to(device=server.device)
             optimiser.zero_grad()
-            loss = fed_avg_criterion(server_model, data_batch, targets_batch)
+            loss = fed_avg_criterion()(server.model, data_batch, targets_batch)
             loss.backward()
             optimiser.step()
-
-        server.aggregate(server_model.state_dict())
 
         test_acc_now = server.accuracy()
         train_acc_now = server.accuracy()
         with torch.no_grad():
-            train_loss_now = fed_avg_criterion(server.model, data, targets)
+            train_loss_now = fed_avg_criterion()(server.model, data, targets)
         val_loss_now = server.val_loss(server.model, fed_avg_criterion())
         test_loss_now = server.test_loss(fed_avg_criterion())
 

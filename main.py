@@ -497,12 +497,12 @@ if __name__ == "__main__":
     """
     num_runs = 5
 
-    noise_levels = [1e-1]
+    noise_levels = [0]
     dataset_alphas = [1e-4, 1e-1, 1e2]
-    algorithms = ["poc", "sfedavg","fedprox"]
-    select_fractions = [4/300, 7/ 300, 30 / 300]
-    sfedavg_alphas = [0.25, 0.5, 0.75]
-    poc_decay_factors = [1, 0.9]
+    algorithms = ["poc", "sfedavg"]
+    select_fractions = [4 / 300, 7 / 300, 30 / 300]
+    sfedavg_alphas = [0.5]
+    poc_decay_factors = [0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
     ucb_betas = [0.001, 0.01, 0.1, 1, 10]
 
@@ -537,7 +537,7 @@ if __name__ == "__main__":
                             )
                             avg_runs(num_runs, test_run, logging=True)
 
-                    elif algorithm == "fedavg":
+                    elif algorithm in ["fedavg", "centralised"]:
                         test_run = AlgoRun(
                             dataset_config,
                             algorithm,

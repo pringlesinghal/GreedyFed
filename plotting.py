@@ -65,7 +65,7 @@ else:
         f"{project_name}",
         filters={
             "config.noise_level": {"$in": [0.1]},
-            "config.select_fraction": {"$gte": 4 / 300},
+            "config.select_fraction": {"$in": [4 / 300, 7 / 300, 30 / 300]},
         },
     )
     with open(result_path, "wb") as f:
@@ -110,13 +110,13 @@ else:
         pickle.dump(result_df, f)
 
 noise_level = 0.1
-select_fraction = 4 / 300
-dataset_alpha = 1e-4
+select_fraction = 30 / 300
+dataset_alpha = 1e-1
 
 ucb_beta = 0.001
 poc_decay_factor = 0.9
 sfedavg_alpha = 0.5
-fedprox_mu = 0.01
+fedprox_mu = 0.001
 
 df_filter_global = (
     (result_df["noise_level"] == noise_level)
@@ -135,6 +135,7 @@ df_filter_fedprox = (result_df["algorithm"] == "fedprox") & (
     result_df["mu"] == fedprox_mu
 )
 df_filter_fedavg = result_df["algorithm"] == "fedavg"
+df_filter_centralised = result_df["algorithm"] == "centralised"
 
 df_filter = df_filter_global & (
     df_filter_fedavg
@@ -142,6 +143,7 @@ df_filter = df_filter_global & (
     | df_filter_ucb
     | df_filter_poc
     | df_filter_sfedavg
+    | df_filter_centralised
 )
 # print(f"ucb = {(df_filter_ucb & df_filter_global).sum()}")
 # print(f"poc = {(df_filter_poc & df_filter_global).sum()}")
@@ -149,17 +151,28 @@ df_filter = df_filter_global & (
 # print(f"fedavg = {(df_filter_fedavg & df_filter_global).sum()}")
 # print(f"sfedavg = {(df_filter_sfedavg & df_filter_global).sum()}")
 
+# print(
+#     result_df[
+#         df_filter_fedavg
+#         & df_filter_global
+#         & (result_df["algo_seed"] == 3)
+#         & (result_df["_step"] == 199)
+#     ]
+# )
+
 result_df = result_df[df_filter]
 # Create a new DataFrame to store the smoothed data
 smoothed_df = pd.DataFrame()
 
 # Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
 alpha = (
-    1  # The smoothing factor (you can adjust this to control the level of smoothing)
+    0.2  # The smoothing factor (you can adjust this to control the level of smoothing)
 )
 
 for (algorithm, algo_seed), group in result_df.groupby(["algorithm", "algo_seed"]):
     algorithm_df = group
+    if algorithm == "fedavg" and algo_seed == 3:
+        algorithm_df = algorithm_df[0:200]
     # Sort the unique step values for interpolation
     sorted_steps = np.sort(algorithm_df["_step"].unique())
 
@@ -187,21 +200,36 @@ g = sns.lineplot(
 
 plt.ylabel("Training Accuracy")
 plt.xlabel("Communication Rounds")
+plt.ylim([0, 1])
 fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
 fedavg_text = "FedAvg"
 ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
 poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
 sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
+centralised_text = "Centralised"
 g.legend_.set_title("Algorithm")
 # ensure labels are in correct order
-# new_labels = [poc_text, sfedavg_text, fedprox_text, fedavg_text, ucb_text]
 new_labels = [
+    centralised_text,
     fedavg_text,
+    fedprox_text,
+    poc_text,
+    sfedavg_text,
     ucb_text,
 ]
+# new_labels = [
+#     fedavg_text,
+#     ucb_text,
+# ]
 for t, l in zip(g.legend_.texts, new_labels):
     t.set_text(l)
-plt.savefig("plots/mnist-noisy-1.png", format="png")
+plt.savefig(
+    f"plots/mnist-noise-{noise_level}-ssf-{select_fraction:.3f}-alpha-{dataset_alpha}.pdf",
+    format="pdf",
+    bbox_inches="tight",
+)
+
+# plt.show()
 
 
 # noise_levels = [0, 1e-3, 1e-1]
@@ -297,13 +325,13 @@ plt.savefig("plots/mnist-noisy-1.png", format="png")
 # # # plt.show()  # comment this for .tex generation
 # # # generate .tex
 
-import tikzplotlib
+# import tikzplotlib
 
-tikzplotlib.save(f"plots/mnist-noisy-1.tex")
-import matplotlib as mpl
+# tikzplotlib.save(f"plots/mnist-noisy-1.tex")
+# import matplotlib as mpl
 
-plt.close()
-mpl.rcParams.update(mpl.rcParamsDefault)
+# plt.close()
+# mpl.rcParams.update(mpl.rcParamsDefault)
 
 
 # """
