@@ -444,11 +444,11 @@ if __name__ == "__main__":
     First configure dataset and split
     """
     # dataset from ["cifar10", "mnist", "synthetic"]
-    dataset = "mnist"
-    num_clients = 300
+    dataset = "synthetic"
+    num_clients = 700
     dirichlet_alpha = 0.0001
-    dataset_alpha = 0.5
-    dataset_beta = 0.5  # needed for synthetic dataset
+    dataset_alpha = 1
+    dataset_beta = 1  # needed for synthetic dataset
     if dataset != "synthetic":
         dataset_alpha = dirichlet_alpha
 
@@ -477,8 +477,8 @@ if __name__ == "__main__":
 
     noise_levels = [1e-1]
     dataset_alphas = [1e-4, 1e-1, 1e2]
-    algorithms = ["poc", "sfedavg","fedprox"]
-    select_fractions = [4/300, 7/ 300, 30 / 300]
+    algorithms = ["ucb","fedavg","poc", "sfedavg","fedprox"]
+    select_fractions = [4/300, 7/ 300, 12 / 300]
     sfedavg_alphas = [0.25, 0.5, 0.75]
     poc_decay_factors = [1, 0.9]
     fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
