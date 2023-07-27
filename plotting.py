@@ -65,7 +65,7 @@ else:
         f"{project_name}",
         filters={
             "config.noise_level": {"$in": [0.1]},
-            "config.select_fraction": {"$in": [4 / 300, 7 / 300, 30 / 300]},
+            "config.select_fraction": {"$in": [30 / 300]},
         },
     )
     with open(result_path, "wb") as f:
@@ -110,58 +110,21 @@ else:
         pickle.dump(result_df, f)
 
 noise_level = 0.1
-select_fraction = 30 / 300
+select_fraction = 7 / 300
 dataset_alpha = 1e-1
 
-ucb_beta = 0.001
-poc_decay_factor = 0.9
-sfedavg_alpha = 0.5
-fedprox_mu = 0.001
+# ucb_beta = 0.001
+# poc_decay_factor = 0.9
+# sfedavg_alpha = 0.5
+# fedprox_mu = 0.001
 
 df_filter_global = (
     (result_df["noise_level"] == noise_level)
     & (result_df["select_fraction"] == select_fraction)
     & (result_df["dataset_alpha"] == dataset_alpha)
 )
-
-df_filter_ucb = (result_df["algorithm"] == "ucb") & (result_df["algo_beta"] == ucb_beta)
-df_filter_poc = (result_df["algorithm"] == "poc") & (
-    result_df["decay_factor"] == poc_decay_factor
-)
-df_filter_sfedavg = (result_df["algorithm"] == "sfedavg") & (
-    result_df["algo_alpha"] == sfedavg_alpha
-)
-df_filter_fedprox = (result_df["algorithm"] == "fedprox") & (
-    result_df["mu"] == fedprox_mu
-)
-df_filter_fedavg = result_df["algorithm"] == "fedavg"
-df_filter_centralised = result_df["algorithm"] == "centralised"
-
-df_filter = df_filter_global & (
-    df_filter_fedavg
-    | df_filter_fedprox
-    | df_filter_ucb
-    | df_filter_poc
-    | df_filter_sfedavg
-    | df_filter_centralised
-)
-# print(f"ucb = {(df_filter_ucb & df_filter_global).sum()}")
-# print(f"poc = {(df_filter_poc & df_filter_global).sum()}")
-# print(f"fedprox = {(df_filter_fedprox & df_filter_global).sum()}")
-# print(f"fedavg = {(df_filter_fedavg & df_filter_global).sum()}")
-# print(f"sfedavg = {(df_filter_sfedavg & df_filter_global).sum()}")
-
-# print(
-#     result_df[
-#         df_filter_fedavg
-#         & df_filter_global
-#         & (result_df["algo_seed"] == 3)
-#         & (result_df["_step"] == 199)
-#     ]
-# )
-
-result_df = result_df[df_filter]
-# Create a new DataFrame to store the smoothed data
+result_df_original = result_df.copy(deep=True)
+result_df = result_df[(result_df["algorithm"] == "ucb") & df_filter_global]
 smoothed_df = pd.DataFrame()
 
 # Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
@@ -169,10 +132,10 @@ alpha = (
     0.2  # The smoothing factor (you can adjust this to control the level of smoothing)
 )
 
-for (algorithm, algo_seed), group in result_df.groupby(["algorithm", "algo_seed"]):
+for (algorithm, algo_seed, algo_beta), group in result_df.groupby(
+    ["algorithm", "algo_seed", "algo_beta"]
+):
     algorithm_df = group
-    if algorithm == "fedavg" and algo_seed == 3:
-        algorithm_df = algorithm_df[0:200]
     # Sort the unique step values for interpolation
     sorted_steps = np.sort(algorithm_df["_step"].unique())
 
@@ -185,46 +148,110 @@ for (algorithm, algo_seed), group in result_df.groupby(["algorithm", "algo_seed"
             "train_accuracy": smoothed_accuracy,
             "algorithm": algorithm,
             "algo_seed": algo_seed,
+            "algo_beta": algo_beta,
         }
     )
     smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
 
+# df_filter_ucb = (result_df["algorithm"] == "ucb") & (result_df["algo_beta"] == ucb_beta)
+# df_filter_poc = (result_df["algorithm"] == "poc") & (
+#     result_df["decay_factor"] == poc_decay_factor
+# )
+# df_filter_sfedavg = (result_df["algorithm"] == "sfedavg") & (
+#     result_df["algo_alpha"] == sfedavg_alpha
+# )
+# df_filter_fedprox = (result_df["algorithm"] == "fedprox") & (
+#     result_df["mu"] == fedprox_mu
+# )
+# df_filter_fedavg = result_df["algorithm"] == "fedavg"
+# df_filter_centralised = result_df["algorithm"] == "centralised"
+
+# df_filter = df_filter_global & (
+#     df_filter_fedavg
+#     | df_filter_fedprox
+#     | df_filter_ucb
+#     | df_filter_poc
+#     | df_filter_sfedavg
+#     | df_filter_centralised
+# )
+# # print(f"ucb = {(df_filter_ucb & df_filter_global).sum()}")
+# # print(f"poc = {(df_filter_poc & df_filter_global).sum()}")
+# # print(f"fedprox = {(df_filter_fedprox & df_filter_global).sum()}")
+# # print(f"fedavg = {(df_filter_fedavg & df_filter_global).sum()}")
+# # print(f"sfedavg = {(df_filter_sfedavg & df_filter_global).sum()}")
+
+# # print(
+# #     result_df[
+# #         df_filter_fedavg
+# #         & df_filter_global
+# #         & (result_df["algo_seed"] == 3)
+# #         & (result_df["_step"] == 199)
+# #     ]
+# # )
+
+# result_df = result_df[df_filter]
+# # Create a new DataFrame to store the smoothed data
+# smoothed_df = pd.DataFrame()
+
+# # Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
+# alpha = (
+#     0.2  # The smoothing factor (you can adjust this to control the level of smoothing)
+# )
+
+# for (algorithm, algo_seed), group in result_df.groupby(["algorithm", "algo_seed"]):
+#     algorithm_df = group
+#     if algorithm == "fedavg" and algo_seed == 3:
+#         algorithm_df = algorithm_df[0:200]
+#     # Sort the unique step values for interpolation
+#     sorted_steps = np.sort(algorithm_df["_step"].unique())
+
+#     # Perform EWMA smoothing on the accuracy
+#     smoothed_accuracy = algorithm_df["train_accuracy"].ewm(alpha=alpha).mean()
+
+#     algorithm_smoothed_df = pd.DataFrame(
+#         {
+#             "_step": sorted_steps,
+#             "train_accuracy": smoothed_accuracy,
+#             "algorithm": algorithm,
+#             "algo_seed": algo_seed,
+#         }
+#     )
+#     smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
+
+sns.set_palette("deep")
 # Create the line plot with seaborn using the smoothed data
 g = sns.lineplot(
-    data=smoothed_df,
-    x="_step",
-    y="train_accuracy",
-    hue="algorithm",
+    data=smoothed_df, x="_step", y="train_accuracy", hue="algo_beta", palette="deep"
 )
 
 
 plt.ylabel("Training Accuracy")
 plt.xlabel("Communication Rounds")
 plt.ylim([0, 1])
-fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
-fedavg_text = "FedAvg"
-ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
-poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
-sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
-centralised_text = "Centralised"
-g.legend_.set_title("Algorithm")
-# ensure labels are in correct order
-new_labels = [
-    centralised_text,
-    fedavg_text,
-    fedprox_text,
-    poc_text,
-    sfedavg_text,
-    ucb_text,
-]
+# fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
+# fedavg_text = "FedAvg"
+# ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
+# poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
+# sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
+# centralised_text = "Centralised"
+g.legend_.set_title(r"$\beta$")
+# # ensure labels are in correct order
 # new_labels = [
+#     centralised_text,
 #     fedavg_text,
+#     fedprox_text,
+#     poc_text,
+#     sfedavg_text,
 #     ucb_text,
 # ]
-for t, l in zip(g.legend_.texts, new_labels):
-    t.set_text(l)
+# # new_labels = [
+# #     fedavg_text,
+# #     ucb_text,
+# # ]
+# for t, l in zip(g.legend_.texts, new_labels):
+#     t.set_text(l)
 plt.savefig(
-    f"plots/mnist-noise-{noise_level}-ssf-{select_fraction:.3f}-alpha-{dataset_alpha}.pdf",
+    f"plots/mnist-noise-ucb-{select_fraction:.3f}-{dataset_alpha}.pdf",
     format="pdf",
     bbox_inches="tight",
 )
