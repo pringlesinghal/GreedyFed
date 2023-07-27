@@ -253,7 +253,7 @@ class AlgoRun:
             wandb_config["noise_level"] = 0
 
         # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-        result_path = f'results-fmnist/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+        result_path = f'results-syn-final/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
         # if os.path.exists(result_path + f"{dict_hash(wandb_config)}.pickle"):
         #     print("this run has been performed earlier")
         #     with open(result_path + f"{dict_hash(wandb_config)}.pickle", "rb") as f:
@@ -262,7 +262,7 @@ class AlgoRun:
         #     return self.results.get_results()
 
         if logging:
-            wandb.init(project="FL-AAU-FMNIST", config=wandb_config)
+            wandb.init(project="FL-AAU-SYN-2", config=wandb_config)
 
         if algorithm == "centralised":
             (
@@ -418,7 +418,7 @@ class AlgoRun:
         if logging == True:
             self.results.config = wandb_config
             # result_path = f'results/{self.dataset_config["dataset"]}/{self.algorithm}/{self.dataset_config["num_clients"]}-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
-            result_path = f'results-fminst/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
+            result_path = f'results-syn-final/{self.algorithm}/select-{int(self.select_fraction*self.dataset_config["num_clients"])}/'
             os.makedirs(result_path, exist_ok=True)
             with open(result_path + f"{dict_hash(wandb_config)}.pickle", "wb") as f:
                 pickle.dump(self.results, f)
@@ -609,7 +609,7 @@ if __name__ == "__main__":
                             )
                             avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-SYN", name="finishing-syn-full-search")
+    wandb.init(project="FL-AAU-SYN-2", name="finishing-syn-full-search")
     wandb.alert(title="finishing synthetic full search", text="Finishing syn runs")
     wandb.finish()
 
@@ -765,6 +765,6 @@ if __name__ == "__main__":
                             )
                             avg_runs(num_runs, test_run, logging=True)
 
-    wandb.init(project="FL-AAU-FMNIST", name="finishing-syn-full-search")
+    wandb.init(project="FL-AAU-SYN-2", name="finishing-syn-full-search")
     wandb.alert(title="finishing synthetic full search", text="Finishing syn runs")
     wandb.finish()
