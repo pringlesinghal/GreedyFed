@@ -99,7 +99,9 @@ def centralised_run(
         test_acc_now = server.accuracy()
         train_acc_now = server.accuracy()
         with torch.no_grad():
-            train_loss_now = fed_avg_criterion()(server.model, data, targets)
+            train_loss_now = float(
+                fed_avg_criterion()(server.model, data, targets).cpu()
+            )
         val_loss_now = server.val_loss(server.model, fed_avg_criterion())
         test_loss_now = server.test_loss(fed_avg_criterion())
 

@@ -499,7 +499,7 @@ if __name__ == "__main__":
 
     noise_levels = [0]
     dataset_alphas = [dirichlet_alpha]
-    algorithms = ["ucb", "fedavg", "poc", "sfedavg", "fedprox", "centralised"]
+    algorithms = ["centralised"]
     select_fractions = [10 / 300]
     sfedavg_alphas = [0.5]
     poc_decay_factors = [0.9]
