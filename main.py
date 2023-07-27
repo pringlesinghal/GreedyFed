@@ -480,9 +480,9 @@ if __name__ == "__main__":
     algorithm = "fedavg"
     select_fraction = 10 / 360
 
-    E = 10
-    B = 10
-    T = 400
+    E = 5
+    B = 5
+    T = 200
     lr = 0.01
     momentum = 0.5
     mu = None
@@ -501,10 +501,10 @@ if __name__ == "__main__":
     dataset_alphas = [dirichlet_alpha]
     algorithms = ["ucb", "fedavg", "poc", "sfedavg", "fedprox", "centralised"]
     select_fractions = [10 / 300]
-    sfedavg_alphas = [0.25, 0.5, 0.75]
-    poc_decay_factors = [1, 0.9]
-    fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
-    ucb_betas = [0.001, 0.01, 0.1, 1, 10]
+    sfedavg_alphas = [0.5]
+    poc_decay_factors = [0.9]
+    fedprox_mus = [0.001, 10]
+    ucb_betas = [0.001, 10]
 
     for select_fraction in select_fractions:
         for noise_level in noise_levels:
@@ -636,9 +636,9 @@ if __name__ == "__main__":
     algorithm = "fedavg"
     select_fraction = 10 / 360
 
-    E = 10
-    B = 10
-    T = 400
+    E = 5
+    B = 5
+    T = 200
     lr = 0.01
     momentum = 0.5
     mu = None
@@ -653,14 +653,14 @@ if __name__ == "__main__":
     """
     num_runs = 5
 
-    noise_levels = [0]
+    noise_levels = [0.1]
     dataset_alphas = [dirichlet_alpha]
     algorithms = ["ucb", "fedavg", "poc", "sfedavg", "fedprox", "centralised"]
     select_fractions = [10 / 300]
-    sfedavg_alphas = [0.25, 0.5, 0.75]
-    poc_decay_factors = [1, 0.9]
-    fedprox_mus = [0.001, 0.01, 0.1, 1, 10]
-    ucb_betas = [0.001, 0.01, 0.1, 1, 10]
+    sfedavg_alphas = [0.5]
+    poc_decay_factors = [0.9]
+    fedprox_mus = [0.001, 10]
+    ucb_betas = [0.001, 10]
 
     for select_fraction in select_fractions:
         for noise_level in noise_levels:
