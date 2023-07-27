@@ -497,7 +497,7 @@ if __name__ == "__main__":
     """
     num_runs = 5
 
-    noise_levels = [0]
+    noise_levels = [0, 0.1]
     dataset_alphas = [1, 0.5]
     algorithms = ["ucb", "fedavg", "poc", "sfedavg", "fedprox", "centralised"]
     select_fractions = [10 / 300]
