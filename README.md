@@ -13,7 +13,7 @@ Dataset Configuration:
 4. alpha, beta (parameters for the Synthetic dataset only) (typically $\alpha = \beta = 0, 0.5, 1$)
 
 Algorithm Configuration:
-1. algorithms to execute (from '''['fedavg','fedprox','sfedavg','ucb','centralised','poc']''')
+1. algorithms to execute (from ```['fedavg','fedprox','sfedavg','ucb','centralised','poc']```)
 2. client select fraction $\frac{M}{N}$
 3. E, B, lr, momentum (epochs, batches, learning rate, SGD momentum)
 4. T (number of communication rounds)
