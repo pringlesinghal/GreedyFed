@@ -578,6 +578,7 @@ def ucb_run(
     learning_rate=0.01,
     momentum=0.5,
     logging=False,
+    shap_memory=0.8,
 ):
     clients = deepcopy(clients)
     client_weights = np.array([client.length for client in clients])
@@ -592,9 +593,11 @@ def ucb_run(
     train_acc = []
     train_loss = []
     val_loss = []
+    val_loss_0 = server.val_loss(server.model, fed_avg_criterion())
     test_loss = []
 
     shapley_values_T = []
+    shapley_values_curr_T = []
     ucb_values_T = []
     selections_T = []
     draws_T = []
@@ -604,6 +607,7 @@ def ucb_run(
     N_t = [0 for i in range(num_clients)]
     UCB = [0 for i in range(num_clients)]
     SV = [0 for i in range(num_clients)]
+    SV_curr = [0 for i in range(num_clients)]
     for t in tqdm(range(T)):
         # select clients to transmit weights to
         # initially sample every client atleast once
@@ -669,12 +673,12 @@ def ucb_run(
         # # print(f"SV = {shapley_values_tmc}")
         # num_model_evaluations["tmc"].append(server.model_evaluations)
 
-        print("starting GTG")
+        # print("starting GTG")
         server.model_evaluations = 0
         shapley_values_gtg = server.shapley_values_gtg(
             fed_avg_criterion(), client_states, weights
         )
-        print(f"server evaluations = {server.model_evaluations}")
+        # print(f"server evaluations = {server.model_evaluations}")
         # print(f"SV = {shapley_values_gtg}")
         num_model_evaluations["gtg"].append(server.model_evaluations)
 
@@ -721,13 +725,35 @@ def ucb_run(
         # compute UCB for next round of selections
         selections = [0 for i in range(num_clients)]
         counter = 0
+        if t == 0:
+            val_loss_diff = np.abs(np.diff([val_loss_0] + val_loss)[-1])
+        else:
+            curr_val_loss_diff = np.diff(val_loss)[-1]
+            if curr_val_loss_diff < 0:
+                # if val loss decreased
+                val_loss_diff = -1 * curr_val_loss_diff  # else stick to previous value
         for i in range(num_clients):
             if selected_status[i]:
-                SV[i] = ((N_t[i] - 1) * SV[i] + shapley_values[counter]) / N_t[i]
+                SV_curr[i] = shapley_values[counter]
+                if shap_memory in ["mean", "mean-norm"]:
+                    prev_wt = (N_t[i] - 1) / N_t[i]
+                else:
+                    prev_wt = shap_memory
+
+                prev_sv = SV[i]
+                curr_wt = 1 - prev_wt  # 1 / N_t[i]
+                if shap_memory == "mean-norm":
+                    curr_sv = SV_curr[i] / val_loss_diff
+                else:
+                    curr_sv = SV_curr[i]
+                SV[i] = prev_wt * prev_sv + curr_wt * curr_sv
                 counter += 1
                 selections[i] = 1
+            else:
+                SV_curr[i] = 0
             UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
         shapley_values_T.append(deepcopy(SV))
+        shapley_values_curr_T.append(deepcopy(SV_curr))
         ucb_values_T.append(deepcopy(UCB))
         selections_T.append(deepcopy(selections))
         draws_T.append(deepcopy(N_t))
@@ -741,6 +767,7 @@ def ucb_run(
 
         for i in range(num_clients):
             log_dict[f"shapley_value_{i}"] = SV[i]
+            log_dict[f"shapley_value_{i}_curr"] = SV_curr[i]
             log_dict[f"selection_{i}"] = selections[i]
 
         if logging == True:
@@ -782,6 +809,8 @@ def sfedavg_run(
     learning_rate=0.01,
     momentum=0.5,
     logging=False,
+    temperature=1e2,
+    alpha_init=3e-2,
 ):
     clients = deepcopy(clients)
     client_weights = np.array([client.length for client in clients])
@@ -804,7 +833,7 @@ def sfedavg_run(
     draws_T = []
 
     N_t = [0 for i in range(num_clients)]
-    Phi = [1 / (num_clients) for i in range(num_clients)]
+    Phi = [alpha_init for i in range(num_clients)]  # TODO: replace with 1/ num_clients
     SV = [0 for i in range(num_clients)]
     for t in tqdm(range(T)):
         # select clients to transmit weights to
@@ -812,7 +841,7 @@ def sfedavg_run(
         selected_status = [False for i in range(num_clients)]
         # do Game of Gradients Selection
         all_indices = list(range(num_clients))
-        probs = np.exp(np.array(Phi))
+        probs = np.exp(temperature * np.array(Phi))
         probs = probs / np.sum(probs)
         selected_indices = np.random.choice(
             all_indices, size=num_selected, replace=False, p=probs

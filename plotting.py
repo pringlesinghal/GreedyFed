@@ -52,7 +52,7 @@ def average_results(results):
 
 # Set your project name and entity (if applicable)
 project_name = "FL-AAU-MNIST-2"
-download_again = False
+download_again = True
 # entity = "your_entity"  # Optional if the project is in your default entity
 # Fetch run data from wandb
 result_path = "mnist-runs.pkl"
