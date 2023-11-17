@@ -80,6 +80,7 @@ def centralised_run(
     optimiser = optim.SGD(
         server.model.parameters(), lr=learning_rate, momentum=momentum
     )
+    E = np.max(E)
     for t in tqdm(range(T)):
         for iteration in range(E * B):
             all_indices = np.random.permutation(list(range(num_datapoints)))
@@ -147,6 +148,8 @@ def fed_avg_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
 
     test_acc = []
@@ -178,7 +181,7 @@ def fed_avg_run(
                 client_state = client.train(
                     server.model,
                     criterion=fed_avg_criterion(),
-                    E=E,
+                    E=E[idx],
                     B=B,
                     learning_rate=learning_rate,
                     momentum=momentum,
@@ -248,6 +251,8 @@ def fed_prox_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
 
     test_acc = []
@@ -279,7 +284,7 @@ def fed_prox_run(
                 client_state = client.train(
                     server.model,
                     criterion=fed_prox_criterion(server.model, mu=mu),
-                    E=E,
+                    E=E[idx],
                     B=B,
                     learning_rate=learning_rate,
                     momentum=momentum,
@@ -363,6 +368,8 @@ def power_of_choice_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
 
     test_acc = []
@@ -415,7 +422,7 @@ def power_of_choice_run(
                 client_state = client.train(
                     server.model,
                     criterion=fed_avg_criterion(),
-                    E=E,
+                    E=E[idx],
                     B=B,
                     learning_rate=learning_rate,
                     momentum=momentum,
@@ -483,6 +490,8 @@ def shapley_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
     choose_from = num_clients  # the size of initial client subset to query for loss
 
@@ -503,7 +512,7 @@ def shapley_run(
             client_state = client.train(
                 server.model,
                 criterion=fed_avg_criterion(),
-                E=E,
+                E=E[idx],
                 B=B,
                 learning_rate=learning_rate,
                 momentum=momentum,
@@ -578,7 +587,6 @@ def ucb_run(
     learning_rate=0.01,
     momentum=0.5,
     logging=False,
-    shap_memory=0.8,
 ):
     clients = deepcopy(clients)
     client_weights = np.array([client.length for client in clients])
@@ -587,6 +595,8 @@ def ucb_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
 
     test_acc = []
@@ -645,7 +655,230 @@ def ucb_run(
                 client_state = client.train(
                     server.model,
                     criterion=fed_avg_criterion(),
-                    E=E,
+                    E=E[idx],
+                    B=B,
+                    learning_rate=learning_rate,
+                    momentum=momentum,
+                )
+                weight = client.length  # number of data points at client
+                client_states.append(client_state)
+                weights.append(weight)
+
+        # compute shapley values for each client BEFORE updating server model
+
+        # print('starting MC')
+        # server.model_evaluations = 0
+        # shapley_values = server.shapley_values_mc(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # print(f'SV = {shapley_values}')
+        # print(f'server evaluations = {server.model_evaluations}')
+
+        # print("starting TMC")
+        # server.model_evaluations = 0
+        # shapley_values_tmc = server.shapley_values_tmc(
+        #     fed_avg_criterion(), deepcopy(client_states), deepcopy(weights)
+        # )
+        # print(f"server evaluations = {server.model_evaluations}")
+        # # print(f"SV = {shapley_values_tmc}")
+        # num_model_evaluations["tmc"].append(server.model_evaluations)
+
+        # print("starting GTG")
+        server.model_evaluations = 0
+        shapley_values_gtg = server.shapley_values_gtg(
+            fed_avg_criterion(), client_states, weights
+        )
+        # print(f"server evaluations = {server.model_evaluations}")
+        # print(f"SV = {shapley_values_gtg}")
+        num_model_evaluations["gtg"].append(server.model_evaluations)
+
+        # print("starting True")
+        # server.model_evaluations = 0
+        # shapley_values_true = server.shapley_values_true(
+        #     fed_avg_criterion(), client_states, weights
+        # )
+        # print(f"server evaluations = {server.model_evaluations}")
+        # # print(f"SV = {shapley_values_true}")
+        # num_model_evaluations["true"].append(server.model_evaluations)
+
+        sv_rounds["gtg"].append(shapley_values_gtg)
+        # sv_rounds["tmc"].append(shapley_values_tmc)
+        # sv_rounds["true"].append(shapley_values_true)
+
+        shapley_values = shapley_values_gtg
+        # shapley_values = shapley_values / np.sum(shapley_values)
+
+        # update server model
+        server.aggregate(client_states, weights)
+        test_acc_now = server.accuracy()
+        train_acc_now = np.sum(
+            [
+                client_weights[i] * clients[i].accuracy_(server.model)
+                for i in range(num_clients)
+            ]
+        )
+        train_loss_now = np.sum(
+            [
+                client_weights[i] * clients[i].loss(server.model, fed_avg_criterion())
+                for i in range(num_clients)
+            ]
+        )
+        val_loss_now = server.val_loss(server.model, fed_avg_criterion())
+        test_loss_now = server.test_loss(fed_avg_criterion())
+
+        train_acc.append(train_acc_now)
+        test_acc.append(test_acc_now)
+        train_loss.append(train_loss_now)
+        val_loss.append(val_loss_now)
+        test_loss.append(test_loss_now)
+
+        # compute UCB for next round of selections
+        selections = [0 for i in range(num_clients)]
+        counter = 0
+        if t == 0:
+            val_loss_diff = np.abs(np.diff([val_loss_0] + val_loss)[-1])
+        else:
+            curr_val_loss_diff = np.diff(val_loss)[-1]
+            if curr_val_loss_diff < 0:
+                # if val loss decreased
+                val_loss_diff = -1 * curr_val_loss_diff  # else stick to previous value
+        for i in range(num_clients):
+            if selected_status[i]:
+                SV_curr[i] = shapley_values[counter]
+                prev_wt = (N_t[i] - 1) / N_t[i]
+                prev_sv = SV[i]
+                curr_wt = 1 - prev_wt  # 1 / N_t[i]
+                curr_sv = SV_curr[i]
+                SV[i] = prev_wt * prev_sv + curr_wt * curr_sv
+                counter += 1
+                selections[i] = 1
+            else:
+                SV_curr[i] = 0
+            UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
+        shapley_values_T.append(deepcopy(SV))
+        shapley_values_curr_T.append(deepcopy(SV_curr))
+        ucb_values_T.append(deepcopy(UCB))
+        selections_T.append(deepcopy(selections))
+        draws_T.append(deepcopy(N_t))
+        log_dict = {
+            "train_accuracy": train_acc_now,
+            "test_accuracy": test_acc_now,
+            "train_loss": train_loss_now,
+            "val_loss": val_loss_now,
+            "test_loss": test_loss_now,
+        }
+
+        for i in range(num_clients):
+            log_dict[f"shapley_value_{i}"] = SV[i]
+            log_dict[f"shapley_value_{i}_curr"] = SV_curr[i]
+            log_dict[f"selection_{i}"] = selections[i]
+
+        if logging == True:
+            wandb.log(log_dict)
+
+        # if t % 10 == 0:
+        #     sns.heatmap(selections_T).set(title="selections")
+        #     plt.show()
+        #     sns.heatmap(shapley_values_T).set(title="SV")
+        #     plt.show()
+
+    if logging == True:
+        wandb.finish()
+
+    return (
+        test_acc,
+        train_acc,
+        train_loss,
+        val_loss,
+        test_loss,
+        selections_T,
+        shapley_values_T,
+        sv_rounds,
+        num_model_evaluations,
+        ucb_values_T,
+    )
+
+def greedy_shap_run(
+    clients,
+    server,
+    select_fraction,
+    T,
+    random_seed=0,
+    E=5,
+    B=10,
+    learning_rate=0.01,
+    momentum=0.5,
+    logging=False,
+    shap_memory=0.8,
+):
+    clients = deepcopy(clients)
+    client_weights = np.array([client.length for client in clients])
+    client_weights = client_weights / np.sum(client_weights)
+    server = deepcopy(server)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
+    num_selected = int(np.ceil(select_fraction * num_clients))
+
+    test_acc = []
+    train_acc = []
+    train_loss = []
+    val_loss = []
+    val_loss_0 = server.val_loss(server.model, fed_avg_criterion())
+    test_loss = []
+
+    shapley_values_T = []
+    shapley_values_curr_T = []
+    ucb_values_T = []
+    selections_T = []
+    draws_T = []
+    sv_rounds = {"gtg": [], "tmc": [], "true": []}
+    num_model_evaluations = {"gtg": [], "tmc": [], "true": []}
+
+    N_t = [0 for i in range(num_clients)]
+    UCB = [0 for i in range(num_clients)]
+    SV = [0 for i in range(num_clients)]
+    SV_curr = [0 for i in range(num_clients)]
+    for t in tqdm(range(T)):
+        # select clients to transmit weights to
+        # initially sample every client atleast once
+        selected_status = [False for i in range(num_clients)]
+        if t < np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, (t + 1) * num_selected):
+                selected_status[idx] = True
+                N_t[idx] += 1
+        elif t == np.floor(num_clients / num_selected):
+            for idx in range(t * num_selected, num_clients):
+                selected_status[idx] = True
+                N_t[idx] += 1
+            remaining_selections = num_selected * (t + 1) - num_clients
+            if remaining_selections > 0:
+                unselected_indices = list(range(0, t * num_selected))
+                selected_indices_subset = np.random.choice(
+                    unselected_indices, size=remaining_selections, replace=False
+                )
+                for idx in selected_indices_subset:
+                    selected_status[idx] = True
+                    N_t[idx] += 1
+        else:
+            # do UCB selection
+            selected_indices = topk(UCB, num_selected)
+            for idx in selected_indices:
+                selected_status[idx] = True
+                N_t[idx] += 1
+        # uniform random
+        client_states = []
+        weights = []
+
+        for idx, client in enumerate(clients):
+            if selected_status[idx]:
+                # perform descent at client
+                client_state = client.train(
+                    server.model,
+                    criterion=fed_avg_criterion(),
+                    E=E[idx],
                     B=B,
                     learning_rate=learning_rate,
                     momentum=momentum,
@@ -751,7 +984,7 @@ def ucb_run(
                 selections[i] = 1
             else:
                 SV_curr[i] = 0
-            UCB[i] = SV[i] + beta * np.sqrt(np.log(t + 1) / N_t[i])
+            UCB[i] = SV[i]
         shapley_values_T.append(deepcopy(SV))
         shapley_values_curr_T.append(deepcopy(SV_curr))
         ucb_values_T.append(deepcopy(UCB))
@@ -819,6 +1052,8 @@ def sfedavg_run(
     torch.manual_seed(random_seed)
     np.random.seed(random_seed)
     num_clients = len(clients)
+    if type(E) == int:
+        E = [E for _ in range(num_clients)]
     num_selected = int(np.ceil(select_fraction * num_clients))
 
     test_acc = []
@@ -859,7 +1094,7 @@ def sfedavg_run(
                 client_state = client.train(
                     server.model,
                     criterion=fed_avg_criterion(),
-                    E=E,
+                    E=E[idx],
                     B=B,
                     learning_rate=learning_rate,
                     momentum=momentum,

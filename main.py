@@ -8,13 +8,14 @@ import seaborn as sns
 import pickle
 import os
 
-GLOBAL_PROJECT_NAME = "FL-FMNIST-Nov"
+GLOBAL_PROJECT_NAME = "FL-Synthetic-Nov"
 from initialise import initNetworkData
 from algorithms import (
     fed_avg_run,
     fed_prox_run,
     sfedavg_run,
     ucb_run,
+    greedy_shap_run,
     power_of_choice_run,
     centralised_run,
 )
@@ -462,7 +463,7 @@ if __name__ == "__main__":
     First configure dataset and split
     """
     # dataset from ["cifar10", "mnist", "synthetic", "fmnist"]
-    dataset = "fmnist"
+    dataset = "synthetic"
     num_clients = 300
     dirichlet_alpha = 0.0001
     dataset_alpha = 1
@@ -510,7 +511,7 @@ if __name__ == "__main__":
     poc_decay_factors = [0.9]
     fedprox_mus = [10]
     ucb_beta = 0  # [1e-6, 0.001, 0.01, 10, 100]
-    ucb_shap_memory = ["mean-norm"]  # ["mean", 0, 0.4, 0.8]
+    ucb_shap_memory = ["mean", 0.5, 0]  # ["mean-norm", "mean", 0, 0.4, 0.8]
 
     for select_fraction in select_fractions:
         for noise_level in noise_levels:
