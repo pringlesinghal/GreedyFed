@@ -25,7 +25,7 @@ Algorithm Hyperparameters
 4. GreedyFed (memory, weight for exponentially weighted average)
 
 Logging results:
-if logging is set to True the runs are saved on wandb \
+if logging is set to True the runs are saved on wandb
 
 You can set the above parameters to a single value or implement a hyperparameter sweep over a list of values. After selecting the desired values, execute the following
 ```
