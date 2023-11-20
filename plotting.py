@@ -15,6 +15,9 @@ from matplotlib import rc
 from main import AlgoResults
 from utils import dict_hash
 
+import warnings
+warnings.filterwarnings("ignore")
+
 rc("mathtext", default="regular")
 
 
@@ -51,11 +54,35 @@ def average_results(results):
 # Login to your wandb account (only needed once)
 
 # Set your project name and entity (if applicable)
-project_name = "FL-AAU-MNIST-2"
-download_again = True
+result_path_parent = "final_results/"
+dataset = "cifar10"
+print(dataset)
+if dataset in ["fmnist","mnist"]:
+    select_fraction_main = 0.01 # 0.03
+    T_main = 400
+    T_array = [150, 250, 350]
+    # For mnist and fmnist
+    select_fraction_main = 0.01
+    if dataset in ["fmnist"]:
+        GLOBAL_PROJECT_NAME = "FL-FMNIST-Final"
+    else:
+        GLOBAL_PROJECT_NAME = "FL-MNIST-Final"
+elif dataset in ["cifar10"]:
+    select_fraction_main = 0.1
+    T_main = 200      
+    T_array = [100, 150, 200]
+    select_fraction_main = 0.1
+    GLOBAL_PROJECT_NAME = "FL-CIFAR10-Final"
+project_name = GLOBAL_PROJECT_NAME
+
+
+download_again = False
+print(f"download status = {download_again}")
 # entity = "your_entity"  # Optional if the project is in your default entity
 # Fetch run data from wandb
-result_path = "mnist-runs.pkl"
+result_path = os.path.join(result_path_parent, f"{dataset}-runs.pkl")
+if not os.path.exists(result_path_parent):
+    os.makedirs(result_path_parent)
 if os.path.exists(result_path) and download_again == False:
     with open(result_path, "rb") as f:
         runs = pickle.load(f)
@@ -63,18 +90,20 @@ else:
     wandb.login()
     runs = wandb.Api().runs(
         f"{project_name}",
-        filters={
-            "config.noise_level": {"$in": [0.1]},
-            "config.select_fraction": {"$in": [30 / 300]},
-        },
+        # filters={
+        #     "config.noise_level": {"$in": [0, 0.05, 0.1]},
+        #     "config.select_fraction": {"$in": [0.01]},
+        #     "config.dataset_alpha": {"$in": [1e-4, 1e-1, 1e1]},
+        #     "config.systems_heterogenity": {"$in": [0, 0.5, 0.9]},
+        # },
     )
     with open(result_path, "wb") as f:
         pickle.dump(runs, f)
 
-result_df_path = "mnist-runs-df.pkl"
+result_df_path = os.path.join(result_path_parent, f"{dataset}-runs-df.pkl")
 if os.path.exists(result_df_path) and download_again == False:
     with open(result_df_path, "rb") as f:
-        result_df = pickle.load(f)
+        result_df_original = pickle.load(f)
 else:
     completed_runs = []
     print(len(runs))
@@ -83,9 +112,7 @@ else:
 
         if (
             len(config) > 0
-            and config["T"] == 200
-            and config["num_clients"] == 300
-            and config["dataset"] == "mnist"
+            and config["select_fraction"] == select_fraction_main
         ):
             run_data = run.history(
                 keys=[
@@ -94,8 +121,11 @@ else:
                     "train_loss",
                     "val_loss",
                     "test_loss",
+                    "_timestamp"
                 ]
             )
+            if len(run_data) < T_main:
+                continue
             run_config = pd.DataFrame.from_dict([config])
             merged_df = (
                 run_data.assign(key=1)
@@ -105,53 +135,168 @@ else:
             completed_runs.append(merged_df)
             print(len(completed_runs))
 
-    result_df = pd.concat(completed_runs, ignore_index=True)
+    result_df_original = pd.concat(completed_runs, ignore_index=True)
     with open(result_df_path, "wb") as f:
-        pickle.dump(result_df, f)
+        pickle.dump(result_df_original, f)
+algo_list = ["greedyshap","ucb","sfedavg","fedavg","fedprox","poc","centralised"]
+algo_list_formal = ["GreedyFed","UCB","S-FedAvg","FedAvg","FedProx","Power-Of-Choice","Centralized"]
+def format_results(T_results, smoothed_df):
+    T_results = T_results - 1
+    resultsgroup = smoothed_df[smoothed_df["_step"] == T_results].groupby(["algorithm", "memory","mu"], dropna = False)
+    accuracy_mean = resultsgroup.mean()["test_accuracy"]
+    accuracy_std = resultsgroup.std()["test_accuracy"]
+    best_idxs = accuracy_mean.groupby("algorithm").idxmax()
+    accuracy_mean = accuracy_mean[best_idxs]
+    accuracy_std = accuracy_std[best_idxs]
+    # Create a custom categorical data type
+    algo_cat = pd.CategoricalDtype(categories=algo_list, ordered=True)
+    df = accuracy_mean
+    # Apply the custom data type to the "algorithm" column
+    df.index = df.index.set_levels(df.index.levels[0].astype(algo_cat), level='algorithm')
+    accuracy_mean = list(accuracy_mean.sort_index(level="algorithm"))
+    df = accuracy_std
+    # Apply the custom data type to the "algorithm" column
+    df.index = df.index.set_levels(df.index.levels[0].astype(algo_cat), level='algorithm')
+    accuracy_std = list(accuracy_std.sort_index(level="algorithm"))
+    result_list = []
+    for idx, algorithm in enumerate(algo_list):
+        # print(f"{algorithm} ${100*accuracy_mean[idx]:.2f}"+" \pm "+f"{100*accuracy_std[idx]:.2f}$")
+        result_list.append(f"${100*accuracy_mean[idx]:.2f} \pm {100*accuracy_std[idx]:.2f}$")
+    return result_list
+def smoothen_df(alpha, result_df):
+    smoothed_df = pd.DataFrame()
+    # Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
 
-noise_level = 0.1
-select_fraction = 7 / 300
-dataset_alpha = 1e-1
+    for (algorithm, seed, memory, mu, dataset_alpha, noise, systems_heterogenity), group in result_df.groupby(
+        ["algorithm", "seed", "memory","mu","dataset_alpha", "noise", "systems_heterogenity"], dropna = False
+    ):
+        # keep only the latest run if all parameters are same
+        if (group["_timestamp"].head(T_main).values > group["_timestamp"].tail(T_main).values)[0]:
+            algorithm_df = group.head(T_main)
+        else:
+            algorithm_df = group.tail(T_main)
+        # Sort the unique step values for interpolation
+        sorted_steps = np.sort(algorithm_df["_step"].unique())
 
-# ucb_beta = 0.001
-# poc_decay_factor = 0.9
-# sfedavg_alpha = 0.5
-# fedprox_mu = 0.001
+        # Perform EWMA smoothing on the accuracy
+        smoothed_accuracy = algorithm_df["test_accuracy"].ewm(alpha=alpha).mean()
 
-df_filter_global = (
-    (result_df["noise_level"] == noise_level)
-    & (result_df["select_fraction"] == select_fraction)
-    & (result_df["dataset_alpha"] == dataset_alpha)
-)
-result_df_original = result_df.copy(deep=True)
-result_df = result_df[(result_df["algorithm"] == "ucb") & df_filter_global]
-smoothed_df = pd.DataFrame()
+        algorithm_smoothed_df = pd.DataFrame(
+            {
+                "_step": sorted_steps,
+                "test_accuracy": smoothed_accuracy,
+                "algorithm": algorithm,
+                "seed": seed,
+                "memory": memory,
+                "mu":mu,
+                "dataset_alpha":dataset_alpha,
+                "noise":noise,
+                "systems_heterogenity":systems_heterogenity,
+            }
+        )
+        smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
+    return smoothed_df
 
-# Smooth the data for each unique combination of 'algorithm' and 'algo_seed' separately using EWMA
-alpha = (
-    0.2  # The smoothing factor (you can adjust this to control the level of smoothing)
-)
+def generate_timing_results(result_df_original, smoothing=0, T = [150, 250, 350]):
+    noise = 0
+    dataset_alpha = 1e-4
+    systems_heterogenity = 0
 
-for (algorithm, algo_seed, algo_beta), group in result_df.groupby(
-    ["algorithm", "algo_seed", "algo_beta"]
-):
-    algorithm_df = group
-    # Sort the unique step values for interpolation
-    sorted_steps = np.sort(algorithm_df["_step"].unique())
+    df_filter_global = (
+        (result_df_original["noise"] == noise)
 
-    # Perform EWMA smoothing on the accuracy
-    smoothed_accuracy = algorithm_df["train_accuracy"].ewm(alpha=alpha).mean()
-
-    algorithm_smoothed_df = pd.DataFrame(
-        {
-            "_step": sorted_steps,
-            "train_accuracy": smoothed_accuracy,
-            "algorithm": algorithm,
-            "algo_seed": algo_seed,
-            "algo_beta": algo_beta,
-        }
+        & (result_df_original["dataset_alpha"] == dataset_alpha)
+        & (result_df_original["systems_heterogenity"] == systems_heterogenity)
+        & (result_df_original["algo_beta"] != 0.01)
     )
-    smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
+    result_df = result_df_original.copy(deep=True)
+    result_df = result_df[df_filter_global]
+    smoothed_df = smoothen_df(1 - smoothing, result_df)
+
+    # Timing constraints data MNIST
+    results_1 = format_results(T_results=T[0], smoothed_df=smoothed_df)
+    results_2 = format_results(T_results=T[1], smoothed_df=smoothed_df)
+    results_3 = format_results(T_results=T[2], smoothed_df=smoothed_df)
+    for algo, a, b ,c in zip(algo_list_formal, results_1, results_2, results_3):
+        print(f"& {algo} & {a} & {b} & {c} \\\\")
+
+def generate_datahet_results(result_df_original, smoothing=0):
+    noise = 0
+    systems_heterogenity = 0
+    T = T_main
+
+    df_filter_global = (
+        (result_df_original["noise"] == noise)
+        & (result_df_original["systems_heterogenity"] == systems_heterogenity)
+        & (result_df_original["algo_beta"] != 0.01)
+    )
+    result_df = result_df_original.copy(deep=True)
+    result_df = result_df[df_filter_global]
+    smoothed_df = smoothen_df(1 - smoothing, result_df)
+
+    # Timing constraints data MNIST
+    results_1 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["dataset_alpha"]==1e-4])
+    results_2 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["dataset_alpha"]==1e-1])
+    results_3 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["dataset_alpha"]==1e1])
+    for algo, a, b ,c in zip(algo_list_formal, results_1, results_2, results_3):
+        print(f"& {algo} & {a} & {b} & {c} \\\\")
+
+def generate_systems_results(result_df_original, smoothing=0):
+    noise = 0
+    dataset_alpha = 1e-4
+    T = T_main
+
+    df_filter_global = (
+        (result_df_original["noise"] == noise)
+        & (result_df_original["dataset_alpha"] == dataset_alpha)
+        & (result_df_original["algo_beta"] != 0.01)
+    )
+    result_df = result_df_original.copy(deep=True)
+    result_df = result_df[df_filter_global]
+
+    smoothed_df = smoothen_df(1 - smoothing, result_df)
+
+    # Timing constraints data MNIST
+    results_1 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["systems_heterogenity"]==0])
+    results_2 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["systems_heterogenity"]==0.5])
+    results_3 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["systems_heterogenity"]==0.9])
+    for algo, a, b ,c in zip(algo_list_formal, results_1, results_2, results_3):
+        print(f"& {algo} & {a} & {b} & {c} \\\\")
+
+def generate_noise_results(result_df_original, smoothing=0):
+    systems_heterogenity = 0
+    dataset_alpha = 1e-4
+    T = T_main
+
+    df_filter_global = (
+        (result_df_original["systems_heterogenity"] == systems_heterogenity)
+        & (result_df_original["dataset_alpha"] == dataset_alpha)
+        & (result_df_original["algo_beta"] != 0.01)
+    )
+    result_df = result_df_original.copy(deep=True)
+    result_df = result_df[df_filter_global]
+
+    smoothed_df = smoothen_df(1 - smoothing, result_df)
+
+    # Timing constraints data MNIST
+    results_1 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["noise"]==0])
+    results_2 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["noise"]==0.05])
+    results_3 = format_results(T_results=T, smoothed_df=smoothed_df[smoothed_df["noise"]==0.1])
+    for algo, a, b ,c in zip(algo_list_formal, results_1, results_2, results_3):
+        print(f"& {algo} & {a} & {b} & {c} \\\\")
+
+print("data")
+generate_datahet_results(result_df_original)
+print("timing")
+generate_timing_results(result_df_original, T=T_array)
+print("systems")
+generate_systems_results(result_df_original)
+print("noise")
+generate_noise_results(result_df_original)
+
+
+
+
 
 # df_filter_ucb = (result_df["algorithm"] == "ucb") & (result_df["algo_beta"] == ucb_beta)
 # df_filter_poc = (result_df["algorithm"] == "poc") & (
@@ -218,23 +363,23 @@ for (algorithm, algo_seed, algo_beta), group in result_df.groupby(
 #     )
 #     smoothed_df = pd.concat([smoothed_df, algorithm_smoothed_df])
 
-sns.set_palette("deep")
-# Create the line plot with seaborn using the smoothed data
-g = sns.lineplot(
-    data=smoothed_df, x="_step", y="train_accuracy", hue="algo_beta", palette="deep"
-)
+# sns.set_palette("deep")
+# # Create the line plot with seaborn using the smoothed data
+# g = sns.lineplot(
+#     data=smoothed_df, x="_step", y="test_accuracy", hue="memory", palette="deep"
+# )
 
 
-plt.ylabel("Training Accuracy")
-plt.xlabel("Communication Rounds")
-plt.ylim([0, 1])
-# fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
-# fedavg_text = "FedAvg"
-# ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
-# poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
-# sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
-# centralised_text = "Centralised"
-g.legend_.set_title(r"$\beta$")
+# plt.ylabel("Training Accuracy")
+# plt.xlabel("Communication Rounds")
+# plt.ylim([0, 1])
+# # fedprox_text = "FedProx, " + r"$\mu = $" + f"{fedprox_mu}"
+# # fedavg_text = "FedAvg"
+# # ucb_text = "Fed-Shap-UCB, " + r"$\beta = $" + f"{ucb_beta}"
+# # poc_text = "Power-Of-Choice, " + r"$\lambda = $" + f"{poc_decay_factor}"
+# # sfedavg_text = "S-FedAvg, " + r"$\alpha = $" + f"{sfedavg_alpha}"
+# # centralised_text = "Centralised"
+# g.legend_.set_title(r"$\beta$")
 # # ensure labels are in correct order
 # new_labels = [
 #     centralised_text,
@@ -250,11 +395,11 @@ g.legend_.set_title(r"$\beta$")
 # # ]
 # for t, l in zip(g.legend_.texts, new_labels):
 #     t.set_text(l)
-plt.savefig(
-    f"plots/mnist-noise-ucb-{select_fraction:.3f}-{dataset_alpha}.pdf",
-    format="pdf",
-    bbox_inches="tight",
-)
+# plt.savefig(
+#     f"plots/mnist-noise-ucb-{select_fraction:.3f}-{dataset_alpha}.pdf",
+#     format="pdf",
+#     bbox_inches="tight",
+# )
 
 # plt.show()
 
