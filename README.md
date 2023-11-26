@@ -1,4 +1,4 @@
-# Greedy Shapley Selection for Communication-Efficient Federated Learning
+# Greedy Shapley Client Selection for Communication-Efficient Federated Learning
 This repository implements the **GreedyFed** algorithm for accelerating convergence in federated learning and compares it against other baselines like **UCB**, **FedAvg**, **FedProx**, **S-FedAvg**, **Power-Of-Choice** and **Centralised** training on the **MNIST**, **FMINST**, and **CIFAR-10** datasets. Results are logged and visualized using W&B.
 
 ***
