@@ -1,6 +1,5 @@
-# Greedy Shapley Selection for Communication-Efficient Federated Learning
-This repository implements the **GreedyFed** algorithm for accelerating convergence in federated learning and compares it against other baselines like **UCB**, **FedAvg**, **FedProx**, **S-FedAvg**, **Power-Of-Choice** and **Centralised** training on the **MNIST**, **FMINST**, and **CIFAR-10** datasets. Results are logged and visualized using W&B.
-
+# Greedy Shapley Selection for Communication-Efficient Federated Learning <a href="https://drive.google.com/file/d/19nMQb0LPI2YCVpalM9eZPBITOnXuQUFl/view?usp=sharing"><img src="docs/assets/text70.svg" alt="paper" width="24" height="24"></a>
+This repository implements the **GreedyFed** algorithm for accelerating convergence in federated learning and compares it against other baselines like **UCB**, **FedAvg**, **FedProx**, **S-FedAvg**, **Power-Of-Choice** and **Centralised** training on the **MNIST**, **FMINST**, and **CIFAR-10** datasets. Results are logged and visualized using W&B. You can see a draft of the paper [here](https://drive.google.com/file/d/19nMQb0LPI2YCVpalM9eZPBITOnXuQUFl/view?usp=sharing).
 ***
 
 To run these algorithms execute ```main.py``` with the desired settings (edit the file).
