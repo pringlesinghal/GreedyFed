@@ -32,7 +32,12 @@ python main.py
 ```
 
 ### plotting.py
-To tabulate results, we download the runs from W&B into a Pandas Dataframe and calculate the accuracy under various settings.
+To tabulate results, we download the runs from W&B into a Pandas DataFrame and calculate the test accuracy under various settings. The code directly produces the LaTeX code for tables used in our paper.
+
+Set ```download = True``` in ```plotting.py``` if you wish to download results from your own runs instead of using existing logs. Set ```dataset``` to one of ```["mnist", "fmnist", "cifar10"]```
+```
+python plotting.py
+```
 
 ### server.py
 Implements the Server class with methods for:
