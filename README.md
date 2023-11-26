@@ -8,7 +8,6 @@ Dataset Configuration:
 1. name of dataset (from ```['fmnist','cifar10','mnist']```)
 2. number of clients ($N$, any positive integer)
 3. alpha ($\alpha$ parameter for dirichlet distribution, not required for Synthetic dataset) (typically varied in powers of 10 from $10^{-4}$ to $10^4$)
-4. alpha, beta (parameters for the Synthetic dataset only) (typically $\alpha = \beta = 0, 0.5, 1$)
 
 Algorithm Configuration:
 1. algorithms to execute (from ```['greedyfed','fedavg','fedprox','sfedavg','ucb','centralised','poc']```)
