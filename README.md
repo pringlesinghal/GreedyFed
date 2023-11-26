@@ -1,9 +1,9 @@
-# Client Valuation and Selection for Communication-Efficient Federated Learning
-This repository implements the **GreedyFed** algorithm for accelerating convergence in federated learning and compares it against other baselines like **UCB**, **FedAvg**, **FedProx**, **S-FedAvg**, **Power-Of-Choice** and **Centralised** training on the **MNIST**, **FMINST**, and **CIFAR-10** datasets.
+# Greedy Shapley Selection for Communication-Efficient Federated Learning
+This repository implements the **GreedyFed** algorithm for accelerating convergence in federated learning and compares it against other baselines like **UCB**, **FedAvg**, **FedProx**, **S-FedAvg**, **Power-Of-Choice** and **Centralised** training on the **MNIST**, **FMINST**, and **CIFAR-10** datasets. Results are logged and visualized using W&B.
 
 ***
 
-To run these algorithms execute main.py with the desired settings (edit the file).
+To run these algorithms execute ```main.py``` with the desired settings (edit the file).
 
 Dataset Configuration:
 1. name of dataset (from ```['fmnist','cifar10','mnist']```)
@@ -21,11 +21,11 @@ Algorithm Configuration:
 Algorithm Hyperparameters
 1. S-FedAvg ( $\alpha = 1- \beta$)
 2. Power-Of-Choice (decay factor $\lambda$)
-3. FedProx (weight of proximal term $\mu$)
+3. FedProx (weight of proximal term $\mu$) 
 4. GreedyFed (memory, weight for exponentially weighted average)
 
 Logging results:
-if logging is set to True the runs are saved on wandb
+if logging is set to True the runs are saved on W&B
 
 You can set the above parameters to a single value or implement a hyperparameter sweep over a list of values. After selecting the desired values, execute the following
 ```
@@ -33,7 +33,7 @@ python main.py
 ```
 
 ### plotting.py
-To tabulate results, we download the runs from wandb into a Pandas Dataframe and calculate the accuracy under various settings.
+To tabulate results, we download the runs from W&B into a Pandas Dataframe and calculate the accuracy under various settings.
 
 ### server.py
 Implements the Server class with methods for:
@@ -55,8 +55,8 @@ Implements the Client class with methods for:
 3. returning client model performance metrics on client data (accuracy and loss)
 
 ### algorithms.py
-Implements all the above mentioned Federated Learning algorithms. Every method returns ```test_acc, train_acc, train_loss, val_loss, test_loss, selections``` and some additional algorithm-specific metrics.\
-FedProx and FedAvg loss are defined using nested functions (closures). The returned loss functions have a slightly different signature from those in PyTorch.
+Implements all the above mentioned Federated Learning algorithms. Every method returns ```test_accuracy, train_accuracy, train_loss, validation_loss, test_loss, client_selections``` and some additional algorithm-specific metrics.
+FedProx and FedAvg loss are defined using nested functions. The returned loss functions have a slightly different signature from those in PyTorch.
 
 ### data_preprocess.py
 Implements methods for downloading and splitting datasets into train-val-test and splitting data across clients using the power law and Dirichlet distribution.
