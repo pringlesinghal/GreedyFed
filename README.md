@@ -17,9 +17,9 @@ Algorithm Configuration:
 5. noise level (maximum client update noise in the privacy preserving setting)
 
 Algorithm Hyperparameters
-1. S-FedAvg ( $\alpha = 1- \beta$)
-2. Power-Of-Choice (decay factor $\lambda$)
-3. FedProx (weight of proximal term $\mu$) 
+1. S-FedAvg [REF1] ( $\alpha = 1- \beta$)
+2. Power-Of-Choice [REF2] (decay factor $\lambda$)
+3. FedProx [REF3] (weight of proximal term $\mu$) 
 4. GreedyFed (memory, weight for exponentially weighted average)
 
 Logging results:
@@ -45,9 +45,9 @@ Implements the Server class with methods for:
 3. returning server model performance metrics (accuracy and loss)
 
 Three different kinds of Shapley Value estimation have been implemented in ```server.py```:
-1. Truncated Monte Carlo sampling
-2. GTG-Shapley (default)
-3. True Shapley Value (extremely expensive to compute, computes loss over all subsets)
+1. Truncated Monte Carlo (TMC) sampling 
+2. GTG-Shapley (default) [REF4]
+3. True Shapley Value [REF5] (extremely expensive to compute, computes loss over all subsets)
 
 Convergence criterion for Shapley Values is implemented in ```utils.py```
 
@@ -58,7 +58,7 @@ Implements the Client class with methods for:
 3. returning client model performance metrics on client data (accuracy and loss)
 
 ### algorithms.py
-Implements all the above mentioned Federated Learning algorithms. Every method returns ```test_accuracy, train_accuracy, train_loss, validation_loss, test_loss, client_selections``` and some additional algorithm-specific metrics.
+Implements all the above-mentioned Federated Learning algorithms. Every method returns ```test_accuracy, train_accuracy, train_loss, validation_loss, test_loss, client_selections``` and some additional algorithm-specific metrics.
 FedProx and FedAvg loss are defined using nested functions. The returned loss functions have a slightly different signature from those in PyTorch.
 
 ### data_preprocess.py
@@ -73,6 +73,19 @@ Implements two different models: a Multi-Layer-Perceptron (NN) and a Convolution
 ### utils.py
 implements some utility functions
 
-#Citations
-....
+# Citations
+[REF1] ...
+[REF2]
+# Citation
+If you use this repo in your project or research, please cite as
+***@software{singha23,
+    author={Pranava Singhal, Shashi Raj Pandey and Petar Popovski},
+    title={greedyfed},
+    url={https://github.com/pringlesinghal/GreedyFed/},
+    year={2023}
+}
+***
+
+
+
 
